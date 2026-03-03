@@ -28,9 +28,17 @@ class MatplotlibTool(SimulationTool):
         params.setdefault("xlabel", "x")
         params.setdefault("ylabel", "y")
         params.setdefault("style", "seaborn-v0_8-darkgrid")
-        params.setdefault("figure_size", [8, 6])
         params.setdefault("dpi", 150)
         params.setdefault("output_format", "png")
+
+        # Normalize split figure size fields from frontend
+        if "figure_width" in params or "figure_height" in params:
+            params["figure_size"] = [
+                params.pop("figure_width", 8),
+                params.pop("figure_height", 6),
+            ]
+        params.setdefault("figure_size", [8, 6])
+
         return params
 
     def run(self, params: dict[str, Any]) -> dict[str, Any]:

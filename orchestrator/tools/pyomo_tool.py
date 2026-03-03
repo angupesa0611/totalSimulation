@@ -24,9 +24,18 @@ class PyomoTool(SimulationTool):
 
         params.setdefault("simulation_type", sim_type)
         params.setdefault("variables", [])
-        params.setdefault("objective", {"expression": "0", "sense": "minimize"})
         params.setdefault("constraints", [])
         params.setdefault("solver", solver)
+
+        # Normalize split objective fields from frontend
+        if isinstance(params.get("objective"), str) or "sense" in params:
+            expr = params.get("objective", "0")
+            if isinstance(expr, dict):
+                expr = expr.get("expression", "0")
+            sense = params.pop("sense", "minimize")
+            params["objective"] = {"expression": expr, "sense": sense}
+        params.setdefault("objective", {"expression": "0", "sense": "minimize"})
+
         return params
 
     def run(self, params: dict[str, Any]) -> dict[str, Any]:
@@ -53,6 +62,10 @@ class PyomoTool(SimulationTool):
             "reals": pyo.Reals,
             "integers": pyo.Integers,
             "binary": pyo.Binary,
+            "NonNegativeReals": pyo.NonNegativeReals,
+            "nonnegativereals": pyo.NonNegativeReals,
+            "NonNegativeIntegers": pyo.NonNegativeIntegers,
+            "nonnegativeintegers": pyo.NonNegativeIntegers,
         }
 
         var_objects = {}

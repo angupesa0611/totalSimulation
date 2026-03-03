@@ -34,8 +34,8 @@ export default function PyomoParams({ params, onChange }) {
         </label>
         <textarea
           value={p.variables || JSON.stringify([
-            { name: 'x', lower: 0, upper: null, domain: 'NonNegativeReals' },
-            { name: 'y', lower: 0, upper: null, domain: 'NonNegativeReals' },
+            { name: 'x', lower: 0, upper: null, domain: 'reals' },
+            { name: 'y', lower: 0, upper: null, domain: 'reals' },
           ], null, 2)}
           onChange={(e) => { try { update('variables', JSON.parse(e.target.value)); } catch { update('variables', e.target.value); } }}
           rows={5}

@@ -20,8 +20,28 @@ class ControlTool(SimulationTool):
         params.setdefault("simulation_type", sim_type)
         params.setdefault("numerator", [1])
         params.setdefault("denominator", [1, 1])
-        params.setdefault("omega_range", [0.01, 1000])
         params.setdefault("t_final", 10.0)
+
+        # Normalize split omega fields from frontend
+        if "omega_min" in params or "omega_max" in params:
+            params["omega_range"] = [
+                params.pop("omega_min", 0.01),
+                params.pop("omega_max", 1000),
+            ]
+        params.setdefault("omega_range", [0.01, 1000])
+
+        # Normalize split k_range fields from frontend
+        if "k_min" in params or "k_max" in params:
+            params["k_range"] = [
+                params.pop("k_min", 0),
+                params.pop("k_max", 100),
+            ]
+
+        # Normalize state-space matrix names from frontend
+        for m in ("A", "B", "C", "D"):
+            if f"{m}_matrix" in params:
+                params[m] = params.pop(f"{m}_matrix")
+
         return params
 
     def run(self, params: dict[str, Any]) -> dict[str, Any]:

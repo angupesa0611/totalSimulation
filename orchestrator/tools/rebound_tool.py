@@ -69,6 +69,9 @@ class REBOUNDTool(SimulationTool):
         for p in params["particles"]:
             name = p.pop("name", None)
             names.append(name or f"particle_{len(names)}")
+            # Strip client-only keys (e.g. _mode)
+            for k in [k for k in p if k.startswith("_")]:
+                p.pop(k)
             if "a" in p:
                 primary_idx = p.pop("primary", 0)
                 primary = sim.particles[primary_idx] if sim.N > 0 else None

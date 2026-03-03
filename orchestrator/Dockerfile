@@ -3,7 +3,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ glpk-utils coinor-cbc coinor-libipopt-dev \
+    gcc g++ pkg-config glpk-utils coinor-cbc coinor-libipopt-dev \
     libosmesa6-dev libgl1-mesa-dev \
     && rm -rf /var/lib/apt/lists/*
 

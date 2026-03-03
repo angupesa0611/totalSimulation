@@ -1,64 +1,8 @@
 import React from 'react';
 import { InputField, SliderParam, DropdownSelect, RunButton, ProgressBar } from './shared';
 import HelpButton from './shared/HelpButton';
-import { PyscfParams, Psi4Params, GromacsParams, NamdParams, QmmmParams, MdanalysisParams, PybulletParams, EinsteinpyParams, NrpyParams, FenicsParams, ElmerParams, BasicoParams, TelluriumParams, Brian2Params, NestParams, MsprimeParams, RDKitParams, CanteraParams, QeParams, LammpsParams, SymPyParams, GmshParams, LcapyParams, PennyLaneParams, SagemathParams, Lean4Params, GapParams, PySpiceParams, QiskitParams, MatplotlibParams, ControlParams, PyomoParams, NetworkXParams, PhiFlowParams, ManimParams, OpenFOAMParams, DedalusParams, SU2Params, FiredrakeParams, VTKParams, OpenBabelParams, COMSOLParams, AlphaFoldParams, SLiMParams, TskitParams, SimuPOPParams, PyRosettaParams, EinsteinToolkitParams } from './params';
+import { ReboundParams, PyscfParams, Psi4Params, GromacsParams, NamdParams, QmmmParams, MdanalysisParams, PybulletParams, EinsteinpyParams, NrpyParams, FenicsParams, ElmerParams, BasicoParams, TelluriumParams, Brian2Params, NestParams, MsprimeParams, RDKitParams, CanteraParams, QeParams, LammpsParams, SymPyParams, GmshParams, LcapyParams, PennyLaneParams, SagemathParams, Lean4Params, GapParams, PySpiceParams, QiskitParams, MatplotlibParams, ControlParams, PyomoParams, NetworkXParams, PhiFlowParams, ManimParams, OpenFOAMParams, DedalusParams, SU2Params, FiredrakeParams, VTKParams, OpenBabelParams, COMSOLParams, AlphaFoldParams, SLiMParams, TskitParams, SimuPOPParams, PyRosettaParams, EinsteinToolkitParams } from './params';
 import theme from '../theme.json';
-
-function ReboundParams({ params, onChange }) {
-  const p = params || {};
-  const update = (key, val) => onChange({ ...p, [key]: val });
-
-  const extraForces = p.extra_forces || [];
-  const toggleForce = (force) => {
-    const next = extraForces.includes(force)
-      ? extraForces.filter(f => f !== force)
-      : [...extraForces, force];
-    update('extra_forces', next);
-  };
-
-  return (
-    <>
-      <DropdownSelect
-        label="Integrator"
-        value={p.integrator || 'whfast'}
-        onChange={(v) => update('integrator', v)}
-        options={['ias15', 'whfast', 'mercurius', 'leapfrog']}
-      />
-      <InputField label="Max Time (tmax)" value={p.tmax || 62.83} onChange={(v) => update('tmax', v)} type="number" step={1} />
-      <SliderParam label="Output Frames" value={p.n_outputs || 500} onChange={(v) => update('n_outputs', v)} min={50} max={2000} step={50} />
-      <InputField label="Timestep (dt)" value={p.dt || 0.01} onChange={(v) => update('dt', v)} type="number" step={0.001} />
-
-      <DropdownSelect
-        label="GR Correction (REBOUNDx)"
-        value={p.gr_correction || 'none'}
-        onChange={(v) => update('gr_correction', v)}
-        options={[
-          { value: 'none', label: 'None' },
-          { value: 'gr', label: 'Post-Newtonian (1PN)' },
-          { value: 'gr_full', label: 'Full PN (most accurate)' },
-          { value: 'gr_potential', label: 'Potential-only (fast)' },
-        ]}
-      />
-
-      <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 4 }}>
-        Extra Forces (REBOUNDx)
-      </div>
-      {[
-        { key: 'radiation_pressure', label: 'Radiation Pressure' },
-        { key: 'tides_constant_time_lag', label: 'Tidal Forces' },
-      ].map(f => (
-        <label key={f.key} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: theme.colors.text, cursor: 'pointer', marginBottom: 4 }}>
-          <input type="checkbox" checked={extraForces.includes(f.key)} onChange={() => toggleForce(f.key)} />
-          {f.label}
-        </label>
-      ))}
-
-      <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 8 }}>
-        Particles: {p.particles?.length || 0} bodies loaded
-      </div>
-    </>
-  );
-}
 
 function QutipParams({ params, onChange }) {
   const p = params || {};

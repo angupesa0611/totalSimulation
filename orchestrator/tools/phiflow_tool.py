@@ -25,10 +25,32 @@ class PhiFlowTool(SimulationTool):
 
         params.setdefault("simulation_type", sim_type)
         params.setdefault("backend", backend)
-        params.setdefault("resolution", [64, 64])
-        params.setdefault("domain_size", [1.0, 1.0])
         params.setdefault("dt", 0.01)
         params.setdefault("n_steps", 100)
+
+        # Normalize split resolution fields from frontend
+        if "nx" in params or "ny" in params:
+            params["resolution"] = [
+                params.pop("ny", 64),
+                params.pop("nx", 64),
+            ]
+        params.setdefault("resolution", [64, 64])
+
+        # Normalize split domain size fields from frontend
+        if "lx" in params or "ly" in params:
+            params["domain_size"] = [
+                params.pop("ly", 1.0),
+                params.pop("lx", 1.0),
+            ]
+        params.setdefault("domain_size", [1.0, 1.0])
+
+        # Normalize split inflow position fields from frontend
+        if "inflow_x" in params or "inflow_y" in params:
+            params["inflow_position"] = [
+                params.pop("inflow_x", 0.5),
+                params.pop("inflow_y", 0.1),
+            ]
+
         return params
 
     def _select_backend(self, backend):

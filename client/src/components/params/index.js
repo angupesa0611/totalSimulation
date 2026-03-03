@@ -1,3 +1,4 @@
+export { default as ReboundParams } from './ReboundParams';
 export { default as PyscfParams } from './PyscfParams';
 export { default as Psi4Params } from './Psi4Params';
 export { default as GromacsParams } from './GromacsParams';

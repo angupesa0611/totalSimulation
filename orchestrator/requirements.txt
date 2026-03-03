@@ -4,8 +4,8 @@ celery[redis]==5.4.0
 redis==5.2.1
 pydantic==2.10.4
 pydantic-settings==2.7.1
-rebound==4.4.3
-reboundx==4.2.1
+rebound==4.6.0
+reboundx==4.6.1
 qutip==5.0.4
 numpy==1.26.4
 websockets==14.1
@@ -17,7 +17,7 @@ copasi-basico==0.75
 tellurium==2.2.10
 brian2==2.7.1
 msprime==1.3.3
-rdkit-pypi==2024.3.5
+rdkit-pypi>=2022.9.5
 cantera==3.0.1
 sympy==1.13.3
 gmsh==4.13.1
@@ -27,7 +27,7 @@ matplotlib==3.9.3
 control==0.10.1
 pyomo==6.8.2
 networkx==3.4.2
-phiflow==2.7.0
+phiflow==2.5.4
 highspy==1.7.2
 cyipopt==1.4.1
 jax[cpu]==0.4.35
