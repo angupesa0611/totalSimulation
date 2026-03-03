@@ -2,7 +2,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis-data:/data
     healthcheck:
@@ -336,7 +336,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "3100:80"
     depends_on:
       - orchestrator
 

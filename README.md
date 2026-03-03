@@ -14,7 +14,7 @@ cp .env.example .env  # or use the default .env
 docker compose up -d
 
 # Access the UI
-open http://localhost:3000
+open http://localhost:3100
 ```
 
 Core services (redis, orchestrator, client) start by default. Specialized workers are opt-in via Docker Compose profiles:
@@ -36,8 +36,8 @@ docker compose --profile molecular --profile continuum --profile fluids up -d
 ┌─────────────┐     ┌──────────────────┐     ┌─────────────┐
 │   Client     │────▶│   Orchestrator   │────▶│    Redis     │
 │  React SPA   │     │  FastAPI + Celery │     │   Broker +   │
-│  :3000       │◀────│  :8000           │◀────│   Results    │
-│              │  WS │  28 built-in     │     │   :6379      │
+│  :3100       │◀────│  :8000           │◀────│   Results    │
+│              │  WS │  28 built-in     │     │   :6380      │
 └─────────────┘     │  tools           │     └─────────────┘
                      └────────┬─────────┘
                               │ Celery tasks
@@ -57,9 +57,9 @@ docker compose --profile molecular --profile continuum --profile fluids up -d
 
 | Service | Port | Description |
 |---------|------|-------------|
-| Client | 3000 | React SPA (nginx) |
+| Client | 3100 | React SPA (nginx) |
 | Orchestrator | 8000 | FastAPI REST + WebSocket API |
-| Redis | 6379 | Message broker + result backend |
+| Redis | 6380 | Message broker + result backend |
 
 ## Features
 
