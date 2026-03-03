@@ -1,0 +1,12 @@
+{
+  "tool": "openfoam",
+  "label": "Lid-Driven Cavity",
+  "params": {
+    "simulation_type": "cavity",
+    "re": 100,
+    "n_cells": [20, 20, 1],
+    "end_time": 0.5,
+    "write_interval": 0.1,
+    "solver": "icoFoam"
+  }
+}

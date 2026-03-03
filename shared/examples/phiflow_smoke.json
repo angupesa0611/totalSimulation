@@ -1,0 +1,14 @@
+{
+  "tool": "phiflow",
+  "label": "Smoke Plume",
+  "params": {
+    "simulation_type": "smoke_simulation",
+    "resolution": [64, 64],
+    "domain_size": [1.0, 1.0],
+    "dt": 0.01,
+    "n_steps": 200,
+    "inflow_position": [0.5, 0.1],
+    "inflow_radius": 0.05,
+    "buoyancy": 1.0
+  }
+}

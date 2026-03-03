@@ -1,0 +1,16 @@
+# Cloudflare Tunnel configuration
+# See containers/cloudflared/README.md for setup instructions.
+
+tunnel: <YOUR_TUNNEL_ID>
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: <YOUR_DOMAIN>
+    service: http://client:80
+  - hostname: <YOUR_DOMAIN>
+    path: /api/*
+    service: http://orchestrator:8000
+  - hostname: <YOUR_DOMAIN>
+    path: /ws/*
+    service: http://orchestrator:8000
+  - service: http_status:404

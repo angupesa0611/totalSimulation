@@ -1,0 +1,14 @@
+{
+  "tool": "firedrake",
+  "params": {
+    "problem_type": "poisson",
+    "mesh_resolution": 32,
+    "length_x": 1.0,
+    "length_y": 1.0,
+    "degree": 1,
+    "source_term": 1.0,
+    "boundary_conditions": [
+      { "type": "dirichlet", "boundary": "all", "value": 0.0 }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "tool": "networkx",
+  "label": "Karate Club Graph",
+  "params": {
+    "simulation_type": "community_detection",
+    "nodes": "karate_club",
+    "algorithm": "louvain"
+  }
+}

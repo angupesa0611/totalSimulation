@@ -1,0 +1,10 @@
+{
+  "tool": "gap",
+  "label": "Symmetric Group S5",
+  "params": {
+    "simulation_type": "group_properties",
+    "group_type": "symmetric",
+    "n": 5,
+    "compute": "conjugacy_classes"
+  }
+}

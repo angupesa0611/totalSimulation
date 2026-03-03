@@ -1,0 +1,14 @@
+{
+  "tool": "qiskit",
+  "label": "Bell State",
+  "params": {
+    "simulation_type": "circuit_simulation",
+    "n_qubits": 2,
+    "gates": [
+      {"name": "h", "qubits": [0]},
+      {"name": "cx", "qubits": [0, 1]}
+    ],
+    "n_shots": 1024,
+    "backend": "qasm"
+  }
+}

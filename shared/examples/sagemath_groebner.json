@@ -1,0 +1,10 @@
+{
+  "tool": "sagemath",
+  "label": "Gr\u00f6bner Basis",
+  "params": {
+    "simulation_type": "polynomial_algebra",
+    "polynomials": ["x^2 + y^2 - 1", "x - y"],
+    "ring": "QQ",
+    "operation": "groebner"
+  }
+}

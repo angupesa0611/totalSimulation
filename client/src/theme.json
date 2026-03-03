@@ -1,0 +1,40 @@
+{
+  "colors": {
+    "bg": "#0a0a0f",
+    "bgSecondary": "#12121a",
+    "bgTertiary": "#1a1a28",
+    "border": "#2a2a3a",
+    "text": "#e0e0e0",
+    "textSecondary": "#8888a0",
+    "accent": "#6366f1",
+    "accentHover": "#818cf8",
+    "success": "#22c55e",
+    "warning": "#f59e0b",
+    "error": "#ef4444",
+    "layers": {
+      "astrophysics": "#f59e0b",
+      "quantum": "#6366f1",
+      "molecular": "#22c55e",
+      "electronic": "#06b6d4",
+      "analysis": "#ec4899",
+      "multiscale": "#14b8a6",
+      "mechanics": "#a855f7",
+      "continuum": "#f97316",
+      "relativity": "#facc15",
+      "systems-biology": "#10b981",
+      "neuroscience": "#f43f5e",
+      "evolution": "#84cc16",
+      "chemistry": "#0ea5e9",
+      "materials": "#d946ef",
+      "mathematics": "#a78bfa",
+      "circuits": "#2dd4bf",
+      "visualization": "#f472b6",
+      "fluid-dynamics": "#38bdf8",
+      "engineering": "#fb923c"
+    }
+  },
+  "fonts": {
+    "sans": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    "mono": "'JetBrains Mono', 'Fira Code', monospace"
+  }
+}

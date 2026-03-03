@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "REBOUNDParams",
+  "type": "object",
+  "required": ["particles", "tmax"],
+  "properties": {
+    "particles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "m": { "type": "number", "description": "Mass (solar masses)" },
+          "x": { "type": "number", "default": 0 },
+          "y": { "type": "number", "default": 0 },
+          "z": { "type": "number", "default": 0 },
+          "vx": { "type": "number", "default": 0 },
+          "vy": { "type": "number", "default": 0 },
+          "vz": { "type": "number", "default": 0 },
+          "a": { "type": "number", "description": "Semi-major axis (AU)" },
+          "e": { "type": "number", "description": "Eccentricity" },
+          "inc": { "type": "number", "description": "Inclination (rad)" },
+          "primary": { "type": "integer", "description": "Index of primary body" }
+        }
+      }
+    },
+    "integrator": {
+      "type": "string",
+      "enum": ["ias15", "whfast", "mercurius", "leapfrog"],
+      "default": "ias15"
+    },
+    "tmax": {
+      "type": "number",
+      "description": "Integration time (years * 2*pi)"
+    },
+    "n_outputs": {
+      "type": "integer",
+      "default": 500,
+      "description": "Number of output snapshots"
+    },
+    "dt": {
+      "type": "number",
+      "description": "Timestep (for fixed-step integrators)"
+    },
+    "gr_corrections": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable general relativity corrections"
+    }
+  }
+}

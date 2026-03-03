@@ -1,0 +1,12 @@
+{
+  "tool": "einstein_toolkit",
+  "label": "ETK BBH Inspiral",
+  "params": {
+    "simulation_type": "bbh_inspiral",
+    "mass_ratio": 1.0,
+    "initial_separation": 10.0,
+    "resolution": "low",
+    "evolution_time": 50.0,
+    "extraction_radius": 50.0
+  }
+}

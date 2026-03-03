@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SimulationRequest",
+  "type": "object",
+  "required": ["tool", "params"],
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["rebound", "qutip", "openmm", "pyscf", "mdanalysis", "psi4", "gromacs", "namd", "qmmm"],
+      "description": "Simulation tool to use"
+    },
+    "params": {
+      "type": "object",
+      "description": "Tool-specific parameters"
+    },
+    "project": {
+      "type": "string",
+      "default": "_default",
+      "description": "Project name for organizing results"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable label for this run"
+    }
+  }
+}

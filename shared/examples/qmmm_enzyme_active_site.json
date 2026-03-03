@@ -1,0 +1,15 @@
+{
+  "tool": "qmmm",
+  "label": "QM/MM Alanine Active Site",
+  "params": {
+    "pdb_content": "REMARK QM/MM test: alanine dipeptide\nATOM      1  N   ALA A   1       3.326   1.548   0.000  1.00  0.00           N\nATOM      2  CA  ALA A   1       4.740   1.548   0.000  1.00  0.00           C\nATOM      3  C   ALA A   1       5.261   0.127   0.000  1.00  0.00           C\nATOM      4  O   ALA A   1       4.434  -0.814   0.000  1.00  0.00           O\nATOM      5  CB  ALA A   1       5.224   2.285  -1.233  1.00  0.00           C\nATOM      6  H   ALA A   1       2.946   2.469   0.000  1.00  0.00           H\nATOM      7  HA  ALA A   1       5.086   2.036   0.905  1.00  0.00           H\nATOM      8 1HB  ALA A   1       4.906   3.325  -1.196  1.00  0.00           H\nATOM      9 2HB  ALA A   1       4.862   1.831  -2.151  1.00  0.00           H\nATOM     10 3HB  ALA A   1       6.314   2.269  -1.247  1.00  0.00           H\nEND",
+    "qm_region": [0, 1, 2, 3, 4],
+    "qm_method": "hf",
+    "qm_basis": "sto-3g",
+    "forcefield": "AMBER",
+    "task_type": "optimization",
+    "steps": 30,
+    "charge": 0,
+    "spin": 0
+  }
+}

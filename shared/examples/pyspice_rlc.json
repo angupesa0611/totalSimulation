@@ -1,0 +1,15 @@
+{
+  "tool": "pyspice",
+  "label": "RLC Transient",
+  "params": {
+    "simulation_type": "transient_analysis",
+    "components": [
+      {"type": "V", "name": "V1", "nodes": [1, 0], "value": 5},
+      {"type": "R", "name": "R1", "nodes": [1, 2], "value": 100},
+      {"type": "L", "name": "L1", "nodes": [2, 3], "value": 0.01},
+      {"type": "C", "name": "C1", "nodes": [3, 0], "value": 0.000001}
+    ],
+    "step_time": 0.000001,
+    "end_time": 0.005
+  }
+}

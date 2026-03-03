@@ -1,0 +1,17 @@
+{
+  "tool": "qe",
+  "label": "Silicon Crystal SCF",
+  "params": {
+    "simulation_type": "scf",
+    "structure": {
+      "cell": [[0, 2.715, 2.715], [2.715, 0, 2.715], [2.715, 2.715, 0]],
+      "positions": [
+        {"symbol": "Si", "coords": [0, 0, 0]},
+        {"symbol": "Si", "coords": [0.25, 0.25, 0.25]}
+      ],
+      "is_fractional": true
+    },
+    "ecutwfc": 30,
+    "k_points": [4, 4, 4]
+  }
+}

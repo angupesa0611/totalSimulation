@@ -1,0 +1,30 @@
+{
+  "tool": "pybullet",
+  "label": "Elastic Collision",
+  "params": {
+    "simulation_type": "collision",
+    "gravity": -9.81,
+    "timestep": 0.00417,
+    "duration": 3.0,
+    "restitution": 0.95,
+    "friction": 0.3,
+    "objects": [
+      {
+        "name": "sphere_left",
+        "shape": "sphere",
+        "mass": 1.0,
+        "position": [-2, 0, 1],
+        "velocity": [3, 0, 0],
+        "radius": 0.3
+      },
+      {
+        "name": "sphere_right",
+        "shape": "sphere",
+        "mass": 1.0,
+        "position": [2, 0, 1],
+        "velocity": [-3, 0, 0],
+        "radius": 0.3
+      }
+    ]
+  }
+}

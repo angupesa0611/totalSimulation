@@ -1,0 +1,13 @@
+{
+  "tool": "simupop",
+  "label": "simuPOP 3-Population Island Migration",
+  "params": {
+    "simulation_type": "migration",
+    "population_size": 1000,
+    "n_generations": 200,
+    "n_loci": 1,
+    "initial_freq": 0.5,
+    "n_populations": 3,
+    "migration_rate": 0.01
+  }
+}

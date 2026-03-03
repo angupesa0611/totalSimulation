@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NAMD Parameters",
+  "type": "object",
+  "required": ["pdb_content", "psf_content", "namd_conf"],
+  "properties": {
+    "pdb_content": {
+      "type": "string",
+      "description": "PDB coordinate file content"
+    },
+    "psf_content": {
+      "type": "string",
+      "description": "PSF structure file content"
+    },
+    "namd_conf": {
+      "type": "string",
+      "description": "NAMD configuration file content"
+    },
+    "parameter_files": {
+      "type": "object",
+      "description": "Map of parameter filenames to their content",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

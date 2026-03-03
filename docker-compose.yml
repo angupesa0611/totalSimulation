@@ -1,0 +1,356 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  orchestrator:
+    build:
+      context: ./orchestrator
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+      - ./shared:/app/shared:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  openmm-worker:
+    build:
+      context: ./containers/openmm
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    profiles:
+      - molecular
+
+  psi4-worker:
+    build:
+      context: ./containers/psi4
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - electronic
+
+  gromacs-worker:
+    build:
+      context: ./containers/gromacs
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - molecular
+
+  namd-worker:
+    build:
+      context: ./containers/namd
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - molecular
+
+  qmmm-worker:
+    build:
+      context: ./containers/qmmm
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - qmmm
+
+  fenics-worker:
+    build:
+      context: ./containers/fenics
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - continuum
+
+  elmer-worker:
+    build:
+      context: ./containers/elmer
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - continuum
+
+  nest-worker:
+    build:
+      context: ./containers/nest
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - neuro
+
+  qe-worker:
+    build:
+      context: ./containers/qe
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - materials
+
+  lammps-worker:
+    build:
+      context: ./containers/lammps
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - materials
+
+  sagemath-worker:
+    build:
+      context: ./containers/sagemath
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - mathematics
+
+  lean4-worker:
+    build:
+      context: ./containers/lean4
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - mathematics
+
+  gap-worker:
+    build:
+      context: ./containers/gap
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - mathematics
+
+  pyspice-worker:
+    build:
+      context: ./containers/pyspice
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - circuits
+
+  qiskit-worker:
+    build:
+      context: ./containers/qiskit
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - circuits
+
+  manim-worker:
+    build:
+      context: ./containers/manim
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - visualization
+
+  su2-worker:
+    build:
+      context: ./containers/su2
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - fluids
+
+  firedrake-worker:
+    build:
+      context: ./containers/firedrake
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - continuum
+
+  openbabel-worker:
+    build:
+      context: ./containers/openbabel
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - cheminformatics
+
+  openfoam-worker:
+    build:
+      context: ./containers/openfoam
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - fluids
+
+  dedalus-worker:
+    build:
+      context: ./containers/dedalus
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - fluids
+
+  einstein-toolkit-worker:
+    build:
+      context: ./containers/einstein-toolkit
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - astro
+
+  slim-worker:
+    build:
+      context: ./containers/slim
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - bio-population
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - orchestrator
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./containers/cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./containers/cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
+    depends_on:
+      - client
+    restart: unless-stopped
+    profiles:
+      - tunnel
+
+volumes:
+  redis-data:

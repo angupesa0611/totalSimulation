@@ -1,0 +1,13 @@
+{
+  "tool": "dedalus",
+  "label": "Rayleigh-Bénard Convection",
+  "params": {
+    "simulation_type": "rayleigh_benard",
+    "rayleigh": 1000000,
+    "prandtl": 1,
+    "resolution": [128, 64],
+    "aspect_ratio": 2,
+    "end_time": 1.0,
+    "dt": 0.001
+  }
+}

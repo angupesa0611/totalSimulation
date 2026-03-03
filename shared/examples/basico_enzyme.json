@@ -1,0 +1,27 @@
+{
+  "tool": "basico",
+  "label": "Enzyme Kinetics (Michaelis-Menten)",
+  "params": {
+    "simulation_type": "ode_timecourse",
+    "model_source": "reactions",
+    "reactions": [
+      { "name": "binding", "scheme": "S + E -> ES" },
+      { "name": "unbinding", "scheme": "ES -> S + E" },
+      { "name": "catalysis", "scheme": "ES -> P + E" }
+    ],
+    "species": [
+      { "name": "S", "initial_concentration": 10.0 },
+      { "name": "E", "initial_concentration": 1.0 },
+      { "name": "ES", "initial_concentration": 0.0 },
+      { "name": "P", "initial_concentration": 0.0 }
+    ],
+    "parameters": [
+      { "name": "(binding).k1", "value": 0.1 },
+      { "name": "(unbinding).k1", "value": 0.01 },
+      { "name": "(catalysis).k1", "value": 0.05 }
+    ],
+    "duration": 200.0,
+    "n_steps": 200,
+    "method": "deterministic"
+  }
+}

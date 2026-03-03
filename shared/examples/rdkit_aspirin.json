@@ -1,0 +1,8 @@
+{
+  "tool": "rdkit",
+  "label": "Aspirin Molecular Descriptors",
+  "params": {
+    "simulation_type": "descriptors",
+    "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+  }
+}

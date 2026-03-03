@@ -1,0 +1,8 @@
+{
+  "tool": "mdanalysis",
+  "label": "RMSD Analysis",
+  "params": {
+    "analysis_type": "rmsd",
+    "source_job_id": ""
+  }
+}

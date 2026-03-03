@@ -1,0 +1,10 @@
+{
+  "tool": "su2",
+  "params": {
+    "simulation_type": "inviscid_airfoil",
+    "mach_number": 0.8,
+    "angle_of_attack": 1.25,
+    "mesh": "naca_0012",
+    "n_iterations": 250
+  }
+}

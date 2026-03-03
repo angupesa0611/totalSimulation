@@ -1,0 +1,9 @@
+{
+  "tool": "openbabel",
+  "params": {
+    "simulation_type": "convert",
+    "source_format": "smi",
+    "source_data": "CC(=O)Oc1ccccc1C(=O)O",
+    "target_format": "sdf"
+  }
+}

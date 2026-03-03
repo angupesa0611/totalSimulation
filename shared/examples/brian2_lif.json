@@ -1,0 +1,19 @@
+{
+  "tool": "brian2",
+  "label": "LIF Network (100 neurons)",
+  "params": {
+    "simulation_type": "lif",
+    "n_neurons": 100,
+    "duration_ms": 500.0,
+    "dt_ms": 0.1,
+    "lif": {
+      "tau_m": 10.0,
+      "v_rest": -65.0,
+      "v_threshold": -50.0,
+      "v_reset": -65.0,
+      "tau_refrac": 2.0,
+      "input_rate_hz": 15.0,
+      "weight": 1.5
+    }
+  }
+}

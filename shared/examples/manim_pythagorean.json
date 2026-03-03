@@ -1,0 +1,11 @@
+{
+  "tool": "manim",
+  "label": "Pythagorean Theorem",
+  "params": {
+    "simulation_type": "equation_animation",
+    "expressions": ["a^2 + b^2 = c^2", "c = \\sqrt{a^2 + b^2}"],
+    "animation_type": "transform",
+    "quality": "medium_quality",
+    "format": "mp4"
+  }
+}

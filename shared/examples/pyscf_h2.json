@@ -1,0 +1,11 @@
+{
+  "tool": "pyscf",
+  "label": "H₂ Hartree-Fock",
+  "params": {
+    "atom_coords": "H 0 0 0; H 0 0 0.74",
+    "basis": "sto-3g",
+    "method": "hf",
+    "charge": 0,
+    "spin": 0
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "tool": "nest",
+  "label": "Brunel Balanced Network",
+  "params": {
+    "simulation_type": "balanced_network",
+    "duration_ms": 500.0,
+    "dt_ms": 0.1,
+    "record_n_neurons": 50,
+    "balanced_network": {
+      "n_excitatory": 4000,
+      "n_inhibitory": 1000,
+      "neuron_model": "iaf_psc_alpha",
+      "connection_probability": 0.1,
+      "weight_exc": 0.1,
+      "weight_inh_factor": -5.0,
+      "delay_ms": 1.5,
+      "external_rate_hz": 8000.0
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "tool": "pyomo",
+  "label": "Knapsack Problem",
+  "params": {
+    "simulation_type": "linear_program",
+    "variables": [
+      {"name": "x1", "lower": 0, "upper": 1, "domain": "binary"},
+      {"name": "x2", "lower": 0, "upper": 1, "domain": "binary"},
+      {"name": "x3", "lower": 0, "upper": 1, "domain": "binary"}
+    ],
+    "objective": {
+      "expression": "10*x1 + 20*x2 + 15*x3",
+      "sense": "maximize"
+    },
+    "constraints": [
+      {"name": "weight", "expression": "5*x1 + 8*x2 + 6*x3 <= 12"}
+    ],
+    "solver": "glpk"
+  }
+}

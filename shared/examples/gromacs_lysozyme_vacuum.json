@@ -1,0 +1,9 @@
+{
+  "tool": "gromacs",
+  "label": "Lysozyme Vacuum MD",
+  "params": {
+    "gro_content": "; Minimal GRO placeholder\nLysozyme in vacuum\n    3\n    1ALA      N    1   0.000   0.000   0.000\n    1ALA     CA    2   0.145   0.000   0.000\n    1ALA      C    3   0.200   0.130   0.000\n   1.0   1.0   1.0",
+    "top_content": "; Minimal topology placeholder\n[ defaults ]\n1 2 yes 0.5 0.8333\n\n[ atomtypes ]\nN  14.01  0.0  A  0.325  0.711\nCA 12.01  0.0  A  0.340  0.460\nC  12.01  0.0  A  0.340  0.460\n\n[ moleculetype ]\nProtein 3\n\n[ atoms ]\n1 N  1 ALA N  1  -0.4157  14.01\n2 CA 1 ALA CA 2   0.0337  12.01\n3 C  1 ALA C  3   0.5973  12.01\n\n[ bonds ]\n1 2 1 0.145 282000\n2 3 1 0.153 282000\n\n[ system ]\nLysozyme\n\n[ molecules ]\nProtein 1",
+    "mdp_content": "; Energy minimization\nintegrator = md\nnsteps = 100\ndt = 0.001\nnstxout = 10\nnstvout = 0\nnstfout = 0\nnstlog = 10\nnstenergy = 10\nnstxout-compressed = 10\ncompressed-x-grps = System\ncutoff-scheme = Verlet\nns_type = grid\nnstlist = 10\nrlist = 1.0\nrcoulomb = 1.0\nrvdw = 1.0\ncoulombtype = PME\npbc = xyz\n"
+  }
+}

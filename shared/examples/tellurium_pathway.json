@@ -1,0 +1,11 @@
+{
+  "tool": "tellurium",
+  "label": "Linear Pathway (S1→S2→S3)",
+  "params": {
+    "simulation_type": "antimony_timecourse",
+    "antimony_model": "model pathway\n  S1 -> S2; k1*S1;\n  S2 -> S3; k2*S2;\n  S3 -> ; k3*S3;\n  S1 = 10; S2 = 0; S3 = 0;\n  k1 = 0.1; k2 = 0.05; k3 = 0.02;\nend",
+    "start_time": 0.0,
+    "end_time": 200.0,
+    "n_points": 200
+  }
+}

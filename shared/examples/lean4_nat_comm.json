@@ -1,0 +1,9 @@
+{
+  "tool": "lean4",
+  "label": "Nat Addition Commutative",
+  "params": {
+    "simulation_type": "verify_statement",
+    "lean_code": "theorem add_comm (n m : Nat) : n + m = m + n := Nat.add_comm n m",
+    "timeout_s": 60
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "tool": "control",
+  "label": "RC Low-Pass Bode",
+  "params": {
+    "simulation_type": "bode_plot",
+    "numerator": [1],
+    "denominator": [0.001, 1],
+    "omega_range": [0.1, 100000]
+  }
+}

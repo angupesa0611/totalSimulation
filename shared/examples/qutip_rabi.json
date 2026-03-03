@@ -1,0 +1,14 @@
+{
+  "tool": "qutip",
+  "label": "Rabi Oscillation",
+  "params": {
+    "system_type": "qubit_rabi",
+    "qubit_rabi": {
+      "omega": 1.0,
+      "delta": 0.0,
+      "psi0": "ground",
+      "tmax": 25.0,
+      "n_steps": 500
+    }
+  }
+}

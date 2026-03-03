@@ -1,0 +1,13 @@
+{
+  "tool": "cantera",
+  "label": "Hydrogen/Air Ignition Delay",
+  "params": {
+    "simulation_type": "ignition_delay",
+    "mechanism": "gri30.yaml",
+    "temperature_K": 1200,
+    "pressure_atm": 1,
+    "composition": "H2:2,O2:1,N2:3.76",
+    "end_time_s": 0.001,
+    "n_points": 200
+  }
+}

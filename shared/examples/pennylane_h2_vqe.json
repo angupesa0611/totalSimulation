@@ -1,0 +1,17 @@
+{
+  "tool": "pennylane",
+  "label": "H\u2082 VQE",
+  "params": {
+    "simulation_type": "vqe",
+    "hamiltonian": [
+      {"coeff": -0.5, "pauli_string": "II"},
+      {"coeff": 0.5, "pauli_string": "ZZ"},
+      {"coeff": 0.25, "pauli_string": "XX"}
+    ],
+    "n_qubits": 2,
+    "ansatz": "basic",
+    "optimizer": "gradient_descent",
+    "max_iterations": 50,
+    "step_size": 0.4
+  }
+}

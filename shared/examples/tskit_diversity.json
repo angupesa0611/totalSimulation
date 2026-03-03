@@ -1,0 +1,9 @@
+{
+  "tool": "tskit",
+  "label": "tskit Diversity Analysis",
+  "params": {
+    "simulation_type": "diversity",
+    "source_job_id": "",
+    "n_windows": 20
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QuTiPParams",
+  "type": "object",
+  "required": ["system_type"],
+  "properties": {
+    "system_type": {
+      "type": "string",
+      "enum": ["qubit_rabi", "spin_chain", "jaynes_cummings"],
+      "description": "Type of quantum system to simulate"
+    },
+    "qubit_rabi": {
+      "type": "object",
+      "properties": {
+        "omega": { "type": "number", "default": 1.0, "description": "Rabi frequency" },
+        "delta": { "type": "number", "default": 0.0, "description": "Detuning" },
+        "psi0": { "type": "string", "default": "ground", "enum": ["ground", "excited", "superposition"] },
+        "tmax": { "type": "number", "default": 25.0 },
+        "n_steps": { "type": "integer", "default": 500 }
+      }
+    },
+    "spin_chain": {
+      "type": "object",
+      "properties": {
+        "n_spins": { "type": "integer", "default": 4, "minimum": 2, "maximum": 10 },
+        "J": { "type": "number", "default": 1.0, "description": "Coupling strength" },
+        "B": { "type": "number", "default": 0.5, "description": "External field" },
+        "tmax": { "type": "number", "default": 20.0 },
+        "n_steps": { "type": "integer", "default": 500 }
+      }
+    },
+    "jaynes_cummings": {
+      "type": "object",
+      "properties": {
+        "n_photons": { "type": "integer", "default": 5, "description": "Photon number cutoff" },
+        "omega_a": { "type": "number", "default": 1.0, "description": "Atom frequency" },
+        "omega_c": { "type": "number", "default": 1.0, "description": "Cavity frequency" },
+        "g": { "type": "number", "default": 0.1, "description": "Coupling strength" },
+        "kappa": { "type": "number", "default": 0.05, "description": "Cavity decay rate" },
+        "gamma": { "type": "number", "default": 0.01, "description": "Atom decay rate" },
+        "tmax": { "type": "number", "default": 50.0 },
+        "n_steps": { "type": "integer", "default": 500 }
+      }
+    }
+  }
+}

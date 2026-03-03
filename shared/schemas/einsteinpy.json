@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EinsteinPyParams",
+  "type": "object",
+  "required": ["simulation_type"],
+  "properties": {
+    "simulation_type": {
+      "type": "string",
+      "enum": ["schwarzschild_geodesic", "kerr_geodesic", "precession"],
+      "default": "schwarzschild_geodesic"
+    },
+    "M": {
+      "type": "number",
+      "default": 1000000,
+      "description": "Black hole mass (solar masses)"
+    },
+    "a": {
+      "type": "number",
+      "default": 0.0,
+      "description": "Spin parameter for Kerr metric"
+    },
+    "initial_position": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "Initial position [r, theta, phi] in spherical coordinates"
+    },
+    "initial_velocity": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "Initial velocity [v_r, v_theta, v_phi]"
+    },
+    "max_time": {
+      "type": "number",
+      "default": 5000.0,
+      "description": "Maximum proper time for integration"
+    },
+    "n_steps": {
+      "type": "integer",
+      "default": 1000,
+      "description": "Number of integration steps"
+    },
+    "ODE_method": {
+      "type": "string",
+      "enum": ["DOP853", "RK45", "RK23"],
+      "default": "DOP853"
+    }
+  }
+}

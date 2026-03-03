@@ -1,0 +1,10 @@
+{
+  "tool": "sympy",
+  "label": "Quadratic Solve",
+  "params": {
+    "simulation_type": "symbolic_solve",
+    "equations": ["x**2 - 5*x + 6"],
+    "solve_for": ["x"],
+    "variables": ["x"]
+  }
+}

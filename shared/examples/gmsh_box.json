@@ -1,0 +1,14 @@
+{
+  "tool": "gmsh",
+  "label": "3D Box Mesh",
+  "params": {
+    "simulation_type": "box_mesh",
+    "lx": 1.0,
+    "ly": 0.5,
+    "lz": 0.2,
+    "mesh_size": 0.05,
+    "dimension": 3,
+    "element_order": 1,
+    "output_format": "msh"
+  }
+}

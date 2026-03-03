@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QM/MM Parameters",
+  "type": "object",
+  "required": ["pdb_content", "qm_region"],
+  "properties": {
+    "pdb_content": {
+      "type": "string",
+      "description": "PDB structure file content"
+    },
+    "qm_region": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "description": "Atom indices for QM treatment (0-indexed)"
+    },
+    "qm_method": {
+      "type": "string",
+      "default": "hf",
+      "enum": ["hf", "b3lyp", "pbe", "pbe0"],
+      "description": "QM method for the active site"
+    },
+    "qm_basis": {
+      "type": "string",
+      "default": "sto-3g",
+      "enum": ["sto-3g", "6-31g", "6-31g*", "cc-pvdz"],
+      "description": "Basis set for QM region"
+    },
+    "forcefield": {
+      "type": "string",
+      "default": "AMBER",
+      "enum": ["AMBER", "CHARMM"],
+      "description": "MM forcefield for surroundings"
+    },
+    "task_type": {
+      "type": "string",
+      "default": "optimization",
+      "enum": ["optimization", "md"],
+      "description": "QM/MM task: geometry optimization or molecular dynamics"
+    },
+    "steps": {
+      "type": "integer",
+      "default": 50,
+      "description": "Number of optimization/MD steps"
+    },
+    "temperature": {
+      "type": "number",
+      "default": 300,
+      "description": "Temperature in Kelvin (MD only)"
+    },
+    "charge": {
+      "type": "integer",
+      "default": 0,
+      "description": "QM region total charge"
+    },
+    "spin": {
+      "type": "integer",
+      "default": 0,
+      "description": "QM region spin (2S)"
+    }
+  }
+}

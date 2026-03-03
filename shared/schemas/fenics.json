@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FEniCSParams",
+  "type": "object",
+  "required": ["problem_type"],
+  "properties": {
+    "problem_type": {
+      "type": "string",
+      "enum": ["heat", "diffusion", "stokes", "elasticity"],
+      "default": "heat"
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["rectangle", "circle", "L-shape"],
+      "default": "rectangle"
+    },
+    "length_x": {
+      "type": "number",
+      "default": 1.0,
+      "description": "Domain length in x direction"
+    },
+    "length_y": {
+      "type": "number",
+      "default": 1.0,
+      "description": "Domain length in y direction"
+    },
+    "mesh_resolution": {
+      "type": "integer",
+      "default": 32,
+      "description": "Number of mesh divisions"
+    },
+    "degree": {
+      "type": "integer",
+      "default": 1,
+      "description": "Polynomial degree of finite elements"
+    },
+    "boundary_conditions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["dirichlet", "neumann"] },
+          "boundary": { "type": "string", "enum": ["left", "right", "top", "bottom", "all"] },
+          "value": { "type": "number" }
+        }
+      }
+    },
+    "source_term": {
+      "type": "number",
+      "default": 0.0,
+      "description": "Source/forcing term value"
+    },
+    "material": {
+      "type": "object",
+      "properties": {
+        "conductivity": { "type": "number", "default": 1.0 },
+        "E": { "type": "number", "default": 100000, "description": "Young's modulus" },
+        "nu": { "type": "number", "default": 0.3, "description": "Poisson ratio" },
+        "density": { "type": "number", "default": 1.0 }
+      }
+    }
+  }
+}

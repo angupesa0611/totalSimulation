@@ -1,0 +1,8 @@
+{
+  "tool": "vtk",
+  "params": {
+    "simulation_type": "field_render",
+    "colormap": "viridis",
+    "window_size": [800, 600]
+  }
+}

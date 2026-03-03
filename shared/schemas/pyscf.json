@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PySCF Parameters",
+  "type": "object",
+  "required": ["atom_coords"],
+  "properties": {
+    "atom_coords": {
+      "type": "string",
+      "description": "Atomic coordinates in PySCF format: 'H 0 0 0; H 0 0 0.74'"
+    },
+    "basis": {
+      "type": "string",
+      "default": "sto-3g",
+      "enum": ["sto-3g", "6-31g", "6-31g*", "6-311g**", "cc-pvdz", "cc-pvtz", "aug-cc-pvdz"],
+      "description": "Basis set"
+    },
+    "method": {
+      "type": "string",
+      "default": "hf",
+      "enum": ["hf", "dft", "mp2", "ccsd"],
+      "description": "Calculation method"
+    },
+    "xc_functional": {
+      "type": "string",
+      "default": "b3lyp",
+      "enum": ["b3lyp", "pbe", "pbe0", "lda", "m06-2x"],
+      "description": "Exchange-correlation functional (DFT only)"
+    },
+    "charge": {
+      "type": "integer",
+      "default": 0,
+      "description": "Total charge of the molecule"
+    },
+    "spin": {
+      "type": "integer",
+      "default": 0,
+      "description": "Spin multiplicity minus 1 (0 = singlet, 1 = doublet, etc.)"
+    }
+  }
+}

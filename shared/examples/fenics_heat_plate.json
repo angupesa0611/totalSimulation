@@ -1,0 +1,21 @@
+{
+  "tool": "fenics",
+  "label": "Heated Plate",
+  "params": {
+    "problem_type": "heat",
+    "length_x": 1.0,
+    "length_y": 1.0,
+    "mesh_resolution": 32,
+    "degree": 1,
+    "material": {
+      "conductivity": 1.0
+    },
+    "source_term": 0.0,
+    "boundary_conditions": [
+      { "type": "dirichlet", "boundary": "left", "value": 100 },
+      { "type": "dirichlet", "boundary": "right", "value": 0 },
+      { "type": "dirichlet", "boundary": "top", "value": 0 },
+      { "type": "dirichlet", "boundary": "bottom", "value": 0 }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "tool": "lammps",
+  "label": "Lennard-Jones Fluid",
+  "params": {
+    "simulation_type": "lj_fluid",
+    "lj_fluid": {
+      "n_atoms": 500,
+      "temperature": 1.0,
+      "density": 0.8,
+      "timestep": 0.005,
+      "n_steps": 10000,
+      "dump_interval": 100
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Psi4 Parameters",
+  "type": "object",
+  "required": ["geometry"],
+  "properties": {
+    "geometry": {
+      "type": "string",
+      "description": "Molecular geometry in Psi4 format. Use -- to separate fragments for SAPT."
+    },
+    "method": {
+      "type": "string",
+      "default": "hf",
+      "enum": ["hf", "mp2", "ccsd", "ccsd(t)", "sapt0", "sapt2"],
+      "description": "Calculation method"
+    },
+    "basis": {
+      "type": "string",
+      "default": "cc-pvdz",
+      "enum": ["sto-3g", "6-31g*", "cc-pvdz", "cc-pvtz", "aug-cc-pvdz", "jun-cc-pvdz"],
+      "description": "Basis set"
+    },
+    "charge": {
+      "type": "integer",
+      "default": 0,
+      "description": "Total charge"
+    },
+    "multiplicity": {
+      "type": "integer",
+      "default": 1,
+      "description": "Spin multiplicity"
+    },
+    "memory": {
+      "type": "string",
+      "default": "2 GB",
+      "description": "Memory allocation"
+    },
+    "threads": {
+      "type": "integer",
+      "default": 2,
+      "description": "Number of threads"
+    }
+  }
+}

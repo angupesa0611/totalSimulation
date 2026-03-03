@@ -1,0 +1,14 @@
+{
+  "tool": "msprime",
+  "label": "Neutral Coalescent (50 samples, 100kb)",
+  "params": {
+    "simulation_type": "coalescent",
+    "n_samples": 50,
+    "sequence_length": 100000,
+    "recombination_rate": 1e-8,
+    "mutation_rate": 1e-8,
+    "population_size": 10000,
+    "random_seed": 42,
+    "n_windows": 20
+  }
+}

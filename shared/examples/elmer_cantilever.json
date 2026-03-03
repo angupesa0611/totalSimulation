@@ -1,0 +1,19 @@
+{
+  "tool": "elmer",
+  "label": "Cantilever Beam",
+  "params": {
+    "problem_type": "structural",
+    "length_x": 1.0,
+    "length_y": 0.1,
+    "mesh_divisions_x": 20,
+    "mesh_divisions_y": 10,
+    "material": {
+      "youngs_modulus": 2e11,
+      "poisson_ratio": 0.3,
+      "density": 7800
+    },
+    "loads": [
+      { "type": "gravity" }
+    ]
+  }
+}

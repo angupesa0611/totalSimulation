@@ -1,0 +1,39 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Node
+client/node_modules/
+client/dist/
+
+# Docker
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local project files
+.worklog
+.memory
+.projectstate
+
+# Cloudflare Tunnel credentials
+containers/cloudflared/credentials.json
+
+# Results data (host-mounted)
+data/

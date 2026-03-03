@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NRPyParams",
+  "type": "object",
+  "required": ["simulation_type"],
+  "properties": {
+    "simulation_type": {
+      "type": "string",
+      "enum": ["brill_lindquist", "gw_strain", "tov_star"],
+      "default": "gw_strain"
+    },
+    "mass_ratio": {
+      "type": "number",
+      "default": 1.0,
+      "description": "Mass ratio q = m2/m1"
+    },
+    "separation": {
+      "type": "number",
+      "default": 10.0,
+      "description": "Initial separation in units of total mass M"
+    },
+    "spin1": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": -0.998,
+      "maximum": 0.998,
+      "description": "Dimensionless spin of BH 1"
+    },
+    "spin2": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": -0.998,
+      "maximum": 0.998,
+      "description": "Dimensionless spin of BH 2"
+    },
+    "grid_points": {
+      "type": "integer",
+      "default": 200,
+      "description": "Number of grid points"
+    },
+    "total_mass_solar": {
+      "type": "number",
+      "default": 60.0,
+      "description": "Total mass in solar masses (for GW strain)"
+    },
+    "central_density": {
+      "type": "number",
+      "default": 5e17,
+      "description": "Central density in kg/m³ (for TOV star)"
+    }
+  }
+}

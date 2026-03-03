@@ -1,0 +1,10 @@
+{
+  "tool": "namd",
+  "label": "Ubiquitin MD",
+  "params": {
+    "pdb_content": "REMARK Minimal ubiquitin placeholder\nATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N\nATOM      2  CA  ALA A   1       1.458   0.000   0.000  1.00  0.00           C\nATOM      3  C   ALA A   1       2.009   1.420   0.000  1.00  0.00           C\nATOM      4  O   ALA A   1       1.246   2.390   0.000  1.00  0.00           O\nEND",
+    "psf_content": "PSF\n\n       1 !NTITLE\n REMARKS minimal psf for testing\n\n       4 !NATOM\n       1 PROT 1    ALA  N    NH1   -0.470000       14.0070           0\n       2 PROT 1    ALA  CA   CT1    0.070000       12.0110           0\n       3 PROT 1    ALA  C    C      0.510000       12.0110           0\n       4 PROT 1    ALA  O    O     -0.510000       15.9990           0\n\n       3 !NBOND\n       1       2       2       3       3       4\n",
+    "namd_conf": "# NAMD Configuration\nstructure input.psf\ncoordinates input.pdb\ntemperature 300\noutputName output\nnumsteps 100\ntimestep 1.0\nDCDfreq 10\noutputEnergies 10\nexclude scaled1-4\n1-4scaling 1.0\nswitching on\nswitchDist 10\ncutoff 12\npairlistdist 14\n",
+    "parameter_files": {}
+  }
+}

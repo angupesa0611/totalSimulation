@@ -1,0 +1,23 @@
+# Auto-import task modules so Celery discovers them
+import tools.rebound_tool  # noqa: F401
+import tools.qutip_tool  # noqa: F401
+import tools.pyscf_tool  # noqa: F401
+import tools.mdanalysis_tool  # noqa: F401
+import tools.pybullet_tool  # noqa: F401
+import tools.einsteinpy_tool  # noqa: F401
+import tools.nrpy_tool  # noqa: F401
+import tools.basico_tool  # noqa: F401
+import tools.tellurium_tool  # noqa: F401
+import tools.brian2_tool  # noqa: F401
+import tools.msprime_tool  # noqa: F401
+import tools.rdkit_tool  # noqa: F401
+import tools.cantera_tool  # noqa: F401
+import tools.sympy_tool  # noqa: F401
+import tools.gmsh_tool  # noqa: F401
+import tools.lcapy_tool  # noqa: F401
+import tools.pennylane_tool  # noqa: F401
+import tools.matplotlib_tool  # noqa: F401
+import tools.control_tool  # noqa: F401
+import tools.pyomo_tool  # noqa: F401
+import tools.networkx_tool  # noqa: F401
+import tools.phiflow_tool  # noqa: F401
