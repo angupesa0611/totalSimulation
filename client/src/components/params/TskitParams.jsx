@@ -25,6 +25,24 @@ export default function TskitParams({ params, onChange }) {
       <InputField label="Source Job ID" value={p.source_job_id ?? ''} onChange={(v) => update('source_job_id', v)} type="text" placeholder="Enter a previous SLiM/msprime job ID" />
       <SliderParam label="Windows" value={p.n_windows ?? 20} onChange={(v) => update('n_windows', v)} min={5} max={100} step={5} />
 
+      {simType === 'fst' && (
+        <div style={{ marginTop: 8 }}>
+          <label style={{ fontSize: 12, color: theme.colors.textSecondary, display: 'block', marginBottom: 4 }}>
+            Sample Sets (JSON array of arrays, e.g. [[0,1,2],[3,4,5]])
+          </label>
+          <textarea
+            value={typeof p.sample_sets === 'string' ? p.sample_sets : JSON.stringify(p.sample_sets || [[0,1,2,3,4],[5,6,7,8,9]], null, 1)}
+            onChange={(e) => { try { update('sample_sets', JSON.parse(e.target.value)); } catch { update('sample_sets', e.target.value); } }}
+            rows={3}
+            style={{
+              width: '100%', padding: 8, background: theme.colors.bgTertiary,
+              border: `1px solid ${theme.colors.border}`, borderRadius: 6,
+              color: theme.colors.text, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, resize: 'vertical',
+            }}
+          />
+        </div>
+      )}
+
       {simType === 'recapitate' && (
         <>
           <InputField label="Ancestral Ne" value={p.population_size ?? 10000} onChange={(v) => update('population_size', parseInt(v))} type="number" step={1000} />

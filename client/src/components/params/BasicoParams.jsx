@@ -41,6 +41,21 @@ export default function BasicoParams({ params, onChange }) {
     } catch { /* ignore parse errors while typing */ }
   };
 
+  const modelSource = p.model_source || 'reactions';
+
+  const [paramsText, setParamsText] = useState(
+    p.parameters ? JSON.stringify(p.parameters, null, 2) : JSON.stringify([
+      { "name": "binding.k1", "value": 0.1 },
+      { "name": "unbinding.k1", "value": 0.01 },
+      { "name": "catalysis.k1", "value": 0.05 }
+    ], null, 2)
+  );
+
+  const handleParamsChange = (text) => {
+    setParamsText(text);
+    try { update('parameters', JSON.parse(text)); } catch {}
+  };
+
   return (
     <>
       <DropdownSelect
@@ -63,33 +78,80 @@ export default function BasicoParams({ params, onChange }) {
         options={['deterministic', 'stochastic', 'hybrid']}
       />
 
-      <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 4 }}>
-        Reactions (JSON)
-      </div>
-      <textarea
-        value={reactionsText}
-        onChange={(e) => handleReactionsChange(e.target.value)}
-        style={{
-          width: '100%', height: 100, padding: 8,
-          background: theme.colors.bgTertiary, color: theme.colors.text,
-          border: `1px solid ${theme.colors.border}`, borderRadius: 6,
-          fontFamily: theme.fonts.mono, fontSize: 11, resize: 'vertical',
-        }}
+      <DropdownSelect
+        label="Model Source"
+        value={modelSource}
+        onChange={(v) => update('model_source', v)}
+        options={[
+          { value: 'reactions', label: 'Reactions + Species' },
+          { value: 'sbml', label: 'SBML (XML)' },
+        ]}
       />
 
-      <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 4 }}>
-        Species (JSON)
-      </div>
-      <textarea
-        value={speciesText}
-        onChange={(e) => handleSpeciesChange(e.target.value)}
-        style={{
-          width: '100%', height: 80, padding: 8,
-          background: theme.colors.bgTertiary, color: theme.colors.text,
-          border: `1px solid ${theme.colors.border}`, borderRadius: 6,
-          fontFamily: theme.fonts.mono, fontSize: 11, resize: 'vertical',
-        }}
-      />
+      {modelSource === 'reactions' && (
+        <>
+          <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 4 }}>
+            Reactions (JSON)
+          </div>
+          <textarea
+            value={reactionsText}
+            onChange={(e) => handleReactionsChange(e.target.value)}
+            style={{
+              width: '100%', height: 100, padding: 8,
+              background: theme.colors.bgTertiary, color: theme.colors.text,
+              border: `1px solid ${theme.colors.border}`, borderRadius: 6,
+              fontFamily: theme.fonts.mono, fontSize: 11, resize: 'vertical',
+            }}
+          />
+
+          <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 4 }}>
+            Species (JSON)
+          </div>
+          <textarea
+            value={speciesText}
+            onChange={(e) => handleSpeciesChange(e.target.value)}
+            style={{
+              width: '100%', height: 80, padding: 8,
+              background: theme.colors.bgTertiary, color: theme.colors.text,
+              border: `1px solid ${theme.colors.border}`, borderRadius: 6,
+              fontFamily: theme.fonts.mono, fontSize: 11, resize: 'vertical',
+            }}
+          />
+
+          <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 4 }}>
+            Kinetic Parameters (JSON)
+          </div>
+          <textarea
+            value={paramsText}
+            onChange={(e) => handleParamsChange(e.target.value)}
+            style={{
+              width: '100%', height: 80, padding: 8,
+              background: theme.colors.bgTertiary, color: theme.colors.text,
+              border: `1px solid ${theme.colors.border}`, borderRadius: 6,
+              fontFamily: theme.fonts.mono, fontSize: 11, resize: 'vertical',
+            }}
+          />
+        </>
+      )}
+
+      {modelSource === 'sbml' && (
+        <div style={{ marginTop: 8 }}>
+          <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginBottom: 4 }}>
+            SBML Model (XML)
+          </div>
+          <textarea
+            value={p.sbml_string || ''}
+            onChange={(e) => update('sbml_string', e.target.value)}
+            placeholder="Paste SBML XML content here..."
+            style={{
+              width: '100%', height: 120, padding: 8,
+              background: theme.colors.bgTertiary, color: theme.colors.text,
+              border: `1px solid ${theme.colors.border}`, borderRadius: 6,
+              fontFamily: theme.fonts.mono, fontSize: 11, resize: 'vertical',
+            }}
+          />
+        </div>
+      )}
 
       {(simType === 'ode_timecourse' || simType === 'stochastic_timecourse' || simType === 'sensitivity') && (
         <>

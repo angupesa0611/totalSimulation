@@ -30,6 +30,24 @@ export default function MdanalysisParams({ params, onChange }) {
         placeholder="Paste job ID from a previous MD run"
       />
 
+      <div style={{ marginTop: 8 }}>
+        <label style={{ fontSize: 12, color: theme.colors.textSecondary, display: 'block', marginBottom: 4 }}>
+          Or: Inline Trajectory Data (JSON)
+        </label>
+        <textarea
+          value={typeof p.trajectory_data === 'string' ? p.trajectory_data : (p.trajectory_data ? JSON.stringify(p.trajectory_data, null, 1) : '')}
+          onChange={(e) => { if (!e.target.value.trim()) { update('trajectory_data', null); return; } try { update('trajectory_data', JSON.parse(e.target.value)); } catch { update('trajectory_data', e.target.value); } }}
+          placeholder='{"frames": [[[x,y,z],...]], "n_atoms": N}'
+          rows={3}
+          style={{
+            width: '100%', padding: 6, background: theme.colors.bgTertiary,
+            border: `1px solid ${theme.colors.border}`, borderRadius: 4,
+            color: theme.colors.text, fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
+            resize: 'vertical',
+          }}
+        />
+      </div>
+
       {(p.analysis_type === 'contacts' || p.analysis_type === 'hbonds') && (
         <InputField
           label="Distance Cutoff (Å)"

@@ -35,8 +35,8 @@ export default function NetworkXParams({ params, onChange }) {
           Nodes (JSON array of node IDs, or "karate_club")
         </label>
         <textarea
-          value={p.nodes || JSON.stringify([0, 1, 2, 3, 4], null, 2)}
-          onChange={(e) => update('nodes', e.target.value)}
+          value={typeof p.nodes === 'string' ? p.nodes : JSON.stringify(p.nodes || [0, 1, 2, 3, 4], null, 2)}
+          onChange={(e) => { try { update('nodes', JSON.parse(e.target.value)); } catch { update('nodes', e.target.value); } }}
           rows={3}
           style={textareaStyle}
         />
@@ -47,8 +47,8 @@ export default function NetworkXParams({ params, onChange }) {
           Edges (JSON array of [source, target] or [source, target, weight])
         </label>
         <textarea
-          value={p.edges || JSON.stringify([[0,1],[1,2],[2,3],[3,4],[4,0],[0,2]], null, 2)}
-          onChange={(e) => update('edges', e.target.value)}
+          value={typeof p.edges === 'string' ? p.edges : JSON.stringify(p.edges || [[0,1],[1,2],[2,3],[3,4],[4,0],[0,2]], null, 2)}
+          onChange={(e) => { try { update('edges', JSON.parse(e.target.value)); } catch { update('edges', e.target.value); } }}
           rows={4}
           style={textareaStyle}
         />

@@ -37,6 +37,27 @@ export default function MsprimeParams({ params, onChange }) {
         </>
       )}
 
+      {simType === 'demographic_model' && (
+        <div style={{ marginTop: 8 }}>
+          <label style={{ fontSize: 12, color: theme.colors.textSecondary, display: 'block', marginBottom: 4 }}>
+            Demographic Events (JSON)
+          </label>
+          <textarea
+            value={typeof p.demographic_events === 'string' ? p.demographic_events : JSON.stringify(p.demographic_events || [
+              { "type": "size_change", "time": 1000, "size": 500 },
+              { "type": "recovery", "time": 2000, "size": 10000, "recovery_time": 500 }
+            ], null, 2)}
+            onChange={(e) => { try { update('demographic_events', JSON.parse(e.target.value)); } catch { update('demographic_events', e.target.value); } }}
+            rows={6}
+            style={{
+              width: '100%', padding: 8, background: theme.colors.bgTertiary,
+              border: `1px solid ${theme.colors.border}`, borderRadius: 6,
+              color: theme.colors.text, fontFamily: "'JetBrains Mono', monospace", fontSize: 11, resize: 'vertical',
+            }}
+          />
+        </div>
+      )}
+
       <div style={{ fontSize: 11, color: '#84cc16', marginTop: 8, padding: 8, background: '#84cc1611', borderRadius: 4, border: '1px solid #84cc1633' }}>
         Backward-time coalescent simulation. Computes SFS, diversity (pi), and Tajima&apos;s D across genomic windows.
       </div>

@@ -125,6 +125,23 @@ export default function PennyLaneParams({ params, onChange }) {
             onChange={(v) => update('max_iterations', parseInt(v) || 100)}
             type="number"
           />
+          <div style={{ marginTop: 8 }}>
+            <label style={{ fontSize: 12, color: theme.colors.textSecondary, display: 'block', marginBottom: 4 }}>
+              Target State (JSON array, e.g. [0.707, 0, 0, 0.707])
+            </label>
+            <textarea
+              value={typeof p.target_state === 'string' ? p.target_state : JSON.stringify(p.target_state || null, null, 1)}
+              onChange={(e) => { try { const v = JSON.parse(e.target.value); update('target_state', v); } catch { update('target_state', e.target.value); } }}
+              rows={2}
+              placeholder="Leave empty for default |+...+> state"
+              style={{
+                width: '100%', background: theme.colors.bgTertiary,
+                border: `1px solid ${theme.colors.border}`, borderRadius: 4,
+                color: theme.colors.text, padding: 8, fontSize: 11,
+                fontFamily: "'JetBrains Mono', monospace", resize: 'vertical',
+              }}
+            />
+          </div>
         </>
       )}
 

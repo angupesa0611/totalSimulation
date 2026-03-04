@@ -100,6 +100,13 @@ export default function Brian2Params({ params, onChange }) {
           />
           <InputField label="Threshold" value={p.threshold || 'v > -50*mV'} onChange={(v) => update('threshold', v)} />
           <InputField label="Reset" value={p.reset || 'v = -65*mV'} onChange={(v) => update('reset', v)} />
+          <InputField
+            label="Initial Value (e.g. -65*mV)"
+            value={p.initial_value || '-65*mV'}
+            onChange={(v) => update('initial_value', v)}
+            placeholder="-65*mV"
+          />
+          <InputField label="Input Current (nA)" value={p.I_ext ?? 10} onChange={(v) => update('I_ext', parseFloat(v))} type="number" step={1} />
         </>
       )}
 

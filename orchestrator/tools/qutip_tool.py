@@ -100,8 +100,16 @@ class QuTiPTool(SimulationTool):
         for i in range(n_spins):
             H += B * _op_at(sz, i, n_spins)
 
-        # Initial state: first spin up, rest down
-        psi0_list = [qutip.basis(2, 0)] + [qutip.basis(2, 1)] * (n_spins - 1)
+        # Initial state: configurable via comma-separated 0/1 string or default
+        init_str = p.get("initial_state", "")
+        if init_str and isinstance(init_str, str):
+            bits = [int(b.strip()) for b in init_str.split(",") if b.strip() in ("0", "1")]
+            if len(bits) == n_spins:
+                psi0_list = [qutip.basis(2, b) for b in bits]
+            else:
+                psi0_list = [qutip.basis(2, 0)] + [qutip.basis(2, 1)] * (n_spins - 1)
+        else:
+            psi0_list = [qutip.basis(2, 0)] + [qutip.basis(2, 1)] * (n_spins - 1)
         psi0 = qutip.tensor(psi0_list)
 
         tlist = np.linspace(0, tmax, n_steps)

@@ -66,6 +66,43 @@ function ObjectEditor({ objects, onChange }) {
               title="Mass"
             />
           </div>
+          {obj.shape === 'sphere' && (
+            <div style={{ marginTop: 4 }}>
+              <label style={{ fontSize: 10, color: theme.colors.textSecondary }}>Radius</label>
+              <input type="number" value={obj.radius ?? 0.5} step={0.1}
+                onChange={(e) => updateObject(idx, 'radius', parseFloat(e.target.value) || 0.5)}
+                style={{ width: '100%', background: theme.colors.bg, border: `1px solid ${theme.colors.border}`, borderRadius: 4, color: theme.colors.text, fontSize: 11, padding: '2px 4px', fontFamily: theme.fonts.mono }}
+              />
+            </div>
+          )}
+          {obj.shape === 'box' && (
+            <div style={{ marginTop: 4 }}>
+              <label style={{ fontSize: 10, color: theme.colors.textSecondary }}>Half-Extents (x,y,z)</label>
+              <input
+                value={(obj.half_extents || [0.5,0.5,0.5]).join(', ')}
+                onChange={(e) => { const v = parseVec(e.target.value); if (v) updateObject(idx, 'half_extents', v); }}
+                style={{ width: '100%', background: theme.colors.bg, border: `1px solid ${theme.colors.border}`, borderRadius: 4, color: theme.colors.text, fontSize: 11, padding: '2px 4px', fontFamily: theme.fonts.mono }}
+              />
+            </div>
+          )}
+          {obj.shape === 'cylinder' && (
+            <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 10, color: theme.colors.textSecondary }}>Radius</label>
+                <input type="number" value={obj.radius ?? 0.5} step={0.1}
+                  onChange={(e) => updateObject(idx, 'radius', parseFloat(e.target.value) || 0.5)}
+                  style={{ width: '100%', background: theme.colors.bg, border: `1px solid ${theme.colors.border}`, borderRadius: 4, color: theme.colors.text, fontSize: 11, padding: '2px 4px' }}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 10, color: theme.colors.textSecondary }}>Height</label>
+                <input type="number" value={obj.height ?? 1.0} step={0.1}
+                  onChange={(e) => updateObject(idx, 'height', parseFloat(e.target.value) || 1.0)}
+                  style={{ width: '100%', background: theme.colors.bg, border: `1px solid ${theme.colors.border}`, borderRadius: 4, color: theme.colors.text, fontSize: 11, padding: '2px 4px' }}
+                />
+              </div>
+            </div>
+          )}
           <div style={{ marginTop: 4 }}>
             <label style={{ fontSize: 10, color: theme.colors.textSecondary }}>Pos (x,y,z)</label>
             <input

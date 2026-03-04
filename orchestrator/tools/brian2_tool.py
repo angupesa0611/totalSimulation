@@ -262,7 +262,18 @@ class Brian2Tool(SimulationTool):
             reset=reset_cond,
             method="euler",
         )
-        G.v = -65.0 * brian2.mV
+        # Apply user-provided initial value or default
+        init_str = params.get("initial_value", "").strip()
+        if init_str:
+            # Parse "N*mV" format safely
+            import re
+            m = re.match(r'^(-?[\d.]+)\s*\*\s*mV$', init_str)
+            if m:
+                G.v = float(m.group(1)) * brian2.mV
+            else:
+                G.v = -65.0 * brian2.mV
+        else:
+            G.v = -65.0 * brian2.mV
 
         spike_mon = brian2.SpikeMonitor(G)
         n_record = min(5, n_neurons)

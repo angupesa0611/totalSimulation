@@ -91,77 +91,73 @@ function ParticleCard({ particle, index, total, names, onUpdate, onRemove }) {
         <MiniField label="Mass (M_sun)" value={particle.m} onChange={(v) => set('m', v)} step={0.001} />
       </div>
 
-      {!isFirst && (
-        <>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
-            <div style={{ flex: 1 }}>
-              <div style={miniLabel}>Coordinates</div>
-              <select
-                value={mode}
-                onChange={(e) => setMode(e.target.value)}
-                style={{ ...miniInput, cursor: 'pointer' }}
-              >
-                <option value={COORD_MODE.KEP}>Keplerian</option>
-                <option value={COORD_MODE.CART}>Cartesian</option>
-              </select>
-            </div>
-            {mode === COORD_MODE.KEP && (
-              <div style={{ flex: 1 }}>
-                <div style={miniLabel}>Primary (index)</div>
-                <select
-                  value={particle.primary ?? 0}
-                  onChange={(e) => set('primary', parseInt(e.target.value))}
-                  style={{ ...miniInput, cursor: 'pointer' }}
-                >
-                  {names.slice(0, index).map((n, i) => (
-                    <option key={i} value={i}>{i}: {n}</option>
-                  ))}
-                </select>
-              </div>
-            )}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+        <div style={{ flex: 1 }}>
+          <div style={miniLabel}>Coordinates</div>
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+            style={{ ...miniInput, cursor: 'pointer' }}
+          >
+            {!isFirst && <option value={COORD_MODE.KEP}>Keplerian</option>}
+            <option value={COORD_MODE.CART}>Cartesian</option>
+          </select>
+        </div>
+        {!isFirst && mode === COORD_MODE.KEP && (
+          <div style={{ flex: 1 }}>
+            <div style={miniLabel}>Primary (index)</div>
+            <select
+              value={particle.primary ?? 0}
+              onChange={(e) => set('primary', parseInt(e.target.value))}
+              style={{ ...miniInput, cursor: 'pointer' }}
+            >
+              {names.slice(0, index).map((n, i) => (
+                <option key={i} value={i}>{i}: {n}</option>
+              ))}
+            </select>
           </div>
+        )}
+      </div>
 
-          {mode === COORD_MODE.KEP && (
+      {mode === COORD_MODE.KEP && !isFirst && (
+        <>
+          <div style={rowStyle}>
+            <MiniField label="a (AU)" value={particle.a} onChange={(v) => set('a', v)} step={0.01} />
+            <MiniField label="e" value={particle.e} onChange={(v) => set('e', v)} step={0.01} />
+          </div>
+          <div
+            onClick={() => setExpanded(!expanded)}
+            style={{ fontSize: 11, color: theme.colors.accent, cursor: 'pointer', marginBottom: expanded ? 6 : 0, userSelect: 'none' }}
+          >
+            {expanded ? '- Hide' : '+ More'} orbital elements
+          </div>
+          {expanded && (
             <>
               <div style={rowStyle}>
-                <MiniField label="a (AU)" value={particle.a} onChange={(v) => set('a', v)} step={0.01} />
-                <MiniField label="e" value={particle.e} onChange={(v) => set('e', v)} step={0.01} />
-              </div>
-              <div
-                onClick={() => setExpanded(!expanded)}
-                style={{ fontSize: 11, color: theme.colors.accent, cursor: 'pointer', marginBottom: expanded ? 6 : 0, userSelect: 'none' }}
-              >
-                {expanded ? '- Hide' : '+ More'} orbital elements
-              </div>
-              {expanded && (
-                <>
-                  <div style={rowStyle}>
-                    <MiniField label="inc (rad)" value={particle.inc} onChange={(v) => set('inc', v)} step={0.01} />
-                    <MiniField label="omega (rad)" value={particle.omega} onChange={(v) => set('omega', v)} step={0.01} />
-                  </div>
-                  <div style={rowStyle}>
-                    <MiniField label="Omega (rad)" value={particle.Omega} onChange={(v) => set('Omega', v)} step={0.01} />
-                    <MiniField label="f (rad)" value={particle.f} onChange={(v) => set('f', v)} step={0.01} />
-                  </div>
-                </>
-              )}
-            </>
-          )}
-
-          {mode === COORD_MODE.CART && (
-            <>
-              <div style={rowStyle}>
-                <MiniField label="x (AU)" value={particle.x} onChange={(v) => set('x', v)} />
-                <MiniField label="y (AU)" value={particle.y} onChange={(v) => set('y', v)} />
-                <MiniField label="z (AU)" value={particle.z} onChange={(v) => set('z', v)} />
+                <MiniField label="inc (rad)" value={particle.inc} onChange={(v) => set('inc', v)} step={0.01} />
+                <MiniField label="omega (rad)" value={particle.omega} onChange={(v) => set('omega', v)} step={0.01} />
               </div>
               <div style={rowStyle}>
-                <MiniField label="vx (AU/yr)" value={particle.vx} onChange={(v) => set('vx', v)} />
-                <MiniField label="vy (AU/yr)" value={particle.vy} onChange={(v) => set('vy', v)} />
-                <MiniField label="vz (AU/yr)" value={particle.vz} onChange={(v) => set('vz', v)} />
+                <MiniField label="Omega (rad)" value={particle.Omega} onChange={(v) => set('Omega', v)} step={0.01} />
+                <MiniField label="f (rad)" value={particle.f} onChange={(v) => set('f', v)} step={0.01} />
               </div>
             </>
           )}
+        </>
+      )}
+
+      {mode === COORD_MODE.CART && (
+        <>
+          <div style={rowStyle}>
+            <MiniField label="x (AU)" value={particle.x} onChange={(v) => set('x', v)} />
+            <MiniField label="y (AU)" value={particle.y} onChange={(v) => set('y', v)} />
+            <MiniField label="z (AU)" value={particle.z} onChange={(v) => set('z', v)} />
+          </div>
+          <div style={rowStyle}>
+            <MiniField label="vx (AU/yr)" value={particle.vx} onChange={(v) => set('vx', v)} />
+            <MiniField label="vy (AU/yr)" value={particle.vy} onChange={(v) => set('vy', v)} />
+            <MiniField label="vz (AU/yr)" value={particle.vz} onChange={(v) => set('vz', v)} />
+          </div>
         </>
       )}
     </div>
@@ -195,7 +191,7 @@ export default function ReboundParams({ params, onChange }) {
 
   const addParticle = () => {
     const newP = particles.length === 0
-      ? { name: 'Star', m: 1.0 }
+      ? { name: 'Star', m: 1.0, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, _mode: COORD_MODE.CART }
       : { name: '', m: 1e-6, a: 1.0, e: 0.0, primary: 0, _mode: COORD_MODE.KEP };
     update('particles', [...particles, newP]);
   };
