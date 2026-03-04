@@ -6,7 +6,7 @@ pydantic==2.10.4
 pydantic-settings==2.7.1
 rebound==4.6.0
 reboundx==4.6.1
-qutip==5.0.4
+qutip==5.2.3
 numpy==1.26.4
 websockets==14.1
 pyscf==2.7.0

@@ -136,10 +136,18 @@ def run_solo(tool_key: str, req: SimulationRequest) -> SimulationStatus:
 @router.get("/status/{job_id}")
 def get_status(job_id: str) -> SimulationStatus:
     result = AsyncResult(job_id, app=celery_app)
-    status = result.status
     data = None
     progress = None
     message = None
+
+    try:
+        status = result.status
+    except Exception:
+        # Celery can't decode error metadata — treat as failed
+        return SimulationStatus(
+            job_id=job_id, tool="", status="FAILURE",
+            message="Task failed (error details unavailable)",
+        )
 
     if status == "PROGRESS":
         info = result.info or {}
@@ -148,11 +156,21 @@ def get_status(job_id: str) -> SimulationStatus:
     elif status == "SUCCESS":
         data = result.result
     elif status == "FAILURE":
-        message = str(result.result)
+        try:
+            message = str(result.result)
+        except Exception:
+            message = "Task failed"
+
+    tool = ""
+    try:
+        if isinstance(result.result, dict):
+            tool = result.result.get("tool", "")
+    except Exception:
+        pass
 
     return SimulationStatus(
         job_id=job_id,
-        tool=result.result.get("tool", "") if isinstance(result.result, dict) else "",
+        tool=tool,
         status=status,
         progress=progress,
         message=message,

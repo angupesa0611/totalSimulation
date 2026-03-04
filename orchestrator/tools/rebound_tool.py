@@ -73,8 +73,14 @@ class REBOUNDTool(SimulationTool):
             for k in [k for k in p if k.startswith("_")]:
                 p.pop(k)
             if "a" in p:
-                primary_idx = p.pop("primary", 0)
-                primary = sim.particles[primary_idx] if sim.N > 0 else None
+                primary_ref = p.pop("primary", 0)
+                # Resolve string name to integer index
+                if isinstance(primary_ref, str):
+                    try:
+                        primary_ref = names.index(primary_ref)
+                    except ValueError:
+                        primary_ref = 0
+                primary = sim.particles[primary_ref] if sim.N > 0 else None
                 sim.add(primary=primary, **p)
             else:
                 sim.add(**p)

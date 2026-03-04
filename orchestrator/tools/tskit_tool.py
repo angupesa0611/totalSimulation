@@ -2,7 +2,7 @@ from typing import Any
 import numpy as np
 from celery_app import app as celery_app
 from tools.base import SimulationTool
-from results import save_result, load_result
+from results import save_result
 
 
 class TreeSequenceTool(SimulationTool):
