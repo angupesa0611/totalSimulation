@@ -10,6 +10,7 @@ from render_router import render_router
 from sweep_router import sweep_router
 from export_router import export_router
 from auth_router import auth_router
+from admin_router import admin_router
 from websocket.manager import ws_router
 from logging_config import setup_logging
 from metrics import metrics_router
@@ -64,12 +65,61 @@ def _recover_stale_jobs():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup sequence
+    # 1. Run Alembic migrations (ensure schema is current)
+    _run_migrations()
+
+    # 2. Load registry cache from DB
+    from db.registry_service import load_cache
+    load_cache()
+
+    # 3. One-time data migrations
+    from auth import migrate_users_json
+    migrated_users = migrate_users_json()
+    if migrated_users:
+        logger.info("Migrated %d users from JSON to DB", migrated_users)
+
+    import results as results_store
+    migrated_results = results_store.migrate_index_files()
+    if migrated_results:
+        logger.info("Migrated %d results from _index.json to DB", migrated_results)
+
+    # 4. Load in-progress pipelines/sweeps from DB
+    from pipeline import load_pipelines_from_db
+    from pipeline_dag import load_dag_pipelines_from_db
+    from sweep import load_sweeps_from_db
+    load_pipelines_from_db()
+    load_dag_pipelines_from_db()
+    load_sweeps_from_db()
+
+    # 5. Recover stale jobs
     _recover_stale_jobs()
+
+    # 6. Start Docker idle reaper
+    from docker_manager import docker_mgr
+    docker_mgr.start_reaper()
+
     logger.info("totalSimulation API started")
     yield
     # Shutdown
+    docker_mgr.stop_reaper()
     logger.info("totalSimulation API shutting down")
+
+
+def _run_migrations():
+    """Run Alembic migrations to ensure DB schema is current."""
+    try:
+        from alembic.config import Config
+        from alembic import command
+        import os
+
+        alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "alembic.ini"))
+        alembic_cfg.set_main_option("script_location",
+                                     os.path.join(os.path.dirname(__file__), "alembic"))
+        command.upgrade(alembic_cfg, "head")
+        logger.info("Alembic migrations applied successfully")
+    except Exception:
+        logger.exception("Failed to run Alembic migrations — DB may not be ready")
 
 
 app = FastAPI(title="totalSimulation", version="0.1.0", lifespan=lifespan)
@@ -123,6 +173,9 @@ app.include_router(render_router)
 app.include_router(sweep_router)
 app.include_router(export_router)
 app.include_router(metrics_router)
+app.include_router(admin_router)
+from workers_router import workers_router
+app.include_router(workers_router)
 app.include_router(ws_router)
 app.mount("/results-files", StaticFiles(directory="/data/results"), name="results-files")
 

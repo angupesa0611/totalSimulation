@@ -1,4 +1,24 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: totalsimulation
+      POSTGRES_USER: totalsim
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-totalsim_dev}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U totalsim -d totalsimulation"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
   redis:
     image: redis:7-alpine
     ports:
@@ -21,8 +41,12 @@ services:
     volumes:
       - ./data/results:/data/results
       - ./shared:/app/shared:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/project:ro
     depends_on:
       redis:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
 
   openmm-worker:
@@ -35,6 +59,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    profiles:
+      - workers
     deploy:
       resources:
         reservations:
@@ -42,8 +68,6 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-    profiles:
-      - molecular
 
   psi4-worker:
     build:
@@ -56,7 +80,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - electronic
+      - workers
 
   gromacs-worker:
     build:
@@ -69,7 +93,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - molecular
+      - workers
 
   namd-worker:
     build:
@@ -82,7 +106,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - molecular
+      - workers
 
   qmmm-worker:
     build:
@@ -95,7 +119,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - qmmm
+      - workers
 
   fenics-worker:
     build:
@@ -108,7 +132,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - continuum
+      - workers
 
   elmer-worker:
     build:
@@ -121,7 +145,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - continuum
+      - workers
 
   nest-worker:
     build:
@@ -134,7 +158,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - neuro
+      - workers
 
   qe-worker:
     build:
@@ -147,20 +171,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - materials
-
-  lammps-worker:
-    build:
-      context: ./containers/lammps
-      dockerfile: Dockerfile
-    env_file: .env
-    volumes:
-      - ./data/results:/data/results
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - materials
+      - workers
 
   sagemath-worker:
     build:
@@ -173,59 +184,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - mathematics
-
-  lean4-worker:
-    build:
-      context: ./containers/lean4
-      dockerfile: Dockerfile
-    env_file: .env
-    volumes:
-      - ./data/results:/data/results
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - mathematics
-
-  gap-worker:
-    build:
-      context: ./containers/gap
-      dockerfile: Dockerfile
-    env_file: .env
-    volumes:
-      - ./data/results:/data/results
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - mathematics
-
-  pyspice-worker:
-    build:
-      context: ./containers/pyspice
-      dockerfile: Dockerfile
-    env_file: .env
-    volumes:
-      - ./data/results:/data/results
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - circuits
-
-  qiskit-worker:
-    build:
-      context: ./containers/qiskit
-      dockerfile: Dockerfile
-    env_file: .env
-    volumes:
-      - ./data/results:/data/results
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - circuits
+      - workers
 
   manim-worker:
     build:
@@ -238,7 +197,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - visualization
+      - workers
 
   su2-worker:
     build:
@@ -251,7 +210,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - fluids
+      - workers
 
   firedrake-worker:
     build:
@@ -264,20 +223,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - continuum
-
-  openbabel-worker:
-    build:
-      context: ./containers/openbabel
-      dockerfile: Dockerfile
-    env_file: .env
-    volumes:
-      - ./data/results:/data/results
-    depends_on:
-      redis:
-        condition: service_healthy
-    profiles:
-      - cheminformatics
+      - workers
 
   openfoam-worker:
     build:
@@ -290,7 +236,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - fluids
+      - workers
 
   dedalus-worker:
     build:
@@ -303,7 +249,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - fluids
+      - workers
 
   einstein-toolkit-worker:
     build:
@@ -316,7 +262,7 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - astro
+      - workers
 
   slim-worker:
     build:
@@ -329,7 +275,33 @@ services:
       redis:
         condition: service_healthy
     profiles:
-      - bio-population
+      - workers
+
+  vtk-worker:
+    build:
+      context: ./containers/vtk
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - workers
+
+  meep-worker:
+    build:
+      context: ./containers/meep
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - ./data/results:/data/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - workers
 
   client:
     build:
@@ -353,4 +325,5 @@ services:
       - tunnel
 
 volumes:
+  postgres-data:
   redis-data:

@@ -1,20 +1,23 @@
 """JWT authentication module — toggleable via AUTH_ENABLED env var.
 
-User store: JSON file at /data/results/_auth/users.json (persists on results volume).
+User store: PostgreSQL auth.users table (migrated from JSON file).
 Passwords: bcrypt via passlib.
 Tokens: HS256 JWT via PyJWT.
 """
 
 import json
-import os
 import logging
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import jwt
 from passlib.context import CryptContext
+from sqlalchemy import select
 
 from config import settings
+from db.engine import sync_session_factory
+from db.models.auth import User
+from db.audit import write_audit
 
 logger = logging.getLogger(__name__)
 
@@ -24,48 +27,50 @@ AUTH_DIR = Path(settings.results_dir) / "_auth"
 USERS_FILE = AUTH_DIR / "users.json"
 
 
-def _load_users() -> dict:
-    """Load user store from JSON file."""
-    if not USERS_FILE.exists():
-        return {}
-    try:
-        return json.loads(USERS_FILE.read_text())
-    except (json.JSONDecodeError, OSError):
-        logger.warning("Corrupt users file, starting fresh")
-        return {}
-
-
-def _save_users(users: dict) -> None:
-    """Persist user store to JSON file."""
-    AUTH_DIR.mkdir(parents=True, exist_ok=True)
-    USERS_FILE.write_text(json.dumps(users, indent=2))
-
-
 def register_user(username: str, password: str) -> dict:
     """Register a new user. Returns user dict or raises ValueError."""
-    users = _load_users()
-    if username in users:
-        raise ValueError("Username already exists")
+    session = sync_session_factory()
+    try:
+        existing = session.execute(
+            select(User).where(User.username == username)
+        ).scalar_one_or_none()
+        if existing:
+            raise ValueError("Username already exists")
 
-    users[username] = {
-        "username": username,
-        "hashed_password": pwd_context.hash(password),
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-    _save_users(users)
-    logger.info("Registered user: %s", username)
-    return {"username": username}
+        user = User(
+            username=username,
+            hashed_password=pwd_context.hash(password),
+            created_at=datetime.now(timezone.utc),
+        )
+        session.add(user)
+        session.commit()
+        logger.info("Registered user: %s", username)
+        write_audit("register", "user", entity_id=username, username=username)
+        return {"username": username}
+    finally:
+        session.close()
 
 
 def authenticate_user(username: str, password: str) -> dict | None:
     """Verify credentials. Returns user dict or None."""
-    users = _load_users()
-    user = users.get(username)
-    if not user:
-        return None
-    if not pwd_context.verify(password, user["hashed_password"]):
-        return None
-    return {"username": username}
+    session = sync_session_factory()
+    try:
+        user = session.execute(
+            select(User).where(User.username == username)
+        ).scalar_one_or_none()
+        if not user:
+            return None
+        if not user.is_active:
+            return None
+        if not pwd_context.verify(password, user.hashed_password):
+            return None
+        # Update last login
+        user.last_login_at = datetime.now(timezone.utc)
+        session.commit()
+        write_audit("login", "user", entity_id=username, username=username)
+        return {"username": username}
+    finally:
+        session.close()
 
 
 def create_access_token(username: str) -> str:
@@ -118,3 +123,59 @@ def validate_ws_token(token: str | None) -> str | None:
     if not token:
         return None
     return decode_token(token)
+
+
+def migrate_users_json() -> int:
+    """One-time migration: import users.json into DB, rename to .migrated.
+
+    Returns number of users migrated.
+    """
+    if not USERS_FILE.exists():
+        return 0
+
+    try:
+        users_data = json.loads(USERS_FILE.read_text())
+    except (json.JSONDecodeError, OSError):
+        logger.warning("Could not read users.json for migration")
+        return 0
+
+    if not users_data:
+        USERS_FILE.rename(USERS_FILE.with_suffix(".json.migrated"))
+        return 0
+
+    session = sync_session_factory()
+    migrated = 0
+    try:
+        for username, user_data in users_data.items():
+            existing = session.execute(
+                select(User).where(User.username == username)
+            ).scalar_one_or_none()
+            if existing:
+                continue
+
+            created_at_str = user_data.get("created_at")
+            created_at = datetime.now(timezone.utc)
+            if created_at_str:
+                try:
+                    created_at = datetime.fromisoformat(created_at_str)
+                except (ValueError, TypeError):
+                    pass
+
+            user = User(
+                username=username,
+                hashed_password=user_data["hashed_password"],
+                created_at=created_at,
+            )
+            session.add(user)
+            migrated += 1
+
+        session.commit()
+        USERS_FILE.rename(USERS_FILE.with_suffix(".json.migrated"))
+        logger.info("Migrated %d users from users.json to DB", migrated)
+    except Exception:
+        session.rollback()
+        logger.exception("Failed to migrate users.json")
+    finally:
+        session.close()
+
+    return migrated

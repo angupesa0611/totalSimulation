@@ -6,7 +6,7 @@ class PipelineStep(BaseModel):
     tool: str = Field(..., description="Tool key for this step")
     params: dict[str, Any] = Field(default_factory=dict, description="Tool-specific parameters")
     label: str | None = Field(default=None, description="Step label")
-    param_map: dict[str, str] | None = Field(
+    param_map: dict[str, Any] | None = Field(
         default=None,
         description="Map param keys to previous step outputs, e.g. {'source_job_id': '$prev.job_id'}"
     )
@@ -45,7 +45,7 @@ class DAGStep(BaseModel):
     params: dict[str, Any] = Field(default_factory=dict)
     label: str | None = None
     depends_on: list[str] = Field(default_factory=list, description="Step IDs that must complete first")
-    param_map: dict[str, str] | None = Field(
+    param_map: dict[str, Any] | None = Field(
         default=None,
         description="Map param keys to step outputs: {'source_job_id': '$step_id.job_id'}"
     )

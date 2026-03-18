@@ -1,6 +1,6 @@
 """Per-tool input validation — checks required params, value ranges, types before Celery submission."""
 
-from config import TOOL_REGISTRY
+from db.registry_service import get_tool_registry
 
 
 # Per-tool validation rules: {tool_key: {param: {type, required, min, max, choices}}}
@@ -19,11 +19,11 @@ TOOL_VALIDATORS = {
         "dt": {"type": "float", "required": False, "min": 1e-15},
     },
     "pyscf": {
-        "atom": {"type": "str", "required": True},
+        "atom_coords": {"type": "str", "required": True},
         "basis": {"type": "str", "required": False},
     },
     "sympy": {
-        "expression": {"type": "str", "required": True},
+        "expression": {"type": "str", "required": False},
     },
     "matplotlib": {
         "plot_type": {"type": "str", "required": False,

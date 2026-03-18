@@ -4,6 +4,8 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
+    database_url: str = "postgresql+asyncpg://totalsim:totalsim_dev@localhost:5433/totalsimulation"
+    database_url_sync: str = "postgresql+psycopg2://totalsim:totalsim_dev@localhost:5433/totalsimulation"
     results_dir: str = "/data/results"
     fastapi_host: str = "0.0.0.0"
     fastapi_port: int = 8000
@@ -379,6 +381,34 @@ TOOL_REGISTRY = {
         "queue": "astro-etk",
         "task": "tools.etk_tool.run_etk",
     },
+    "rayoptics": {
+        "name": "RayOptics",
+        "description": "Geometrical ray tracing — singlet/doublet lenses, spot diagrams",
+        "layer": "optics",
+        "queue": "optics-ray",
+        "task": "tools.rayoptics_tool.run_rayoptics",
+    },
+    "lightpipes": {
+        "name": "LightPipes",
+        "description": "Physical wave optics — diffraction, interference, beam propagation",
+        "layer": "optics",
+        "queue": "optics-wave",
+        "task": "tools.lightpipes_tool.run_lightpipes",
+    },
+    "strawberryfields": {
+        "name": "Strawberry Fields",
+        "description": "Quantum photonics — squeezed states, HOM effect, boson sampling, Gaussian circuits",
+        "layer": "optics",
+        "queue": "optics-quantum",
+        "task": "tools.strawberryfields_tool.run_strawberryfields",
+    },
+    "meep": {
+        "name": "Meep",
+        "description": "FDTD electromagnetic simulation — waveguides, resonators, photonic crystals",
+        "layer": "optics",
+        "queue": "em-meep",
+        "task": "tools.meep_tool.run_meep",
+    },
 }
 
 # Layer definitions
@@ -482,6 +512,11 @@ LAYERS = {
         "name": "Biological Structure",
         "description": "Protein structure prediction, modeling, and design",
         "tools": ["alphafold", "pyrosetta"],
+    },
+    "optics": {
+        "name": "Optics & Photonics",
+        "description": "Ray tracing, wave optics, quantum photonics, and electromagnetic FDTD simulation",
+        "tools": ["rayoptics", "lightpipes", "strawberryfields", "meep"],
     },
 }
 
@@ -767,13 +802,104 @@ PRESETS = {
         "tool": "simupop",
         "label": "simuPOP Random Mating",
         "description": "Wright-Fisher random mating with allele frequency tracking",
-        "example_file": "simupop_migration.json",
+        "example_file": "simupop_random_mating.json",
     },
     "etk_bbh_inspiral": {
         "tool": "einstein_toolkit",
         "label": "ETK BBH Inspiral",
         "description": "Equal-mass binary black hole inspiral with Cactus/McLachlan (low resolution)",
         "example_file": "etk_bbh.json",
+    },
+    "rayoptics_singlet": {
+        "tool": "rayoptics",
+        "label": "Biconvex Singlet Lens",
+        "description": "Biconvex singlet lens ray trace with spot diagram (100mm f/5)",
+        "example_file": "rayoptics_singlet.json",
+    },
+    "lightpipes_double_slit": {
+        "tool": "lightpipes",
+        "label": "Young's Double Slit",
+        "description": "Young's double-slit experiment at 532nm, 0.2mm separation, 1m propagation",
+        "example_file": "lightpipes_double_slit.json",
+    },
+    "strawberryfields_hom": {
+        "tool": "strawberryfields",
+        "label": "Hong-Ou-Mandel Effect",
+        "description": "Hong-Ou-Mandel two-photon interference on a 50:50 beam splitter",
+        "example_file": "strawberryfields_hom.json",
+    },
+    "meep_waveguide": {
+        "tool": "meep",
+        "label": "Waveguide Bend",
+        "description": "Dielectric waveguide 90° bend at 1.55µm with FDTD field visualization",
+        "example_file": "meep_waveguide.json",
+    },
+    # --- Optics additional simulation-type presets ---
+    "rayoptics_doublet": {
+        "tool": "rayoptics",
+        "label": "Achromatic Doublet Lens",
+        "description": "Crown-flint achromatic doublet (200mm f/8, N-BK7 + N-SF2) with chromatic ray trace",
+        "example_file": "rayoptics_doublet.json",
+    },
+    "rayoptics_spot": {
+        "tool": "rayoptics",
+        "label": "Spot Diagram — f/4 Singlet",
+        "description": "Spot diagram of an f/4 singlet lens showing ray intersection pattern at image plane",
+        "example_file": "rayoptics_spot.json",
+    },
+    "lightpipes_circular": {
+        "tool": "lightpipes",
+        "label": "Airy Disk — Circular Aperture",
+        "description": "Fraunhofer diffraction through a circular aperture (632.8nm HeNe, 0.5mm radius)",
+        "example_file": "lightpipes_circular.json",
+    },
+    "lightpipes_lens": {
+        "tool": "lightpipes",
+        "label": "Gaussian Beam Lens Focus",
+        "description": "Gaussian beam focused by a thin lens (532nm, f=500mm, 2mm beam radius)",
+        "example_file": "lightpipes_lens.json",
+    },
+    "lightpipes_interferometer": {
+        "tool": "lightpipes",
+        "label": "Mach-Zehnder Interferometer",
+        "description": "Mach-Zehnder interferometer with tilted mirror arm (632.8nm HeNe)",
+        "example_file": "lightpipes_interferometer.json",
+    },
+    "strawberryfields_squeezed": {
+        "tool": "strawberryfields",
+        "label": "Squeezed Vacuum State",
+        "description": "Single-mode squeezed vacuum (r=0.7) with photon number distribution",
+        "example_file": "strawberryfields_squeezed.json",
+    },
+    "strawberryfields_boson": {
+        "tool": "strawberryfields",
+        "label": "4-Mode Boson Sampling",
+        "description": "Boson sampling through a random 4-mode interferometer with 2 input photons",
+        "example_file": "strawberryfields_boson.json",
+    },
+    "strawberryfields_gaussian": {
+        "tool": "strawberryfields",
+        "label": "Two-Mode Gaussian State",
+        "description": "Squeezed-displaced two-mode Gaussian state with Wigner function visualization",
+        "example_file": "strawberryfields_gaussian.json",
+    },
+    "meep_ring": {
+        "tool": "meep",
+        "label": "Ring Resonator",
+        "description": "Microring resonator coupled to bus waveguide at 1.55µm (R=5µm, gap=0.1µm)",
+        "example_file": "meep_ring.json",
+    },
+    "meep_photonic_crystal": {
+        "tool": "meep",
+        "label": "2D Photonic Crystal",
+        "description": "7×7 square-lattice rod array photonic crystal with FDTD field map",
+        "example_file": "meep_photonic_crystal.json",
+    },
+    "meep_dipole": {
+        "tool": "meep",
+        "label": "Point Dipole Radiation",
+        "description": "Point dipole source radiation pattern in free space",
+        "example_file": "meep_dipole.json",
     },
 }
 
@@ -883,6 +1009,16 @@ PIPELINES = {
             {"tool": "pyscf", "params": {"method": "hf", "basis": "sto-3g"}, "param_map": {"atom_coords": "$prev.result.atom_coords_pyscf"}, "label": "Hamiltonian"},
             {"tool": "qiskit", "params": {"simulation_type": "vqe"}, "param_map": {"atom_coords": "$prev.result.molecular_geometry"}, "label": "VQE (Qiskit)"},
             {"tool": "pennylane", "params": {"simulation_type": "vqe"}, "label": "Optimization (PennyLane)"},
+        ],
+    },
+    "photonic_design": {
+        "label": "Photonic Device Design",
+        "description": "End-to-end photonic design: ray optics lens layout → wave propagation → FDTD verification → publication plot",
+        "steps": [
+            {"tool": "rayoptics", "params": {"simulation_type": "singlet_lens", "singlet_lens": {"efl": 100.0, "f_number": 5.0}}, "label": "Lens layout (ray optics)"},
+            {"tool": "lightpipes", "params": {"simulation_type": "lens_focus", "lens_focus": {"focal_length": 0.1, "beam_radius": 2e-3}}, "param_map": {"lens_focus.focal_length": "$prev.result.efl"}, "label": "Wave propagation"},
+            {"tool": "meep", "params": {"simulation_type": "waveguide_bend"}, "label": "FDTD verification"},
+            {"tool": "matplotlib", "params": {"plot_type": "heatmap"}, "param_map": {"z_data": "$prev.result.field_ez"}, "label": "Publication plot"},
         ],
     },
 }
@@ -2000,4 +2136,115 @@ COUPLINGS = {
         "description": "Verified symbolic computation (verification direction)",
         "default_param_map": {"expression": "$prev.result.proof_term"},
     },
+    # --- Optics couplings ---
+    "rayoptics_to_lightpipes": {
+        "from": "rayoptics",
+        "to": "lightpipes",
+        "type": "sequential",
+        "description": "Ray trace focus → LightPipes wave propagation at focal plane",
+        "default_param_map": {"lens_focus.focal_length": "$prev.result.efl"},
+    },
+    "lightpipes_to_meep": {
+        "from": "lightpipes",
+        "to": "meep",
+        "type": "sequential",
+        "description": "Wave optics beam profile → Meep FDTD source field",
+        "default_param_map": {"source_field": "$prev.result.intensity"},
+    },
+    "meep_to_vtk": {
+        "from": "meep",
+        "to": "vtk",
+        "type": "sequential",
+        "description": "Meep FDTD field data → VTK 3D isosurface visualization",
+        "default_param_map": {"field_data": "$prev.result.field_ez", "x_grid": "$prev.result.x_range", "y_grid": "$prev.result.y_range"},
+    },
+    "meep_to_matplotlib": {
+        "from": "meep",
+        "to": "matplotlib",
+        "type": "sequential",
+        "description": "Meep FDTD spectra/fields → Matplotlib publication plots",
+        "default_param_map": {"z_data": "$prev.result.field_ez", "x_data": "$prev.result.x_range", "y_data": "$prev.result.y_range"},
+    },
+    "lightpipes_to_matplotlib": {
+        "from": "lightpipes",
+        "to": "matplotlib",
+        "type": "sequential",
+        "description": "Diffraction/interference pattern → Matplotlib publication plot",
+        "default_param_map": {"z_data": "$prev.result.intensity", "x_data": "$prev.result.x_mm"},
+    },
+    "strawberryfields_to_qutip": {
+        "from": "strawberryfields",
+        "to": "qutip",
+        "type": "sequential",
+        "description": "Photonic Gaussian state → QuTiP cavity QED dynamics",
+        "default_param_map": {"initial_state_data": "$prev.result"},
+    },
+    "qutip_to_strawberryfields": {
+        "from": "qutip",
+        "to": "strawberryfields",
+        "type": "sequential",
+        "description": "Quantum state → Strawberry Fields photonic circuit input",
+        "default_param_map": {"state_data": "$prev.result"},
+    },
+    "strawberryfields_to_pennylane": {
+        "from": "strawberryfields",
+        "to": "pennylane",
+        "type": "sequential",
+        "description": "Photonic circuit → PennyLane hybrid quantum-classical ML",
+        "default_param_map": {"circuit_data": "$prev.result"},
+    },
+    "pennylane_to_strawberryfields": {
+        "from": "pennylane",
+        "to": "strawberryfields",
+        "type": "sequential",
+        "description": "Optimized QML parameters → Strawberry Fields photonic circuit",
+        "default_param_map": {"optimized_params": "$prev.result"},
+    },
+    "meep_to_fenics": {
+        "from": "meep",
+        "to": "fenics",
+        "type": "sequential",
+        "description": "Meep EM field absorption → FEniCS thermal FEM (laser heating)",
+        "default_param_map": {"source_term": "$prev.result.field_ez"},
+    },
+    "sympy_to_rayoptics": {
+        "from": "sympy",
+        "to": "rayoptics",
+        "type": "sequential",
+        "description": "Symbolic lens equation → RayOptics ray trace validation",
+        "default_param_map": {"singlet_lens.efl": "$prev.result.expression"},
+    },
+    "sympy_to_lightpipes": {
+        "from": "sympy",
+        "to": "lightpipes",
+        "type": "sequential",
+        "description": "Symbolic diffraction formula → LightPipes wave simulation",
+        "default_param_map": {"double_slit.slit_separation": "$prev.result.expression"},
+    },
+    "gmsh_to_meep": {
+        "from": "gmsh",
+        "to": "meep",
+        "type": "sequential",
+        "description": "Gmsh mesh geometry → Meep FDTD computational domain",
+        "default_param_map": {"mesh_file": "$prev.result.mesh_file_path"},
+    },
 }
+
+# Pipeline test presets — JSON files for POST /api/pipeline testing
+PIPELINE_PRESETS = {
+    "pipeline_quantum_to_organism": {"pipeline": "quantum_to_organism", "label": "Quantum-to-Organism", "example_file": "pipeline_quantum_to_organism.json"},
+    "pipeline_mercury_precession": {"pipeline": "mercury_precession", "label": "Mercury GR Precession", "example_file": "pipeline_mercury_precession.json"},
+    "pipeline_qmmm_enzyme": {"pipeline": "qmmm_enzyme", "label": "QM/MM Enzyme Catalysis", "example_file": "pipeline_qmmm_enzyme.json"},
+    "pipeline_evolution_structure": {"pipeline": "evolution_structure", "label": "Evolution → Structure Feedback", "example_file": "pipeline_evolution_structure.json"},
+    "pipeline_multiscale_tissue": {"pipeline": "multiscale_tissue", "label": "Multiscale Tissue Modeling", "example_file": "pipeline_multiscale_tissue.json"},
+    "pipeline_drug_discovery": {"pipeline": "drug_discovery", "label": "Drug Discovery", "example_file": "pipeline_drug_discovery.json"},
+    "pipeline_materials_discovery": {"pipeline": "materials_discovery", "label": "Materials Discovery", "example_file": "pipeline_materials_discovery.json"},
+    "pipeline_reactive_multiphysics": {"pipeline": "reactive_multiphysics", "label": "Reactive Multiphysics", "example_file": "pipeline_reactive_multiphysics.json"},
+    "pipeline_math_verification": {"pipeline": "math_verification", "label": "Mathematics Verification Loop", "example_file": "pipeline_math_verification.json"},
+    "pipeline_classical_circuit": {"pipeline": "classical_circuit", "label": "Classical Circuit Design", "example_file": "pipeline_classical_circuit.json"},
+    "pipeline_quantum_chemistry_qc": {"pipeline": "quantum_chemistry_qc", "label": "QC on Quantum Computers", "example_file": "pipeline_quantum_chemistry_qc.json"},
+    "pipeline_photonic_design": {"pipeline": "photonic_design", "label": "Photonic Device Design", "example_file": "pipeline_photonic_design.json"},
+}
+
+# Coupling test presets — JSON files for POST /api/pipeline testing of individual couplings
+COUPLING_PRESETS = {k: {"coupling": k, "label": v["description"], "from": v["from"], "to": v["to"], "example_file": f"coupling_{k}.json"} for k, v in COUPLINGS.items() if not v.get("deferred")}

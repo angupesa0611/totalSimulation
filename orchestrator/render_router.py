@@ -18,7 +18,7 @@ def list_scenes_for_tool(tool_key: str):
 
 
 @render_router.post("/from-result/{job_id}")
-def render_from_result(job_id: str, body: dict = {}):
+async def render_from_result(job_id: str, body: dict = {}):
     """Render a Manim animation from an existing simulation result.
 
     Body (optional): {scene_type, quality, format, project, options}
@@ -45,6 +45,10 @@ def render_from_result(job_id: str, body: dict = {}):
     manim_params["quality"] = quality
     manim_params["format"] = fmt
 
+    # Ensure manim worker is running
+    from docker_manager import docker_mgr
+    await docker_mgr.ensure_worker("manim")
+
     # Submit to Manim queue
     task = celery_app.send_task(
         "tools.manim_tool.run_manim",
@@ -52,6 +56,7 @@ def render_from_result(job_id: str, body: dict = {}):
                 "label": f"Render: {tool_key}/{scene_type}"},
         queue="render-manim",
     )
+    docker_mgr.record_activity("manim")
     return {"render_job_id": task.id, "scene_type": scene_type, "status": "PENDING"}
 
 
@@ -65,12 +70,14 @@ def list_renderable_tools():
 
 
 @render_router.post("/pipeline/{pipeline_id}")
-def render_pipeline(pipeline_id: str, body: dict = {}):
+async def render_pipeline(pipeline_id: str, body: dict = {}):
     """Render a composite animation from a completed pipeline.
 
     Renders each step's result that has a converter, then returns render job IDs.
     Composite stitching via ffmpeg is deferred to client-side or a follow-up task.
     """
+    from docker_manager import docker_mgr
+
     project = body.get("project", "_default")
     quality = body.get("quality", "medium_quality")
     fmt = body.get("format", "mp4")
@@ -82,6 +89,9 @@ def render_pipeline(pipeline_id: str, body: dict = {}):
 
     if not pipeline_results:
         raise HTTPException(404, f"No results found for pipeline: {pipeline_id}")
+
+    # Ensure manim worker is running before dispatching renders
+    await docker_mgr.ensure_worker("manim")
 
     render_jobs = []
     for meta in pipeline_results:
@@ -118,4 +128,5 @@ def render_pipeline(pipeline_id: str, body: dict = {}):
     if not render_jobs:
         raise HTTPException(400, "No renderable steps found in pipeline")
 
+    docker_mgr.record_activity("manim")
     return {"pipeline_id": pipeline_id, "render_jobs": render_jobs, "status": "PENDING"}

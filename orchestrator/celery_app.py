@@ -63,6 +63,10 @@ app.conf.update(
         "tools.simupop_tool.run_simupop": {"queue": "evolution-simupop"},
         "tools.pyrosetta_stub.run_pyrosetta": {"queue": "bio-pyrosetta"},
         "tools.etk_tool.run_etk": {"queue": "astro-etk"},
+        "tools.rayoptics_tool.run_rayoptics": {"queue": "optics-ray"},
+        "tools.lightpipes_tool.run_lightpipes": {"queue": "optics-wave"},
+        "tools.strawberryfields_tool.run_strawberryfields": {"queue": "optics-quantum"},
+        "tools.meep_tool.run_meep": {"queue": "em-meep"},
     },
 )
 

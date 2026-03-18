@@ -1,13 +1,20 @@
 """DAG pipeline engine — extends sequential pipelines with parallel execution, conditionals, and variables."""
 
 import ast
+import asyncio
 import copy
+import json
+import logging
 import uuid
 from collections import defaultdict, deque
+from datetime import datetime, timezone
 
 from celery.result import AsyncResult
 from celery_app import app as celery_app
-from config import TOOL_REGISTRY, settings
+from config import settings
+from db.registry_service import get_tool_registry
+
+logger = logging.getLogger(__name__)
 
 
 # In-memory DAG pipeline state
@@ -149,7 +156,7 @@ def _evaluate_condition(condition: str, completed_results: dict) -> bool:
         return False
 
 
-def start_dag_pipeline(request) -> dict:
+async def start_dag_pipeline(request) -> dict:
     """Start a DAG pipeline. Returns initial status."""
     steps_raw = [s.model_dump() for s in request.steps]
 
@@ -159,6 +166,7 @@ def start_dag_pipeline(request) -> dict:
         )
 
     # Validate all tools
+    TOOL_REGISTRY = get_tool_registry()
     for step in steps_raw:
         if step["tool"] not in TOOL_REGISTRY:
             raise ValueError(f"Unknown tool in pipeline: {step['tool']}")
@@ -193,15 +201,18 @@ def start_dag_pipeline(request) -> dict:
         "label": request.label,
     }
     _dag_state[pipeline_id] = state
+    _persist_dag_pipeline(state)
 
     # Advance — submit initial steps (no dependencies)
-    _advance_dag(pipeline_id)
+    await _advance_dag(pipeline_id)
 
     return _format_dag_status(state)
 
 
-def _advance_dag(pipeline_id: str):
-    """Find newly-unblocked steps, submit them, check completion."""
+async def _advance_dag(pipeline_id: str):
+    """Find newly-unblocked steps, ensure workers, submit them."""
+    from docker_manager import docker_mgr
+
     state = _dag_state.get(pipeline_id)
     if not state or state["status"] != "RUNNING":
         return
@@ -237,8 +248,17 @@ def _advance_dag(pipeline_id: str):
             step["message"] = f"Condition not met: {condition}"
             continue
 
-        # Resolve params and submit
+        # Ensure worker container is running
         tool_key = step["tool"]
+        try:
+            await docker_mgr.ensure_worker(tool_key)
+        except Exception as e:
+            step["status"] = "FAILURE"
+            step["message"] = f"Worker startup failed: {e}"
+            continue
+
+        # Resolve params and submit
+        TOOL_REGISTRY = get_tool_registry()
         tool_meta = TOOL_REGISTRY[tool_key]
         params = _resolve_dag_params(step["config"], completed_results, state["variables"])
 
@@ -253,9 +273,10 @@ def _advance_dag(pipeline_id: str):
         )
         step["job_id"] = task.id
         step["status"] = "SUBMITTED"
+        docker_mgr.record_activity(tool_key)
 
 
-def get_dag_pipeline_status(pipeline_id: str) -> dict | None:
+async def get_dag_pipeline_status(pipeline_id: str) -> dict | None:
     """Get current DAG pipeline status, polling Celery for active steps."""
     state = _dag_state.get(pipeline_id)
     if not state:
@@ -294,7 +315,7 @@ def get_dag_pipeline_status(pipeline_id: str) -> dict | None:
             step["message"] = str(result.result)
 
     # Try to advance after polling
-    _advance_dag(pipeline_id)
+    await _advance_dag(pipeline_id)
 
     # Re-check state after advancing
     all_done = True
@@ -308,6 +329,7 @@ def get_dag_pipeline_status(pipeline_id: str) -> dict | None:
     if all_done:
         state["status"] = "FAILURE" if any_failed else "SUCCESS"
 
+    _persist_dag_pipeline(state)
     return _format_dag_status(state)
 
 
@@ -335,3 +357,121 @@ def _format_dag_status(state: dict) -> dict:
         "steps": steps_list,
         "label": state.get("label"),
     }
+
+
+def _persist_dag_pipeline(state: dict) -> None:
+    """Save DAG pipeline state to DB for restart recovery."""
+    try:
+        from sqlalchemy import select
+        from db.engine import sync_session_factory
+        from db.models.results import PipelineRun
+
+        session = sync_session_factory()
+        try:
+            run = session.execute(
+                select(PipelineRun).where(PipelineRun.pipeline_id == state["pipeline_id"])
+            ).scalar_one_or_none()
+
+            now = datetime.now(timezone.utc)
+            # Serialize steps without large result data
+            steps_snap = {}
+            for step_id, s in state["steps"].items():
+                steps_snap[step_id] = {
+                    k: v for k, v in s.items() if k not in ("result", "config")
+                }
+            # Store step configs separately (needed for recovery)
+            step_configs = {
+                step_id: s.get("config", {})
+                for step_id, s in state["steps"].items()
+            }
+
+            snapshot = {
+                "steps": steps_snap,
+                "step_configs": step_configs,
+                "topo_order": state.get("topo_order", []),
+                "variables": state.get("variables"),
+            }
+
+            if run:
+                run.status = state["status"]
+                run.current_step = sum(
+                    1 for s in state["steps"].values()
+                    if s["status"] in ("SUCCESS", "FAILURE", "SKIPPED")
+                )
+                run.steps_snapshot = snapshot
+                if state["status"] in ("SUCCESS", "FAILURE"):
+                    run.completed_at = now
+            else:
+                run = PipelineRun(
+                    pipeline_id=state["pipeline_id"],
+                    pipeline_type="dag",
+                    project_name=state.get("project", "_default"),
+                    label=state.get("label"),
+                    status=state["status"],
+                    total_steps=len(state["steps"]),
+                    current_step=0,
+                    variables=state.get("variables"),
+                    steps_snapshot=snapshot,
+                    created_at=now,
+                )
+                session.add(run)
+            session.commit()
+        finally:
+            session.close()
+    except Exception:
+        logger.exception("Failed to persist DAG pipeline state to DB")
+
+
+def load_dag_pipelines_from_db() -> int:
+    """Load in-progress DAG pipelines from DB on startup. Returns count loaded."""
+    try:
+        from sqlalchemy import select
+        from db.engine import sync_session_factory
+        from db.models.results import PipelineRun
+
+        session = sync_session_factory()
+        try:
+            rows = session.execute(
+                select(PipelineRun).where(
+                    PipelineRun.pipeline_type == "dag",
+                    PipelineRun.status == "RUNNING",
+                )
+            ).scalars().all()
+
+            loaded = 0
+            for run in rows:
+                snap = run.steps_snapshot or {}
+                steps_snap = snap.get("steps", {})
+                step_configs = snap.get("step_configs", {})
+                topo_order = snap.get("topo_order", [])
+
+                # Reconstruct step_map with configs
+                step_map = {}
+                for step_id, step_data in steps_snap.items():
+                    step_map[step_id] = {
+                        **step_data,
+                        "config": step_configs.get(step_id, {}),
+                        "result": None,
+                    }
+
+                state = {
+                    "pipeline_id": run.pipeline_id,
+                    "status": run.status,
+                    "steps": step_map,
+                    "topo_order": topo_order,
+                    "completed_results": {},
+                    "variables": run.variables or snap.get("variables", {}),
+                    "project": run.project_name,
+                    "label": run.label,
+                }
+                _dag_state[run.pipeline_id] = state
+                loaded += 1
+
+            if loaded:
+                logger.info("Loaded %d in-progress DAG pipelines from DB", loaded)
+            return loaded
+        finally:
+            session.close()
+    except Exception:
+        logger.exception("Failed to load DAG pipelines from DB")
+        return 0

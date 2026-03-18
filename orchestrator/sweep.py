@@ -1,15 +1,20 @@
 """Parameter sweep engine — grid, random, and Latin Hypercube sampling with Celery group execution."""
 
 import copy
+import logging
 import math
 import random
 import uuid
+from datetime import datetime, timezone
 from itertools import product
 
 from celery import group
 from celery.result import AsyncResult
 from celery_app import app as celery_app
-from config import TOOL_REGISTRY, settings
+from config import settings
+from db.registry_service import get_tool_registry
+
+logger = logging.getLogger(__name__)
 
 
 # In-memory sweep state (same pattern as pipeline.py)
@@ -102,11 +107,16 @@ def generate_sweep_points(axes, method: str, n_samples: int | None,
         raise ValueError(f"Unknown sweep method: {method}")
 
 
-def start_sweep(request) -> dict:
+async def start_sweep(request) -> dict:
     """Generate sweep points, submit all as a Celery group, store state."""
+    TOOL_REGISTRY = get_tool_registry()
     tool_key = request.tool
     if tool_key not in TOOL_REGISTRY:
         raise ValueError(f"Unknown tool: {tool_key}")
+
+    # Ensure the worker container is running before dispatching sweep
+    from docker_manager import docker_mgr
+    await docker_mgr.ensure_worker(tool_key)
 
     tool_meta = TOOL_REGISTRY[tool_key]
     sweep_points = generate_sweep_points(
@@ -146,6 +156,7 @@ def start_sweep(request) -> dict:
 
     # Submit group
     group_result = group(tasks).apply_async()
+    docker_mgr.record_activity(tool_key)
 
     # Store task IDs from group children
     for i, child in enumerate(group_result.children or []):
@@ -163,6 +174,7 @@ def start_sweep(request) -> dict:
         "project": request.project,
     }
     _sweep_state[sweep_id] = state
+    _persist_sweep(state, method=request.method)
 
     return _format_status(state)
 
@@ -212,6 +224,7 @@ def get_sweep_status(sweep_id: str) -> dict | None:
     elif completed > 0 or failed > 0:
         state["status"] = "RUNNING"
 
+    _persist_sweep(state)
     return _format_status(state)
 
 
@@ -283,3 +296,97 @@ def _format_status(state: dict) -> dict:
         "failed_runs": state["failed_runs"],
         "runs": state["runs"],
     }
+
+
+def _persist_sweep(state: dict, method: str | None = None) -> None:
+    """Save sweep state to DB for restart recovery."""
+    try:
+        from sqlalchemy import select
+        from db.engine import sync_session_factory
+        from db.models.results import SweepRun
+
+        session = sync_session_factory()
+        try:
+            run = session.execute(
+                select(SweepRun).where(SweepRun.sweep_id == state["sweep_id"])
+            ).scalar_one_or_none()
+
+            now = datetime.now(timezone.utc)
+            # Snapshot runs without full params to keep JSONB small
+            runs_snap = []
+            for r in state["runs"]:
+                runs_snap.append({
+                    "run_index": r["run_index"],
+                    "job_id": r.get("job_id"),
+                    "status": r["status"],
+                    "result_summary": r.get("result_summary"),
+                })
+
+            if run:
+                run.status = state["status"]
+                run.completed_runs = state["completed_runs"]
+                run.failed_runs = state["failed_runs"]
+                run.runs_snapshot = {"runs": runs_snap}
+                if state["status"] in ("SUCCESS", "PARTIAL", "FAILURE", "CANCELLED"):
+                    run.completed_at = now
+            else:
+                run = SweepRun(
+                    sweep_id=state["sweep_id"],
+                    tool_key=state["tool"],
+                    project_name=state.get("project", "_default"),
+                    method=method or "unknown",
+                    total_runs=state["total_runs"],
+                    completed_runs=state["completed_runs"],
+                    failed_runs=state["failed_runs"],
+                    status=state["status"],
+                    runs_snapshot={"runs": runs_snap},
+                    created_at=now,
+                )
+                session.add(run)
+            session.commit()
+        finally:
+            session.close()
+    except Exception:
+        logger.exception("Failed to persist sweep state to DB")
+
+
+def load_sweeps_from_db() -> int:
+    """Load in-progress sweeps from DB on startup. Returns count loaded."""
+    try:
+        from sqlalchemy import select
+        from db.engine import sync_session_factory
+        from db.models.results import SweepRun
+
+        session = sync_session_factory()
+        try:
+            rows = session.execute(
+                select(SweepRun).where(SweepRun.status == "RUNNING")
+            ).scalars().all()
+
+            loaded = 0
+            for run in rows:
+                snap = run.runs_snapshot or {}
+                runs = snap.get("runs", [])
+
+                state = {
+                    "sweep_id": run.sweep_id,
+                    "tool": run.tool_key,
+                    "status": run.status,
+                    "total_runs": run.total_runs,
+                    "completed_runs": run.completed_runs,
+                    "failed_runs": run.failed_runs,
+                    "runs": runs,
+                    "group_result_id": None,
+                    "project": run.project_name,
+                }
+                _sweep_state[run.sweep_id] = state
+                loaded += 1
+
+            if loaded:
+                logger.info("Loaded %d in-progress sweeps from DB", loaded)
+            return loaded
+        finally:
+            session.close()
+    except Exception:
+        logger.exception("Failed to load sweeps from DB")
+        return 0

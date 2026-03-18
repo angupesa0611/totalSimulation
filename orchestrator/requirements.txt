@@ -23,6 +23,7 @@ sympy==1.13.3
 gmsh==4.13.1
 lcapy==1.23
 pennylane==0.39.0
+autoray>=0.6.7,<0.8
 matplotlib==3.9.3
 control==0.10.1
 pyomo==6.8.2
@@ -39,3 +40,15 @@ reportlab>=4.0
 PyJWT>=2.8.0
 passlib[bcrypt]>=1.7.4
 pytest>=8.0
+qiskit[visualization]>=1.0.0
+qiskit-aer>=0.13.0
+openbabel-wheel>=3.1.1
+PySpice>=1.5
+rayoptics>=0.9.2
+LightPipes>=2.1.4
+strawberryfields>=0.23.0
+docker>=7.0.0
+sqlalchemy[asyncio]>=2.0.30
+asyncpg>=0.29.0
+psycopg2-binary>=2.9.9
+alembic>=1.13.0

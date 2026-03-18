@@ -3,15 +3,19 @@
 from fastapi import APIRouter, HTTPException
 from models.sweep import SweepRequest
 import sweep as sweep_engine
+from db.audit import write_audit
 
 sweep_router = APIRouter(prefix="/api/sweep")
 
 
 @sweep_router.post("/")
-def submit_sweep(req: SweepRequest) -> dict:
+async def submit_sweep(req: SweepRequest) -> dict:
     """Submit a parameter sweep, returns sweep_id + initial status."""
     try:
-        return sweep_engine.start_sweep(req)
+        result = await sweep_engine.start_sweep(req)
+        write_audit("submit", "sweep", entity_id=result.get("sweep_id"),
+                    details={"tool": req.tool, "method": req.method, "project": req.project})
+        return result
     except ValueError as e:
         raise HTTPException(400, str(e))
 

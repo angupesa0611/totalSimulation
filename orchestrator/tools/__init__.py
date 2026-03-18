@@ -20,9 +20,17 @@ from .control_tool import ControlTool
 from .pyomo_tool import PyomoTool
 from .networkx_tool import NetworkXTool
 from .phiflow_tool import PhiFlowTool
-from .vtk_tool import VTKTool
 from .tskit_tool import TreeSequenceTool
 from .simupop_tool import SimuPOPTool
+from .qiskit_tool import QiskitTool
+from .lammps_tool import LAMMPSTool
+from .openbabel_tool import OpenBabelTool
+from .pyspice_tool import PySpiceTool
+from .gap_tool import GAPTool
+from .lean4_tool import Lean4Tool
+from .rayoptics_tool import RayOpticsTool
+from .lightpipes_tool import LightPipesTool
+from .strawberryfields_tool import StrawberryFieldsTool
 
 TOOL_INSTANCES = {
     "rebound": REBOUNDTool(),
@@ -47,7 +55,15 @@ TOOL_INSTANCES = {
     "pyomo": PyomoTool(),
     "networkx": NetworkXTool(),
     "phiflow": PhiFlowTool(),
-    "vtk": VTKTool(),
     "tskit": TreeSequenceTool(),
     "simupop": SimuPOPTool(),
+    "qiskit": QiskitTool(),
+    "lammps": LAMMPSTool(),
+    "openbabel": OpenBabelTool(),
+    "pyspice": PySpiceTool(),
+    "gap": GAPTool(),
+    "lean4": Lean4Tool(),
+    "rayoptics": RayOpticsTool(),
+    "lightpipes": LightPipesTool(),
+    "strawberryfields": StrawberryFieldsTool(),
 }
