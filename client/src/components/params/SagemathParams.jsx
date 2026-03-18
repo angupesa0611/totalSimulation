@@ -147,9 +147,6 @@ export default function SagemathParams({ params, onChange }) {
         </>
       )}
 
-      <div style={{ fontSize: 11, color: '#a78bfa', marginTop: 8, padding: 8, background: '#a78bfa11', borderRadius: 4, border: '1px solid #a78bfa33' }}>
-        Requires <code>mathematics</code> Docker profile. Run with: <code>--profile mathematics</code>
-      </div>
     </>
   );
 }

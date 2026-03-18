@@ -7,7 +7,7 @@ import theme from '../theme.json';
 
 const ACCENT = '#f472b6';
 
-export default function PipelineBuilder({ onOpenDocs }) {
+export default function PipelineBuilder({ onOpenDocs, initialPipeline, initialCoupling }) {
   const [steps, setSteps] = useState([{ tool: '', params: {}, param_map: {} }]);
   const [couplings, setCouplings] = useState({});
   const [tools, setTools] = useState([]);
@@ -35,6 +35,24 @@ export default function PipelineBuilder({ onOpenDocs }) {
       setTools(allTools);
     }).catch(console.error);
   }, []);
+
+  // Pre-load a named pipeline when navigating from dashboard
+  useEffect(() => {
+    if (initialPipeline) {
+      loadNamedPipeline(initialPipeline);
+    }
+  }, [initialPipeline]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Pre-populate a 2-step pipeline from a coupling
+  useEffect(() => {
+    if (initialCoupling && couplings[initialCoupling]) {
+      const c = couplings[initialCoupling];
+      setSteps([
+        { tool: c.from, params: {}, param_map: {} },
+        { tool: c.to, params: {}, param_map: c.default_param_map || {} },
+      ]);
+    }
+  }, [initialCoupling, couplings]);
 
   const loadNamedPipeline = useCallback(async (key) => {
     setLoadingPipeline(key);

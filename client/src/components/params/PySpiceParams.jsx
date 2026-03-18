@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InputField, DropdownSelect } from '../shared';
 import theme from '../../theme.json';
 
@@ -6,6 +6,10 @@ export default function PySpiceParams({ params, onChange }) {
   const p = params || {};
   const update = (key, val) => onChange({ ...p, [key]: val });
   const [compText, setCompText] = useState(JSON.stringify(p.components || [], null, 1));
+
+  useEffect(() => {
+    setCompText(JSON.stringify(p.components || [], null, 1));
+  }, [JSON.stringify(p.components)]);
 
   const simType = p.simulation_type || 'dc_operating_point';
 
@@ -84,9 +88,6 @@ export default function PySpiceParams({ params, onChange }) {
         </>
       )}
 
-      <div style={{ fontSize: 11, color: '#2dd4bf', marginTop: 8, padding: 8, background: '#2dd4bf11', borderRadius: 4, border: '1px solid #2dd4bf33' }}>
-        Requires <code>circuits</code> Docker profile. Uses ngspice as simulation backend.
-      </div>
     </>
   );
 }

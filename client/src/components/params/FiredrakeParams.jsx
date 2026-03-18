@@ -127,9 +127,6 @@ export default function FiredrakeParams({ params, onChange }) {
         />
       </div>
 
-      <div style={{ fontSize: 11, color: '#14b8a6', marginTop: 8, padding: 8, background: '#14b8a611', borderRadius: 4, border: '1px solid #14b8a633' }}>
-        Requires <code>continuum</code> Docker profile. Uses Firedrake FEM with PETSc backend.
-      </div>
     </>
   );
 }

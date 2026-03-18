@@ -10,6 +10,7 @@ const LAYER_LABELS = {
   chemistry: "Chemistry", materials: "Materials Science", mathematics: "Mathematics",
   circuits: "Circuits", visualization: "Visualization", "fluid-dynamics": "Fluid Dynamics",
   engineering: "Engineering",
+  optics: "Optics & Photonics",
 };
 
 function Section({ title, children }) {

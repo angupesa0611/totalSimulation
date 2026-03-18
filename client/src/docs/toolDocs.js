@@ -2201,6 +2201,177 @@ export const toolDocs = {
     license: "Academic license required",
     limitations: ["DEFERRED — requires academic license", "Not currently operational on this platform"],
   },
+
+  // ═══════════════════════════════════════════
+  // OPTICS & PHOTONICS
+  // ═══════════════════════════════════════════
+  rayoptics: {
+    name: "RayOptics",
+    layer: "optics",
+    summary: "Geometrical ray tracing — singlet/doublet lenses, spot diagrams",
+    description:
+      "RayOptics is a Python geometrical optics package for sequential ray tracing through optical systems. It models lenses, mirrors, and apertures using paraxial and real ray tracing, computes spot diagrams, and evaluates image quality metrics.",
+    capabilities: [
+      "Sequential ray tracing through multi-element optical systems",
+      "Singlet and doublet achromatic lens design",
+      "Spot diagram computation with RMS radius",
+      "Multi-wavelength chromatic analysis",
+      "Glass catalog support (Schott, Ohara, etc.)",
+      "Paraxial and real ray fan analysis",
+    ],
+    whenToUse:
+      "Use RayOptics for classical lens design and evaluation: singlet/doublet optimization, image quality assessment via spot diagrams, and first-order optical system layout. For wave optics effects (diffraction, interference), use LightPipes.",
+    alternatives:
+      "For physical wave optics, use LightPipes. For full electromagnetic simulation, use Meep. For quantum photonics, use Strawberry Fields.",
+    params: {
+      simulation_type: { type: "select", description: "Type of optical simulation", options: { singlet_lens: "Biconvex singlet lens ray trace", doublet: "Achromatic doublet (crown + flint)", spot_diagram: "Spot diagram at image plane" } },
+      efl: { type: "number", unit: "mm", description: "Effective focal length" },
+      f_number: { type: "number", description: "f/number (focal ratio)" },
+      n_rays: { type: "number", description: "Number of rays to trace", range: "5–51" },
+      wavelength: { type: "number", unit: "nm", description: "Design wavelength" },
+    },
+    outputs: {
+      rays: "Traced ray paths through the optical system (heights and z-positions per ray)",
+      surfaces: "Surface curvatures and thicknesses for each optical element",
+      rms_radius_mm: "RMS spot radius at the image plane (spot diagram mode)",
+    },
+    examples: ["Biconvex Singlet Lens preset"],
+    references: [
+      { label: "RayOptics documentation", url: "https://ray-optics.readthedocs.io" },
+    ],
+    license: "BSD-3-Clause",
+    limitations: [
+      "Geometrical optics only — no diffraction or wave effects",
+      "Limited to sequential optical systems (no non-sequential tracing)",
+      "No thermal or mechanical analysis of optical elements",
+    ],
+  },
+  lightpipes: {
+    name: "LightPipes",
+    layer: "optics",
+    summary: "Physical wave optics — diffraction, interference, beam propagation",
+    description:
+      "LightPipes is a wave optics simulation library implementing Fresnel and Fraunhofer diffraction, beam propagation through optical elements (lenses, apertures, phase screens), and interferometric setups. It operates on 2D complex field grids.",
+    capabilities: [
+      "Fresnel and Fraunhofer diffraction propagation",
+      "Young's double-slit and multi-slit interference",
+      "Circular and rectangular aperture diffraction (Airy pattern)",
+      "Lens focusing and defocusing simulation",
+      "Mach-Zehnder and Michelson interferometers",
+      "Arbitrary phase screens and beam tilting",
+    ],
+    whenToUse:
+      "Use LightPipes when diffraction and interference effects matter: optical bench simulations, diffraction pattern calculation, interferometer design. For ray-only optics, use RayOptics; for full Maxwell's equations, use Meep.",
+    alternatives:
+      "RayOptics for geometrical optics. Meep for full electromagnetic FDTD. SymPy for analytical diffraction formulas.",
+    params: {
+      simulation_type: { type: "select", description: "Type of wave optics simulation", options: { double_slit: "Young's double-slit experiment", circular_aperture: "Circular aperture diffraction", lens_focus: "Gaussian beam lens focusing", interferometer: "Mach-Zehnder interferometer" } },
+      wavelength: { type: "number", unit: "m", description: "Optical wavelength" },
+      grid_size: { type: "number", unit: "m", description: "Physical size of the computational grid" },
+      grid_points: { type: "number", description: "Number of grid points (N×N)", range: "128–1024" },
+    },
+    outputs: {
+      intensity: "2D intensity distribution at the observation plane",
+      x_mm: "Spatial coordinate array in millimeters",
+    },
+    examples: ["Young's Double Slit preset"],
+    references: [
+      { label: "LightPipes documentation", url: "https://opticspy.github.io/lightpipes/" },
+    ],
+    license: "MIT",
+    limitations: [
+      "Scalar wave optics — no polarization or vector field effects",
+      "2D grid computation (memory scales as N²)",
+      "Paraxial approximation in Fresnel propagation",
+    ],
+  },
+  strawberryfields: {
+    name: "Strawberry Fields",
+    layer: "optics",
+    summary: "Quantum photonics — squeezed states, HOM effect, boson sampling, Gaussian circuits",
+    description:
+      "Strawberry Fields is Xanadu's quantum photonics framework for designing and simulating continuous-variable (CV) quantum circuits. It supports Gaussian and Fock-space backends, enabling simulation of squeezed light, Hong-Ou-Mandel interference, boson sampling, and Gaussian boson sampling.",
+    capabilities: [
+      "Squeezed state generation and photon number statistics",
+      "Hong-Ou-Mandel two-photon interference (HOM dip)",
+      "Boson sampling with random interferometers",
+      "Gaussian state preparation and Wigner function visualization",
+      "Beam splitters, phase shifters, and displacement operations",
+      "Fock and Gaussian simulation backends",
+    ],
+    whenToUse:
+      "Use Strawberry Fields for quantum photonics: continuous-variable quantum computing, photonic circuit design, boson sampling experiments, and quantum state characterization. For qubit-based quantum computing, use Qiskit or PennyLane.",
+    alternatives:
+      "PennyLane for hybrid quantum-classical ML with photonic plugins. QuTiP for general quantum dynamics. Qiskit for qubit-based circuits.",
+    params: {
+      simulation_type: { type: "select", description: "Type of quantum photonics simulation", options: { squeezed_state: "Single-mode squeezed vacuum", hong_ou_mandel: "Two-photon HOM interference", boson_sampling: "Multi-mode boson sampling", gaussian_state: "Gaussian state with Wigner function" } },
+      "hong_ou_mandel.beam_splitter_angle": { type: "number", unit: "rad", description: "Beam splitter mixing angle (π/4 = 50:50)" },
+      "hong_ou_mandel.cutoff_dim": { type: "number", description: "Fock space cutoff dimension" },
+      "boson_sampling.n_modes": { type: "number", description: "Number of optical modes" },
+      "boson_sampling.n_photons": { type: "number", description: "Number of input photons" },
+    },
+    outputs: {
+      photon_numbers: "Photon number distribution for squeezed states",
+      coincidence_counts: "Coincidence detection counts for HOM",
+      hom_dip_probabilities: "Theoretical HOM dip curve vs beam splitter angle",
+      wigner_W: "Wigner quasi-probability distribution (Gaussian states)",
+    },
+    examples: ["Hong-Ou-Mandel Effect preset"],
+    references: [
+      { label: "Strawberry Fields documentation", url: "https://strawberryfields.readthedocs.io" },
+      { label: "Xanadu Quantum", url: "https://xanadu.ai" },
+    ],
+    license: "Apache-2.0",
+    limitations: [
+      "Fock backend limited by cutoff dimension (memory exponential in modes × cutoff)",
+      "Gaussian backend cannot simulate non-Gaussian operations",
+      "No hardware backend access (simulation only)",
+    ],
+  },
+  meep: {
+    name: "Meep",
+    layer: "optics",
+    summary: "FDTD electromagnetic simulation — waveguides, resonators, photonic crystals",
+    description:
+      "Meep (MIT Electromagnetic Equation Propagation) is a finite-difference time-domain (FDTD) solver for Maxwell's equations. It simulates electromagnetic wave propagation through arbitrary dielectric structures including waveguides, ring resonators, photonic crystals, and radiating dipoles.",
+    capabilities: [
+      "2D and 3D FDTD electromagnetic simulation",
+      "Dielectric waveguide bends and splitters",
+      "Ring resonator transmission and coupling",
+      "Photonic crystal band structures and defect modes",
+      "Dipole radiation patterns and Purcell enhancement",
+      "PML absorbing boundary conditions",
+    ],
+    whenToUse:
+      "Use Meep for full-wave electromagnetic problems where ray or wave optics approximations break down: photonic devices, nanophotonic structures, resonators, and metamaterials. For faster ray optics, use RayOptics; for scalar wave optics, use LightPipes.",
+    alternatives:
+      "RayOptics for geometrical optics. LightPipes for scalar wave optics. FEniCS for FEM-based electromagnetic problems.",
+    params: {
+      simulation_type: { type: "select", description: "Type of FDTD simulation", options: { waveguide_bend: "Dielectric waveguide 90° bend", ring_resonator: "Ring resonator coupled to bus waveguide", photonic_crystal: "Square lattice rod photonic crystal", dipole_radiation: "Point dipole radiation pattern" } },
+      resolution: { type: "number", description: "Grid resolution (pixels per unit length)", range: "10–80" },
+      wavelength: { type: "number", unit: "µm", description: "Source wavelength" },
+      n_core: { type: "number", description: "Waveguide/rod refractive index" },
+      run_time: { type: "number", description: "Simulation run time (Meep time units)" },
+    },
+    outputs: {
+      field_ez: "2D Ez field distribution at final timestep",
+      field_shape: "Shape of the field array [Ny, Nx]",
+      x_range: "Spatial extent in x-direction",
+      y_range: "Spatial extent in y-direction",
+    },
+    examples: ["Waveguide Bend preset"],
+    references: [
+      { label: "Meep documentation", url: "https://meep.readthedocs.io" },
+      { label: "MIT photonics", url: "https://mpb.readthedocs.io" },
+    ],
+    license: "GPL-2.0",
+    limitations: [
+      "FDTD memory scales as O(N³) for 3D — practical limit ~10⁸ grid cells",
+      "Requires many timesteps for high-Q resonators",
+      "No nonlinear or gain materials in this implementation",
+      "Container-based — requires meep-worker service running",
+    ],
+  },
 };
 
 // Helper: get all tool keys

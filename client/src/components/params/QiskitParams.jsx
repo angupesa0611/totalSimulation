@@ -155,9 +155,6 @@ export default function QiskitParams({ params, onChange }) {
         </>
       )}
 
-      <div style={{ fontSize: 11, color: '#2dd4bf', marginTop: 8, padding: 8, background: '#2dd4bf11', borderRadius: 4, border: '1px solid #2dd4bf33' }}>
-        Requires <code>circuits</code> Docker profile. Exports OpenQASM for QuTiP coupling (Qiskit → QuTiP).
-      </div>
     </>
   );
 }

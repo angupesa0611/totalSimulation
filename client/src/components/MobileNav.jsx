@@ -2,14 +2,12 @@ import React from 'react';
 import theme from '../theme.json';
 
 const TABS = [
-  { key: 'layers', label: 'Layers' },
-  { key: 'tool', label: 'Tool' },
-  { key: 'pipeline', label: 'Pipeline' },
+  { key: 'dashboard', label: 'Home' },
   { key: 'sweep', label: 'Sweep' },
-  { key: 'results', label: 'Results' },
+  { key: 'docs', label: 'Docs' },
 ];
 
-export default function MobileNav({ mode, onModeChange, onToggleSidebar }) {
+export default function MobileNav({ view, detailType, onNavigate }) {
   return (
     <nav style={{
       position: 'fixed',
@@ -25,17 +23,19 @@ export default function MobileNav({ mode, onModeChange, onToggleSidebar }) {
       zIndex: 1000,
     }}>
       {TABS.map(tab => {
-        const isActive = tab.key === 'layers' ? false : mode === tab.key;
+        const isActive = tab.key === 'dashboard'
+          ? view === 'dashboard'
+          : tab.key === 'sweep'
+            ? view === 'detail' && detailType === 'sweep'
+            : false;
+
+        // Show back arrow on Home tab when in detail view
+        const showBackArrow = tab.key === 'dashboard' && view === 'detail';
+
         return (
           <button
             key={tab.key}
-            onClick={() => {
-              if (tab.key === 'layers') {
-                onToggleSidebar();
-              } else {
-                onModeChange(tab.key);
-              }
-            }}
+            onClick={() => onNavigate(tab.key)}
             style={{
               flex: 1,
               height: '100%',
@@ -53,7 +53,7 @@ export default function MobileNav({ mode, onModeChange, onToggleSidebar }) {
               borderTop: isActive ? `2px solid ${theme.colors.accent}` : '2px solid transparent',
             }}
           >
-            {tab.label}
+            {showBackArrow ? '\u2190 Back' : tab.label}
           </button>
         );
       })}

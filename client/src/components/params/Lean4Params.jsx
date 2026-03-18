@@ -55,9 +55,6 @@ export default function Lean4Params({ params, onChange }) {
         type="number"
       />
 
-      <div style={{ fontSize: 11, color: '#a78bfa', marginTop: 8, padding: 8, background: '#a78bfa11', borderRadius: 4, border: '1px solid #a78bfa33' }}>
-        Requires <code>mathematics</code> Docker profile. Uses Lean 4 stable toolchain (no Mathlib).
-      </div>
     </>
   );
 }

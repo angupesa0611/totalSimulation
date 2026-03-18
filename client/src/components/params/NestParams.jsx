@@ -50,9 +50,6 @@ export default function NestParams({ params, onChange }) {
         </>
       )}
 
-      <div style={{ fontSize: 11, color: '#f43f5e', marginTop: 8, padding: 8, background: '#f43f5e11', borderRadius: 4, border: '1px solid #f43f5e33' }}>
-        Requires NEST container (--profile neuro). Large-scale neural simulation with internal thread pool.
-      </div>
     </>
   );
 }

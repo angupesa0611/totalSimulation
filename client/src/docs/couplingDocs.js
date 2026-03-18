@@ -184,6 +184,15 @@ export const couplingDocs = {
       examples: ["alphafold_to_openmm", "alphafold_to_pyrosetta", "slim_to_alphafold", "rdkit_to_pyrosetta", "pyrosetta_to_openmm", "pyrosetta_to_basico"],
       deferred: true,
     },
+    {
+      id: "optics-simulation",
+      label: "Optics & Photonics",
+      description: "Ray tracing, wave optics, quantum photonics, and FDTD electromagnetic simulation couplings across the optics layer and into visualization/quantum tools.",
+      tools: ["rayoptics", "lightpipes", "strawberryfields", "meep"],
+      target: "matplotlib",
+      dataFlow: "Ray trace → wave propagation → FDTD verification → publication plot; photonic state ↔ quantum dynamics",
+      examples: ["rayoptics_to_lightpipes", "lightpipes_to_meep", "meep_to_vtk", "meep_to_matplotlib", "lightpipes_to_matplotlib", "strawberryfields_to_qutip", "qutip_to_strawberryfields", "strawberryfields_to_pennylane", "pennylane_to_strawberryfields", "meep_to_fenics", "sympy_to_rayoptics", "sympy_to_lightpipes", "gmsh_to_meep"],
+    },
   ],
 
   // Detailed documentation for key couplings
@@ -257,6 +266,34 @@ export const couplingDocs = {
       paramMap: { expressions: "$prev.result.latex" },
       tier: "extension",
       workedExample: "1. SymPy solves x² - 2 = 0 → x = ±√2. 2. Manim animates the LaTeX equation and solution steps. 3. Output MP4 showing step-by-step derivation.",
+    },
+    rayoptics_to_lightpipes: {
+      from: "rayoptics", to: "lightpipes", type: "sequential",
+      description: "Ray trace a lens system to find the focal plane, then use LightPipes to simulate wave propagation and diffraction at focus.",
+      paramMap: { "lens_focus.focal_length": "$prev.result.efl" },
+      tier: "core",
+      workedExample: "1. RayOptics traces a biconvex singlet (f=100mm, f/5). 2. LightPipes propagates a Gaussian beam through the same focal length. 3. Compare geometrical spot size with diffraction-limited Airy pattern.",
+    },
+    lightpipes_to_meep: {
+      from: "lightpipes", to: "meep", type: "sequential",
+      description: "Use LightPipes beam profile as a source field for Meep FDTD simulation of photonic structures.",
+      paramMap: { source_field: "$prev.result.intensity" },
+      tier: "core",
+      workedExample: "1. LightPipes computes a focused Gaussian beam (w₀ = 2µm). 2. Meep uses this as an input source for a waveguide bend simulation. 3. Observe coupling efficiency and mode profile.",
+    },
+    strawberryfields_to_qutip: {
+      from: "strawberryfields", to: "qutip", type: "sequential",
+      description: "Prepare a photonic quantum state in Strawberry Fields, then evolve it in a cavity QED system using QuTiP.",
+      paramMap: { initial_state_data: "$prev.result" },
+      tier: "extension",
+      workedExample: "1. Strawberry Fields generates a squeezed vacuum state (r=0.5). 2. QuTiP simulates Jaynes-Cummings dynamics with the squeezed cavity field. 3. Observe collapse-revival patterns enhanced by squeezing.",
+    },
+    meep_to_fenics: {
+      from: "meep", to: "fenics", type: "sequential",
+      description: "Meep computes EM field absorption in a material, FEniCS solves the resulting thermal diffusion (laser heating).",
+      paramMap: { source_term: "$prev.result.field_ez" },
+      tier: "extension",
+      workedExample: "1. Meep simulates a focused laser beam on a silicon slab. 2. Absorbed power density extracted from |E|². 3. FEniCS solves heat equation with the absorption as source term.",
     },
   },
 };

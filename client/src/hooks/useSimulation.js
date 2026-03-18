@@ -43,6 +43,10 @@ export function useSimulation() {
 
   const terminalStates = ['SUCCESS', 'FAILURE', 'REVOKED', 'CANCELLED'];
 
+  const isStartingWorker = submitting ||
+    (ws.message && typeof ws.message === 'string' && ws.message.toLowerCase().includes('starting worker')) ||
+    ws.status === 'STARTING_WORKER';
+
   return {
     run,
     cancel,
@@ -60,5 +64,6 @@ export function useSimulation() {
     isDone: ws.status === 'SUCCESS',
     isFailed: ws.status === 'FAILURE' || !!error,
     isCancelled: cancelled || ws.status === 'REVOKED',
+    isStartingWorker,
   };
 }

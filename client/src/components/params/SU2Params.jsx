@@ -68,9 +68,6 @@ export default function SU2Params({ params, onChange }) {
         step={50}
       />
 
-      <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 8, padding: 8, background: '#f59e0b11', borderRadius: 4, border: '1px solid #f59e0b33' }}>
-        Requires <code>fluids</code> Docker profile. Compressible/transonic CFD (complements OpenFOAM).
-      </div>
     </>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import LayerSelector from './components/LayerSelector';
+import Dashboard from './components/Dashboard';
 import SimulationPanel from './components/SimulationPanel';
 import PipelineBuilder from './components/PipelineBuilder';
+import PipelinePanel from './components/PipelinePanel';
 import SweepPanel from './components/SweepPanel';
 import ResultsBrowser from './components/ResultsBrowser';
 import ResultDetail from './components/ResultDetail';
@@ -70,20 +71,27 @@ const toolInfo = {
   simupop: { key: 'simupop', name: 'simuPOP', description: 'Forward-time population genetics — mating, migration, selection' },
   pyrosetta: { key: 'pyrosetta', name: 'PyRosetta', description: 'Protein modeling and design (DEFERRED — license required)' },
   einstein_toolkit: { key: 'einstein_toolkit', name: 'Einstein Toolkit', description: 'Full numerical relativity — BBH inspiral, neutron stars, dynamical spacetimes' },
+  rayoptics: { key: 'rayoptics', name: 'RayOptics', description: 'Geometrical ray tracing — singlet/doublet lenses, spot diagrams' },
+  lightpipes: { key: 'lightpipes', name: 'LightPipes', description: 'Physical wave optics — diffraction, interference, beam propagation' },
+  strawberryfields: { key: 'strawberryfields', name: 'Strawberry Fields', description: 'Quantum photonics — squeezed states, HOM effect, boson sampling' },
+  meep: { key: 'meep', name: 'Meep', description: 'FDTD electromagnetic simulation — waveguides, resonators, photonic crystals' },
 };
 
 export default function App() {
+  // Navigation: dashboard or detail view
+  const [view, setView] = useState('dashboard'); // 'dashboard' | 'detail'
+  const [detailType, setDetailType] = useState(null); // 'tool' | 'pipeline' | 'coupling' | 'sweep' | 'result-detail'
+  const [detailTarget, setDetailTarget] = useState(null); // context object for the detail view
+
   const [selectedTool, setSelectedTool] = useState(null);
   const [params, setParams] = useState({});
-  const [mode, setMode] = useState('tool'); // 'tool', 'pipeline', 'sweep', or 'results'
   const [docsOpen, setDocsOpen] = useState(false);
   const [docsFilter, setDocsFilter] = useState({ tab: 'tools', filter: '' });
   const [selectedResult, setSelectedResult] = useState(null);
   const simulation = useSimulation();
   const projectsHook = useProjects();
   const auth = useAuth();
-  const { isMobile, isDesktop } = useBreakpoint();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isMobile } = useBreakpoint();
 
   // Wire auth callbacks into axios interceptors
   useEffect(() => {
@@ -98,7 +106,6 @@ export default function App() {
   // Keyboard shortcut: ? toggles DocsPanel
   useEffect(() => {
     const handler = (e) => {
-      // Ignore if typing in an input, textarea, or select
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
       if (e.key === '?') {
         setDocsOpen(prev => !prev);
@@ -108,44 +115,89 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const handleSelectTool = useCallback((tool) => {
+  // --- Navigation functions ---
+
+  const navigateToDashboard = useCallback(() => {
+    setView('dashboard');
+    setDetailType(null);
+    setDetailTarget(null);
+  }, []);
+
+  const navigateToTool = useCallback((tool) => {
     setSelectedTool(tool);
     setParams({});
-    setMode('tool');
     setSelectedResult(null);
     simulation.reset();
+    setView('detail');
+    setDetailType('tool');
+    setDetailTarget(tool);
   }, [simulation]);
 
-  const handleLoadPreset = useCallback((presetData) => {
+  const navigateToPreset = useCallback((presetData) => {
     const toolKey = presetData.tool;
     const info = toolInfo[toolKey];
-
     if (info) {
       setSelectedTool(info);
       setParams(presetData.params || {});
-      setMode('tool');
       setSelectedResult(null);
       simulation.reset();
+      setView('detail');
+      setDetailType('tool');
+      setDetailTarget(info);
     }
   }, [simulation]);
+
+  const navigateToPipeline = useCallback((key, pipeline) => {
+    setSelectedResult(null);
+    setView('detail');
+    setDetailType('pipeline');
+    setDetailTarget({ key, ...pipeline });
+  }, []);
+
+  const navigateToCoupling = useCallback((key, coupling) => {
+    setSelectedResult(null);
+    setView('detail');
+    setDetailType('coupling');
+    setDetailTarget({ key, ...coupling });
+  }, []);
+
+  const navigateToSweep = useCallback(() => {
+    setSelectedResult(null);
+    setView('detail');
+    setDetailType('sweep');
+    setDetailTarget(null);
+  }, []);
+
+  const navigateToResultDetail = useCallback((result) => {
+    setSelectedResult(result);
+    setView('detail');
+    setDetailType('result-detail');
+    setDetailTarget(result);
+  }, []);
 
   const handleRun = useCallback((request) => {
     simulation.run({ ...request, project: projectsHook.activeProject });
   }, [simulation, projectsHook.activeProject]);
-
-  const handleSelectResult = useCallback((result) => {
-    setSelectedResult(result);
-  }, []);
 
   const handleRerun = useCallback((result) => {
     const info = toolInfo[result.tool];
     if (info) {
       setSelectedTool(info);
       setParams(result.params || {});
-      setMode('tool');
       setSelectedResult(null);
+      setView('detail');
+      setDetailType('tool');
+      setDetailTarget(info);
     }
   }, []);
+
+  // Derive a display name for the detail header
+  const detailName = detailType === 'tool' ? detailTarget?.name
+    : detailType === 'pipeline' ? detailTarget?.label
+    : detailType === 'coupling' ? `${detailTarget?.from} → ${detailTarget?.to}`
+    : detailType === 'sweep' ? 'Parameter Sweep'
+    : detailType === 'result-detail' ? (detailTarget?.tool || 'Result')
+    : '';
 
   // Auth loading state
   if (auth.loading) {
@@ -164,6 +216,8 @@ export default function App() {
   if (auth.needsLogin) {
     return <LoginPage onLogin={auth.setToken} />;
   }
+
+  const isDetail = view === 'detail';
 
   return (
     <div style={{
@@ -185,18 +239,28 @@ export default function App() {
         flexShrink: 0,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {isMobile && (
+          {/* Back button when in detail view */}
+          {isDetail && (
             <button
-              onClick={() => setSidebarOpen(prev => !prev)}
+              onClick={navigateToDashboard}
               style={{
                 background: 'none', border: 'none', color: theme.colors.text,
-                fontSize: 20, cursor: 'pointer', padding: '0 4px',
+                fontSize: 18, cursor: 'pointer', padding: '0 4px',
               }}
+              title="Back to dashboard"
             >
-              {'\u2630'}
+              {'\u2190'}
             </button>
           )}
-          <span style={{ fontSize: isMobile ? 14 : 18, fontWeight: 700, color: theme.colors.text }}>
+          <span
+            onClick={isDetail ? navigateToDashboard : undefined}
+            style={{
+              fontSize: isMobile ? 14 : 18,
+              fontWeight: 700,
+              color: theme.colors.text,
+              cursor: isDetail ? 'pointer' : 'default',
+            }}
+          >
             totalSimulation
           </span>
           {!isMobile && (
@@ -211,6 +275,15 @@ export default function App() {
               Phase 16
             </span>
           )}
+          {/* Detail context name */}
+          {isDetail && detailName && !isMobile && (
+            <>
+              <span style={{ color: theme.colors.textSecondary, fontSize: 14 }}>/</span>
+              <span style={{ fontSize: 14, color: theme.colors.textSecondary }}>
+                {detailName}
+              </span>
+            </>
+          )}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 6 : 12 }}>
@@ -222,30 +295,6 @@ export default function App() {
             onCreate={projectsHook.createProject}
             compact={isMobile}
           />
-
-          {/* Mode toggle — hidden on mobile (moved to MobileNav) */}
-          {!isMobile && (
-            <div style={{ display: 'flex', gap: 2, background: theme.colors.bgTertiary, borderRadius: 6, padding: 2 }}>
-              {['tool', 'pipeline', 'sweep', 'results'].map(m => (
-                <button
-                  key={m}
-                  onClick={() => { setMode(m); if (m !== 'results') setSelectedResult(null); }}
-                  style={{
-                    padding: '4px 12px',
-                    background: mode === m ? theme.colors.accent : 'transparent',
-                    border: 'none',
-                    borderRadius: 4,
-                    color: mode === m ? '#fff' : theme.colors.textSecondary,
-                    fontSize: 11,
-                    cursor: 'pointer',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {m}
-                </button>
-              ))}
-            </div>
-          )}
 
           {/* Docs button */}
           {!isMobile && (
@@ -298,117 +347,120 @@ export default function App() {
         overflow: 'hidden',
         paddingBottom: isMobile ? 56 : 0,
       }}>
-        {/* Mobile sidebar overlay */}
-        {isMobile && sidebarOpen && (
-          <div
-            onClick={() => setSidebarOpen(false)}
-            style={{
-              position: 'fixed', top: 48, left: 0, right: 0, bottom: 56,
-              background: 'rgba(0,0,0,0.5)', zIndex: 998,
-            }}
-          />
-        )}
-
-        {/* LayerSelector — drawer on mobile, static sidebar on desktop */}
-        {(isDesktop || sidebarOpen) && (
-          <div style={isMobile ? {
-            position: 'fixed', top: 48, left: 0, bottom: 56,
-            width: 280, zIndex: 999,
-            background: theme.colors.bgSecondary,
-            boxShadow: '4px 0 12px rgba(0,0,0,0.3)',
-            overflowY: 'auto',
-          } : undefined}>
-            <LayerSelector
-              onSelectTool={(tool) => { handleSelectTool(tool); if (isMobile) setSidebarOpen(false); }}
-              onLoadPreset={(preset) => { handleLoadPreset(preset); if (isMobile) setSidebarOpen(false); }}
-              selectedTool={selectedTool}
-              onClose={isMobile ? () => setSidebarOpen(false) : undefined}
-            />
-          </div>
-        )}
-
-        {/* Center panel */}
-        {mode === 'tool' ? (
-          <SimulationPanel
-            tool={selectedTool}
-            params={params}
-            onParamsChange={setParams}
-            onRun={handleRun}
-            simulation={simulation}
-            onOpenDocs={handleOpenDocs}
-            style={isMobile ? { width: '100%', maxHeight: '40vh', flexShrink: 0 } : undefined}
-          />
-        ) : mode === 'pipeline' ? (
-          <div style={{
-            width: isMobile ? '100%' : 320,
-            maxHeight: isMobile ? '40vh' : undefined,
-            background: theme.colors.bgSecondary,
-            borderRight: isMobile ? 'none' : `1px solid ${theme.colors.border}`,
-            borderBottom: isMobile ? `1px solid ${theme.colors.border}` : 'none',
-            flexShrink: 0,
-            overflow: 'hidden',
-          }}>
-            <PipelineBuilder onOpenDocs={handleOpenDocs} />
-          </div>
-        ) : mode === 'sweep' ? (
-          <div style={{
-            width: isMobile ? '100%' : 320,
-            maxHeight: isMobile ? '40vh' : undefined,
-            background: theme.colors.bgSecondary,
-            borderRight: isMobile ? 'none' : `1px solid ${theme.colors.border}`,
-            borderBottom: isMobile ? `1px solid ${theme.colors.border}` : 'none',
-            flexShrink: 0,
-            overflow: 'hidden',
-          }}>
-            <SweepPanel />
-          </div>
-        ) : (
-          <ResultsBrowser
+        {view === 'dashboard' ? (
+          /* ===== DASHBOARD VIEW ===== */
+          <Dashboard
+            onSelectTool={navigateToTool}
+            onLoadPreset={navigateToPreset}
+            onSelectPipeline={navigateToPipeline}
+            onSelectCoupling={navigateToCoupling}
+            onSelectSweep={navigateToSweep}
+            onSelectResult={navigateToResultDetail}
             project={projectsHook.activeProject}
-            onSelectResult={handleSelectResult}
-            selectedResult={selectedResult}
-            style={isMobile ? { width: '100%', maxHeight: '40vh', flexShrink: 0 } : undefined}
+            isMobile={isMobile}
           />
-        )}
-
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          {mode === 'results' && selectedResult ? (
-            <ResultDetail
-              result={selectedResult}
-              project={projectsHook.activeProject}
-              toolInfo={toolInfo}
-              onRerun={handleRerun}
-            />
-          ) : (
-            <>
-              {simulation.jobId && simulation.isDone && (
-                <div style={{
-                  display: 'flex', justifyContent: 'flex-end', padding: '6px 12px',
-                  borderBottom: `1px solid ${theme.colors.border}`,
-                  background: theme.colors.bgSecondary,
-                }}>
-                  <ExportButton
-                    jobIds={simulation.jobId ? [simulation.jobId] : []}
-                    title={selectedTool ? `${selectedTool.name} Results` : 'Results'}
-                  />
-                </div>
-              )}
-              <VisualizerArea
+        ) : (
+          /* ===== DETAIL VIEW ===== */
+          <>
+            {/* Left panel */}
+            {detailType === 'tool' ? (
+              <SimulationPanel
                 tool={selectedTool}
-                result={simulation.result}
-                jobId={simulation.jobId}
+                params={params}
+                onParamsChange={setParams}
+                onRun={handleRun}
+                simulation={simulation}
+                onOpenDocs={handleOpenDocs}
+                style={isMobile ? { width: '100%', maxHeight: '40vh', flexShrink: 0 } : undefined}
               />
-            </>
-          )}
-        </div>
+            ) : detailType === 'pipeline' ? (
+              <PipelinePanel
+                pipeline={detailTarget}
+                onOpenDocs={handleOpenDocs}
+                isMobile={isMobile}
+                style={isMobile ? { width: '100%', maxHeight: '40vh', flexShrink: 0 } : undefined}
+              />
+            ) : detailType === 'coupling' ? (
+              <div style={{
+                width: isMobile ? '100%' : 320,
+                maxHeight: isMobile ? '40vh' : undefined,
+                background: theme.colors.bgSecondary,
+                borderRight: isMobile ? 'none' : `1px solid ${theme.colors.border}`,
+                borderBottom: isMobile ? `1px solid ${theme.colors.border}` : 'none',
+                flexShrink: 0,
+                overflow: 'hidden',
+              }}>
+                <PipelineBuilder
+                  onOpenDocs={handleOpenDocs}
+                  initialCoupling={detailTarget?.key}
+                />
+              </div>
+            ) : detailType === 'sweep' ? (
+              <div style={{
+                width: isMobile ? '100%' : 320,
+                maxHeight: isMobile ? '40vh' : undefined,
+                background: theme.colors.bgSecondary,
+                borderRight: isMobile ? 'none' : `1px solid ${theme.colors.border}`,
+                borderBottom: isMobile ? `1px solid ${theme.colors.border}` : 'none',
+                flexShrink: 0,
+                overflow: 'hidden',
+              }}>
+                <SweepPanel />
+              </div>
+            ) : detailType === 'result-detail' ? (
+              <ResultsBrowser
+                project={projectsHook.activeProject}
+                onSelectResult={(r) => { setSelectedResult(r); setDetailTarget(r); }}
+                selectedResult={selectedResult}
+                style={isMobile ? { width: '100%', maxHeight: '40vh', flexShrink: 0 } : undefined}
+              />
+            ) : null}
+
+            {/* Right area: visualizer or result detail */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              {detailType === 'result-detail' && selectedResult ? (
+                <ResultDetail
+                  result={selectedResult}
+                  project={projectsHook.activeProject}
+                  toolInfo={toolInfo}
+                  onRerun={handleRerun}
+                />
+              ) : (
+                <>
+                  {simulation.jobId && simulation.isDone && (
+                    <div style={{
+                      display: 'flex', justifyContent: 'flex-end', padding: '6px 12px',
+                      borderBottom: `1px solid ${theme.colors.border}`,
+                      background: theme.colors.bgSecondary,
+                    }}>
+                      <ExportButton
+                        jobIds={simulation.jobId ? [simulation.jobId] : []}
+                        title={selectedTool ? `${selectedTool.name} Results` : 'Results'}
+                      />
+                    </div>
+                  )}
+                  <VisualizerArea
+                    tool={selectedTool}
+                    result={simulation.result}
+                    jobId={simulation.jobId}
+                  />
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Mobile bottom navigation */}
       {isMobile && (
         <MobileNav
-          mode={mode}
-          onModeChange={(m) => { setMode(m); if (m !== 'results') setSelectedResult(null); }}
-          onToggleSidebar={() => setSidebarOpen(prev => !prev)}
+          view={view}
+          detailType={detailType}
+          onNavigate={(target) => {
+            if (target === 'dashboard') navigateToDashboard();
+            else if (target === 'sweep') navigateToSweep();
+            else if (target === 'docs') handleOpenDocs('tools', '');
+          }}
         />
       )}
 

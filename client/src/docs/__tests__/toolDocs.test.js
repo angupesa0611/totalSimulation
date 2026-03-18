@@ -3,7 +3,7 @@ import { toolDocs, allToolKeys, getToolsByLayer, searchTools } from '../toolDocs
 import { couplingDocs, searchCouplings } from '../couplingDocs';
 import { pipelineDocs, allPipelineKeys, searchPipelines } from '../pipelineDocs';
 
-// All 51 tool keys expected in the platform
+// All 55 tool keys expected in the platform
 const EXPECTED_TOOL_KEYS = [
   'rebound', 'qutip', 'openmm', 'pyscf', 'mdanalysis', 'psi4', 'gromacs', 'namd',
   'qmmm', 'pybullet', 'einsteinpy', 'nrpy', 'fenics', 'elmer', 'basico', 'tellurium',
@@ -11,20 +11,20 @@ const EXPECTED_TOOL_KEYS = [
   'lcapy', 'pennylane', 'sagemath', 'lean4', 'gap', 'pyspice', 'qiskit', 'matplotlib',
   'control', 'pyomo', 'networkx', 'phiflow', 'manim', 'openfoam', 'dedalus', 'su2',
   'firedrake', 'vtk', 'openbabel', 'comsol', 'alphafold', 'slim', 'tskit', 'simupop',
-  'pyrosetta', 'einstein_toolkit',
+  'pyrosetta', 'einstein_toolkit', 'rayoptics', 'lightpipes', 'strawberryfields', 'meep',
 ];
 
 const REQUIRED_TOOL_FIELDS = ['name', 'layer', 'summary', 'description'];
 
 describe('toolDocs', () => {
-  it('has entries for all 51 expected tools', () => {
+  it('has entries for all 55 expected tools', () => {
     for (const key of EXPECTED_TOOL_KEYS) {
       expect(toolDocs).toHaveProperty(key);
     }
   });
 
-  it('has exactly 51 tools', () => {
-    expect(allToolKeys.length).toBe(51);
+  it('has exactly 55 tools', () => {
+    expect(allToolKeys.length).toBe(55);
   });
 
   it('every tool has required fields', () => {
@@ -41,7 +41,7 @@ describe('toolDocs', () => {
       'astrophysics', 'quantum', 'molecular', 'electronic', 'analysis', 'multiscale',
       'mechanics', 'continuum', 'relativity', 'systems-biology', 'neuroscience',
       'evolution', 'chemistry', 'materials', 'mathematics', 'circuits',
-      'visualization', 'fluid-dynamics', 'engineering',
+      'visualization', 'fluid-dynamics', 'engineering', 'optics',
     ];
     for (const [key, doc] of Object.entries(toolDocs)) {
       expect(validLayers, `${key} has invalid layer: ${doc.layer}`).toContain(doc.layer);
@@ -55,11 +55,11 @@ describe('toolDocs', () => {
     for (const tools of Object.values(groups)) {
       totalTools += tools.length;
     }
-    expect(totalTools).toBe(51);
+    expect(totalTools).toBe(55);
   });
 
   it('searchTools returns all tools for empty query', () => {
-    expect(searchTools('').length).toBe(51);
+    expect(searchTools('').length).toBe(55);
   });
 
   it('searchTools filters by name', () => {
@@ -112,7 +112,7 @@ describe('couplingDocs', () => {
 
 describe('pipelineDocs', () => {
   it('has 11 pipelines', () => {
-    expect(allPipelineKeys.length).toBe(11);
+    expect(allPipelineKeys.length).toBe(12);
   });
 
   it('every pipeline has required fields', () => {
@@ -136,7 +136,7 @@ describe('pipelineDocs', () => {
   });
 
   it('searchPipelines returns all for empty query', () => {
-    expect(searchPipelines('').length).toBe(11);
+    expect(searchPipelines('').length).toBe(12);
   });
 
   it('searchPipelines filters by tool name', () => {

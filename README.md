@@ -1,6 +1,6 @@
 # totalSimulation
 
-Unified Multi-Scale Simulation Platform — a web-based interface for 51 scientific simulation tools across 20 research domains, from astrophysics to quantum mechanics to molecular dynamics.
+Unified Multi-Scale Simulation Platform — a web-based interface for 55 scientific simulation tools across 21 research domains, from astrophysics to quantum mechanics to molecular dynamics and optics.
 
 Built with **FastAPI + Celery + Redis** (backend) and **React + Vite + Three.js + Plotly + MolStar** (frontend). All services containerized with Docker Compose.
 
@@ -49,8 +49,8 @@ docker compose --profile molecular --profile continuum --profile fluids up -d
              └────────────┘      └────────────┘
 ```
 
-- **Orchestrator**: FastAPI API + Celery workers for 28 lightweight tools (REBOUND, QuTiP, PySCF, SymPy, etc.)
-- **Container workers**: 23 isolated Docker containers for heavy-duty tools (OpenMM, GROMACS, Psi4, FEniCS, LAMMPS, etc.)
+- **Orchestrator**: FastAPI API + Celery workers for 31 lightweight tools (REBOUND, QuTiP, PySCF, SymPy, RayOptics, LightPipes, Strawberry Fields, etc.)
+- **Container workers**: 24 isolated Docker containers for heavy-duty tools (OpenMM, GROMACS, Psi4, FEniCS, LAMMPS, Meep, etc.)
 - **Client**: React SPA with 3D visualizations (Three.js), 2D plots (Plotly), molecular views (MolStar), and video playback
 
 ## Ports
@@ -63,9 +63,9 @@ docker compose --profile molecular --profile continuum --profile fluids up -d
 
 ## Features
 
-### Simulation Tools (51)
+### Simulation Tools (55)
 
-Organized into 20 scientific layers:
+Organized into 21 scientific layers:
 
 | Layer | Tools |
 |-------|-------|
@@ -88,13 +88,14 @@ Organized into 20 scientific layers:
 | Visualization | Matplotlib, VTK, Manim |
 | Fluid Dynamics | OpenFOAM, Dedalus, SU2 |
 | Engineering | Pyomo, python-control, NetworkX, PhiFlow |
+| Optics & Photonics | RayOptics, LightPipes, Strawberry Fields, Meep |
 | Bio-Structure | AlphaFold (deferred), PyRosetta (deferred), COMSOL (deferred) |
 
 ### Platform Capabilities
 
-- **48 presets** — one-click launch for common simulations
-- **11 named pipelines** — multi-step workflows (e.g., quantum-to-organism, drug discovery)
-- **153 tool couplings** — connect outputs of one tool as inputs to another
+- **63 tool presets** + **12 pipeline presets** + **149 coupling presets** — comprehensive test coverage
+- **12 named pipelines** — multi-step workflows (e.g., quantum-to-organism, drug discovery, photonic design)
+- **166 tool couplings** — connect outputs of one tool as inputs to another
 - **DAG pipeline engine** — parallel execution with dependency resolution
 - **Sweep engine** — parameter sweeps with combinatorial/grid/random strategies
 - **Export engine** — CSV, JSON, PDF report generation
@@ -161,8 +162,12 @@ See `containers/cloudflared/README.md` for setup instructions.
 ```
 GET    /health                        — Health check
 GET    /api/layers                    — List all layers and tools
-GET    /api/presets                   — List all presets
+GET    /api/presets                   — List tool presets
 GET    /api/presets/:key              — Get preset parameters
+GET    /api/presets/pipelines         — List pipeline test presets
+GET    /api/presets/pipelines/:key    — Get pipeline preset
+GET    /api/presets/couplings         — List coupling test presets
+GET    /api/presets/couplings/:key    — Get coupling preset
 POST   /api/simulate                  — Submit simulation
 GET    /api/status/:jobId             — Check job status
 POST   /api/simulate/:jobId/cancel    — Cancel running job

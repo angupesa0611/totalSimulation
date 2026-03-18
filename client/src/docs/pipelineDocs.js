@@ -191,6 +191,25 @@ export const pipelineDocs = {
     },
     expectedRuntime: "~3 minutes total",
   },
+
+  photonic_design: {
+    label: "Photonic Device Design",
+    summary: "End-to-end photonic design from ray optics through full-wave FDTD verification",
+    steps: [
+      { tool: "rayoptics", role: "Lens layout — ray trace a singlet lens to establish focal geometry", duration: "~5s" },
+      { tool: "lightpipes", role: "Wave propagation — simulate diffraction and beam profile at the focal plane", duration: "~10s" },
+      { tool: "meep", role: "FDTD verification — full electromagnetic simulation of the photonic structure", duration: "~2min" },
+      { tool: "matplotlib", role: "Publication plot — generate heatmap of the FDTD field distribution", duration: "~5s" },
+    ],
+    scientificContext: "This pipeline bridges three levels of optical modeling: geometrical ray optics for first-order design, scalar wave optics for diffraction effects, and full-wave FDTD for accurate electromagnetic simulation. The progression from fast approximate methods to slow exact methods mirrors real photonic device design workflows.",
+    recommendedParams: {
+      rayoptics: { simulation_type: "singlet_lens", singlet_lens: { efl: 100.0, f_number: 5.0 } },
+      lightpipes: { simulation_type: "lens_focus", lens_focus: { focal_length: 0.1, beam_radius: 2e-3 } },
+      meep: { simulation_type: "waveguide_bend" },
+      matplotlib: { plot_type: "heatmap" },
+    },
+    expectedRuntime: "~3 minutes total",
+  },
 };
 
 // Helper: get all pipeline keys

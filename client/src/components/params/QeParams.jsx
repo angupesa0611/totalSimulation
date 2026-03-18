@@ -85,9 +85,6 @@ export default function QeParams({ params, onChange }) {
         <InputField label="kz" value={kPoints[2]} onChange={(v) => updateKPoint(2, v)} type="number" step={1} />
       </div>
 
-      <div style={{ fontSize: 11, color: '#d946ef', marginTop: 8, padding: 8, background: '#d946ef11', borderRadius: 4, border: '1px solid #d946ef33' }}>
-        Requires the materials profile: docker compose --profile materials up -d
-      </div>
     </>
   );
 }

@@ -22,6 +22,7 @@ const LAYER_LABELS = {
   visualization: "Visualization",
   "fluid-dynamics": "Fluid Dynamics",
   engineering: "Engineering",
+  optics: "Optics & Photonics",
 };
 
 export default function DocsToolList({ searchQuery, onSelectTool }) {

@@ -79,6 +79,10 @@ const visualizers = {
   simupop: EvolutionPlot,
   pyrosetta: MolStarViewer,
   einstein_toolkit: GeodesicPlot,
+  rayoptics: PlotlyChart,
+  lightpipes: FieldPlot,
+  strawberryfields: PlotlyChart,
+  meep: FieldPlot,
 };
 
 export default function VisualizerArea({ tool, result, jobId }) {

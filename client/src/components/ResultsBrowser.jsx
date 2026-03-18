@@ -33,7 +33,7 @@ function StatusIcon({ status }) {
   );
 }
 
-export default function ResultsBrowser({ project, onSelectResult, selectedResult, style }) {
+export default function ResultsBrowser({ project, onSelectResult, selectedResult, style, embedded }) {
   const { results, total, loading, filters, setFilters, page, setPage, pageCount, deleteResult, refresh } = useResults(project);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
@@ -50,10 +50,10 @@ export default function ResultsBrowser({ project, onSelectResult, selectedResult
 
   return (
     <div style={{
-      width: 320,
+      width: embedded ? '100%' : 320,
       background: theme.colors.bgSecondary,
-      borderRight: `1px solid ${theme.colors.border}`,
-      flexShrink: 0,
+      borderRight: embedded ? 'none' : `1px solid ${theme.colors.border}`,
+      flexShrink: embedded ? undefined : 0,
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',

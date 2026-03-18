@@ -25,11 +25,13 @@ export default function LayerSelector({ onSelectTool, onLoadPreset, selectedTool
   return (
     <div style={{
       width: 260,
+      height: '100%',
       background: theme.colors.bgSecondary,
       borderRight: `1px solid ${theme.colors.border}`,
       padding: 16,
       overflowY: 'auto',
       flexShrink: 0,
+      boxSizing: 'border-box',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <h2 style={{ fontSize: 14, color: theme.colors.textSecondary, margin: 0, textTransform: 'uppercase', letterSpacing: 1 }}>

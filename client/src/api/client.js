@@ -227,4 +227,20 @@ export async function deactivateLayers(layers) {
   return data;
 }
 
+// Worker management
+export async function getWorkerStatus() {
+  const { data } = await api.get('/workers/');
+  return data;
+}
+
+export async function stopWorker(serviceName) {
+  const { data } = await api.post(`/workers/${serviceName}/stop`);
+  return data;
+}
+
+export async function startWorker(toolKey) {
+  const { data } = await api.post(`/workers/start/${toolKey}`);
+  return data;
+}
+
 export default api;

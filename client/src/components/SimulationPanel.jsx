@@ -1,175 +1,8 @@
 import React from 'react';
-import { InputField, SliderParam, DropdownSelect, RunButton, ProgressBar } from './shared';
+import { RunButton, ProgressBar } from './shared';
 import HelpButton from './shared/HelpButton';
-import { ReboundParams, PyscfParams, Psi4Params, GromacsParams, NamdParams, QmmmParams, MdanalysisParams, PybulletParams, EinsteinpyParams, NrpyParams, FenicsParams, ElmerParams, BasicoParams, TelluriumParams, Brian2Params, NestParams, MsprimeParams, RDKitParams, CanteraParams, QeParams, LammpsParams, SymPyParams, GmshParams, LcapyParams, PennyLaneParams, SagemathParams, Lean4Params, GapParams, PySpiceParams, QiskitParams, MatplotlibParams, ControlParams, PyomoParams, NetworkXParams, PhiFlowParams, ManimParams, OpenFOAMParams, DedalusParams, SU2Params, FiredrakeParams, VTKParams, OpenBabelParams, COMSOLParams, AlphaFoldParams, SLiMParams, TskitParams, SimuPOPParams, PyRosettaParams, EinsteinToolkitParams } from './params';
+import { PARAM_COMPONENTS } from './params/paramComponents';
 import theme from '../theme.json';
-
-function QutipParams({ params, onChange }) {
-  const p = params || {};
-  const sysType = p.system_type || 'qubit_rabi';
-  const subParams = p[sysType] || {};
-
-  const updateSub = (key, val) => {
-    onChange({ ...p, [sysType]: { ...subParams, [key]: val } });
-  };
-
-  return (
-    <>
-      <DropdownSelect
-        label="System Type"
-        value={sysType}
-        onChange={(v) => onChange({ ...p, system_type: v })}
-        options={[
-          { value: 'qubit_rabi', label: 'Qubit Rabi Oscillation' },
-          { value: 'spin_chain', label: 'Spin Chain' },
-          { value: 'jaynes_cummings', label: 'Jaynes-Cummings' },
-        ]}
-      />
-      {sysType === 'qubit_rabi' && (
-        <>
-          <InputField label="Rabi Frequency (omega)" value={subParams.omega ?? 1.0} onChange={(v) => updateSub('omega', v)} type="number" step={0.1} />
-          <InputField label="Detuning (delta)" value={subParams.delta ?? 0.0} onChange={(v) => updateSub('delta', v)} type="number" step={0.1} />
-          <DropdownSelect label="Initial State" value={subParams.psi0 || 'ground'} onChange={(v) => updateSub('psi0', v)} options={['ground', 'excited', 'superposition']} />
-          <InputField label="Max Time" value={subParams.tmax ?? 25.0} onChange={(v) => updateSub('tmax', v)} type="number" step={1} />
-        </>
-      )}
-      {sysType === 'spin_chain' && (
-        <>
-          <SliderParam label="Number of Spins" value={subParams.n_spins ?? 4} onChange={(v) => updateSub('n_spins', v)} min={2} max={10} step={1} />
-          <InputField label="Coupling J" value={subParams.J ?? 1.0} onChange={(v) => updateSub('J', v)} type="number" step={0.1} />
-          <InputField label="Field B" value={subParams.B ?? 0.5} onChange={(v) => updateSub('B', v)} type="number" step={0.1} />
-          <InputField label="Max Time" value={subParams.tmax ?? 20.0} onChange={(v) => updateSub('tmax', v)} type="number" step={1} />
-          <InputField
-            label="Initial State (e.g. 0,1,1,0)"
-            value={subParams.initial_state || ''}
-            onChange={(v) => updateSub('initial_state', v)}
-            placeholder="0=up, 1=down per spin (comma-sep)"
-          />
-        </>
-      )}
-      {sysType === 'jaynes_cummings' && (
-        <>
-          <SliderParam label="Photon Cutoff" value={subParams.n_photons ?? 5} onChange={(v) => updateSub('n_photons', v)} min={2} max={20} step={1} />
-          <InputField label="Atom Frequency (omega_a)" value={subParams.omega_a ?? 1.0} onChange={(v) => updateSub('omega_a', v)} type="number" step={0.1} />
-          <InputField label="Cavity Frequency (omega_c)" value={subParams.omega_c ?? 1.0} onChange={(v) => updateSub('omega_c', v)} type="number" step={0.1} />
-          <InputField label="Coupling g" value={subParams.g ?? 0.1} onChange={(v) => updateSub('g', v)} type="number" step={0.01} />
-          <InputField label="Cavity Decay (kappa)" value={subParams.kappa ?? 0.05} onChange={(v) => updateSub('kappa', v)} type="number" step={0.01} />
-          <InputField label="Atom Decay (gamma)" value={subParams.gamma ?? 0.01} onChange={(v) => updateSub('gamma', v)} type="number" step={0.01} />
-          <InputField label="Max Time" value={subParams.tmax ?? 50.0} onChange={(v) => updateSub('tmax', v)} type="number" step={5} />
-          <SliderParam label="Steps" value={subParams.n_steps ?? 500} onChange={(v) => updateSub('n_steps', v)} min={100} max={2000} step={100} />
-        </>
-      )}
-    </>
-  );
-}
-
-function OpenmmParams({ params, onChange }) {
-  const p = params || {};
-  const update = (key, val) => onChange({ ...p, [key]: val });
-
-  const handlePdbFile = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => update('pdb_content', ev.target.result);
-    reader.readAsText(file);
-  };
-
-  return (
-    <>
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 12, color: theme.colors.textSecondary, marginBottom: 4 }}>PDB Structure</div>
-        <label style={{
-          display: 'block', padding: '8px 12px', background: theme.colors.accent,
-          borderRadius: 6, color: '#fff', fontSize: 12, textAlign: 'center',
-          cursor: 'pointer', marginBottom: 6,
-        }}>
-          Upload .pdb file
-          <input type="file" accept=".pdb" onChange={handlePdbFile} style={{ display: 'none' }} />
-        </label>
-        <textarea
-          value={p.pdb_content || ''}
-          onChange={(e) => update('pdb_content', e.target.value)}
-          placeholder="Or paste PDB content here..."
-          rows={4}
-          style={{
-            width: '100%', padding: 6, background: theme.colors.bgTertiary,
-            border: `1px solid ${theme.colors.border}`, borderRadius: 4,
-            color: theme.colors.text, fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
-            resize: 'vertical',
-          }}
-        />
-        <div style={{ fontSize: 11, color: p.pdb_content ? theme.colors.success : theme.colors.warning, marginTop: 4 }}>
-          {p.pdb_content ? `PDB loaded (${p.pdb_content.split('\n').length} lines)` : 'No PDB loaded — upload or paste a structure'}
-        </div>
-      </div>
-      <DropdownSelect
-        label="Integrator"
-        value={p.integrator || 'langevin'}
-        onChange={(v) => update('integrator', v)}
-        options={['langevin', 'verlet', 'brownian']}
-      />
-      <InputField label="Temperature (K)" value={p.temperature ?? 300} onChange={(v) => update('temperature', v)} type="number" step={10} />
-      <InputField label="Timestep (ps)" value={p.dt ?? 0.002} onChange={(v) => update('dt', v)} type="number" step={0.001} />
-      <SliderParam label="Steps" value={p.steps ?? 10000} onChange={(v) => update('steps', v)} min={1000} max={100000} step={1000} />
-      <SliderParam label="Report Interval" value={p.report_interval ?? 100} onChange={(v) => update('report_interval', v)} min={10} max={1000} step={10} />
-    </>
-  );
-}
-
-const PARAM_COMPONENTS = {
-  rebound: ReboundParams,
-  qutip: QutipParams,
-  openmm: OpenmmParams,
-  pyscf: PyscfParams,
-  mdanalysis: MdanalysisParams,
-  psi4: Psi4Params,
-  gromacs: GromacsParams,
-  namd: NamdParams,
-  qmmm: QmmmParams,
-  pybullet: PybulletParams,
-  einsteinpy: EinsteinpyParams,
-  nrpy: NrpyParams,
-  fenics: FenicsParams,
-  elmer: ElmerParams,
-  basico: BasicoParams,
-  tellurium: TelluriumParams,
-  brian2: Brian2Params,
-  nest: NestParams,
-  msprime: MsprimeParams,
-  rdkit: RDKitParams,
-  cantera: CanteraParams,
-  qe: QeParams,
-  lammps: LammpsParams,
-  sympy: SymPyParams,
-  gmsh: GmshParams,
-  lcapy: LcapyParams,
-  pennylane: PennyLaneParams,
-  sagemath: SagemathParams,
-  lean4: Lean4Params,
-  gap: GapParams,
-  pyspice: PySpiceParams,
-  qiskit: QiskitParams,
-  matplotlib: MatplotlibParams,
-  control: ControlParams,
-  pyomo: PyomoParams,
-  networkx: NetworkXParams,
-  phiflow: PhiFlowParams,
-  manim: ManimParams,
-  openfoam: OpenFOAMParams,
-  dedalus: DedalusParams,
-  su2: SU2Params,
-  firedrake: FiredrakeParams,
-  vtk: VTKParams,
-  openbabel: OpenBabelParams,
-  comsol: COMSOLParams,
-  alphafold: AlphaFoldParams,
-  slim: SLiMParams,
-  tskit: TskitParams,
-  simupop: SimuPOPParams,
-  pyrosetta: PyRosettaParams,
-  einstein_toolkit: EinsteinToolkitParams,
-};
 
 export default function SimulationPanel({ tool, params, onParamsChange, onRun, simulation, onOpenDocs, style }) {
   const ParamComponent = tool ? PARAM_COMPONENTS[tool.key] : null;
@@ -227,10 +60,20 @@ export default function SimulationPanel({ tool, params, onParamsChange, onRun, s
 
       {simulation.isRunning && (
         <>
+          {simulation.isStartingWorker && !simulation.jobId && (
+            <div style={{
+              marginTop: 8, padding: '6px 10px', background: '#1a1a0a',
+              borderRadius: 6, border: '1px solid #f59e0b',
+              fontSize: 11, color: '#f59e0b', textAlign: 'center',
+            }}>
+              Starting worker container...
+            </div>
+          )}
           <ProgressBar
             progress={simulation.progress}
             message={simulation.message}
             status={simulation.status}
+            isStartingWorker={simulation.isStartingWorker && !simulation.jobId}
           />
           <button
             onClick={() => simulation.cancel()}
