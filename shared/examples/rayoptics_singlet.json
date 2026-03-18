@@ -1,0 +1,17 @@
+{
+  "tool": "rayoptics",
+  "label": "Biconvex Singlet Lens",
+  "params": {
+    "simulation_type": "singlet_lens",
+    "singlet_lens": {
+      "efl": 100.0,
+      "f_number": 5.0,
+      "wavelength": 587.56,
+      "n_rays": 21,
+      "r1": 90.0,
+      "r2": -90.0,
+      "thickness": 6.0,
+      "glass": "N-BK7"
+    }
+  }
+}

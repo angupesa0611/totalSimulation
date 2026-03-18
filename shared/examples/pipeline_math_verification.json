@@ -1,0 +1,45 @@
+{
+  "pipeline": "math_verification",
+  "label": "Mathematics Verification Loop",
+  "description": "Symbolic computation \u2192 algebraic enrichment \u2192 formal proof verification",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 2"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Symbolic computation"
+    },
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Algebraic analysis"
+    },
+    {
+      "tool": "lean4",
+      "params": {
+        "simulation_type": "verify_statement",
+        "lean_code": "theorem add_comm (n m : Nat) : n + m = m + n := Nat.add_comm n m",
+        "timeout_s": 60
+      },
+      "label": "Formal verification"
+    }
+  ]
+}

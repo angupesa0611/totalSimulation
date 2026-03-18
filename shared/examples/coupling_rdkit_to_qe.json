@@ -1,0 +1,70 @@
+{
+  "coupling": "rdkit_to_qe",
+  "label": "SMILES \u2192 crystal structure prediction",
+  "from": "rdkit",
+  "to": "qe",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "qe",
+      "params": {
+        "simulation_type": "scf",
+        "structure": {
+          "cell": [
+            [
+              0,
+              2.715,
+              2.715
+            ],
+            [
+              2.715,
+              0,
+              2.715
+            ],
+            [
+              2.715,
+              2.715,
+              0
+            ]
+          ],
+          "positions": [
+            {
+              "symbol": "Si",
+              "coords": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "symbol": "Si",
+              "coords": [
+                0.25,
+                0.25,
+                0.25
+              ]
+            }
+          ],
+          "is_fractional": true
+        },
+        "ecutwfc": 30,
+        "k_points": [
+          4,
+          4,
+          4
+        ]
+      },
+      "param_map": {
+        "coordinates": "$prev.result.conformer_coordinates"
+      },
+      "label": "Step 2: qe"
+    }
+  ]
+}

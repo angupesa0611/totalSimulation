@@ -1,0 +1,42 @@
+{
+  "coupling": "sympy_to_lightpipes",
+  "label": "Symbolic diffraction \u2192 wave simulation",
+  "from": "sympy",
+  "to": "lightpipes",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "lightpipes",
+      "params": {
+        "simulation_type": "double_slit",
+        "double_slit": {
+          "wavelength": 5.32e-07,
+          "grid_size": 0.01,
+          "grid_points": 512,
+          "slit_width": 0.0001,
+          "slit_separation": 0.0002,
+          "propagation_distance": 1.0
+        }
+      },
+      "param_map": {
+        "double_slit.slit_separation": "$prev.result.expression"
+      },
+      "label": "Step 2: lightpipes"
+    }
+  ]
+}

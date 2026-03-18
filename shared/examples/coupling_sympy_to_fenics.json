@@ -1,0 +1,64 @@
+{
+  "coupling": "sympy_to_fenics",
+  "label": "SymPy symbolic PDE \u2192 FEniCS weak form",
+  "from": "sympy",
+  "to": "fenics",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {
+          "conductivity": 1.0
+        },
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {
+            "type": "dirichlet",
+            "boundary": "left",
+            "value": 100
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "right",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "top",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "bottom",
+            "value": 0
+          }
+        ]
+      },
+      "param_map": {
+        "ufl_code": "$prev.result.ufl_code"
+      },
+      "label": "Step 2: fenics"
+    }
+  ]
+}

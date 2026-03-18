@@ -1,0 +1,50 @@
+{
+  "coupling": "qiskit_to_qutip",
+  "label": "Qiskit OpenQASM \u2192 QuTiP-QIP circuit",
+  "from": "qiskit",
+  "to": "qutip",
+  "steps": [
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "label": "Step 1: qiskit"
+    },
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "param_map": {
+        "qasm_str": "$prev.result.qasm_str"
+      },
+      "label": "Step 2: qutip"
+    }
+  ]
+}

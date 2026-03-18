@@ -1,0 +1,65 @@
+{
+  "coupling": "meep_to_fenics",
+  "label": "EM field absorption \u2192 thermal FEM",
+  "from": "meep",
+  "to": "fenics",
+  "steps": [
+    {
+      "tool": "meep",
+      "params": {
+        "simulation_type": "waveguide_bend",
+        "waveguide_bend": {
+          "resolution": 30,
+          "sx": 16.0,
+          "sy": 16.0,
+          "waveguide_width": 1.0,
+          "wavelength": 1.55,
+          "n_core": 3.4,
+          "pml_thickness": 1.0,
+          "run_time": 200
+        }
+      },
+      "label": "Step 1: meep"
+    },
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {
+          "conductivity": 1.0
+        },
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {
+            "type": "dirichlet",
+            "boundary": "left",
+            "value": 100
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "right",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "top",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "bottom",
+            "value": 0
+          }
+        ]
+      },
+      "param_map": {
+        "source_term": "$prev.result.field_ez"
+      },
+      "label": "Step 2: fenics"
+    }
+  ]
+}

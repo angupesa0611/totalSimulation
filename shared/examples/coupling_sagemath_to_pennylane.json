@@ -1,0 +1,50 @@
+{
+  "coupling": "sagemath_to_pennylane",
+  "label": "Symmetry-aware quantum ML",
+  "from": "sagemath",
+  "to": "pennylane",
+  "steps": [
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Step 1: sagemath"
+    },
+    {
+      "tool": "pennylane",
+      "params": {
+        "simulation_type": "vqe",
+        "hamiltonian": [
+          {
+            "coeff": -0.5,
+            "pauli_string": "II"
+          },
+          {
+            "coeff": 0.5,
+            "pauli_string": "ZZ"
+          },
+          {
+            "coeff": 0.25,
+            "pauli_string": "XX"
+          }
+        ],
+        "n_qubits": 2,
+        "ansatz": "basic",
+        "optimizer": "gradient_descent",
+        "max_iterations": 50,
+        "step_size": 0.4
+      },
+      "param_map": {
+        "symmetry_data": "$prev.result.result"
+      },
+      "label": "Step 2: pennylane"
+    }
+  ]
+}

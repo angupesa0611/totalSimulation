@@ -1,0 +1,35 @@
+{
+  "coupling": "tellurium_to_copasi",
+  "label": "Tellurium SBML \u2192 BasiCO parameter estimation",
+  "from": "tellurium",
+  "to": "basico",
+  "steps": [
+    {
+      "tool": "tellurium",
+      "params": {
+        "simulation_type": "antimony_timecourse",
+        "antimony_model": "model pathway\n  S1 -> S2; k1*S1;\n  S2 -> S3; k2*S2;\n  S3 -> ; k3*S3;\n  S1 = 10; S2 = 0; S3 = 0;\n  k1 = 0.1; k2 = 0.05; k3 = 0.02;\nend",
+        "start_time": 0.0,
+        "end_time": 200.0,
+        "n_points": 200
+      },
+      "label": "Step 1: tellurium"
+    },
+    {
+      "tool": "basico",
+      "params": {
+        "simulation_type": "ode_timecourse",
+        "model_source": "sbml",
+        "sbml_string": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<sbml xmlns=\"http://www.sbml.org/sbml/level3/version2/core\" level=\"3\" version=\"2\">\n  <model id=\"pathway\" name=\"pathway\">\n    <listOfCompartments>\n      <compartment id=\"default\" size=\"1\" constant=\"true\"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id=\"S1\" compartment=\"default\" initialConcentration=\"10\" boundaryCondition=\"false\" constant=\"false\"/>\n      <species id=\"S2\" compartment=\"default\" initialConcentration=\"0\" boundaryCondition=\"false\" constant=\"false\"/>\n      <species id=\"S3\" compartment=\"default\" initialConcentration=\"0\" boundaryCondition=\"false\" constant=\"false\"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id=\"k1\" value=\"0.1\" constant=\"true\"/>\n      <parameter id=\"k2\" value=\"0.05\" constant=\"true\"/>\n      <parameter id=\"k3\" value=\"0.02\" constant=\"true\"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id=\"R1\" reversible=\"false\">\n        <listOfReactants>\n          <speciesReference species=\"S1\" stoichiometry=\"1\" constant=\"true\"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species=\"S2\" stoichiometry=\"1\" constant=\"true\"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n            <apply><times/><ci>k1</ci><ci>S1</ci></apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id=\"R2\" reversible=\"false\">\n        <listOfReactants>\n          <speciesReference species=\"S2\" stoichiometry=\"1\" constant=\"true\"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species=\"S3\" stoichiometry=\"1\" constant=\"true\"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n            <apply><times/><ci>k2</ci><ci>S2</ci></apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id=\"R3\" reversible=\"false\">\n        <listOfReactants>\n          <speciesReference species=\"S3\" stoichiometry=\"1\" constant=\"true\"/>\n        </listOfReactants>\n        <kineticLaw>\n          <math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n            <apply><times/><ci>k3</ci><ci>S3</ci></apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>",
+        "duration": 200.0,
+        "n_steps": 200,
+        "method": "deterministic"
+      },
+      "param_map": {
+        "sbml_string": "$prev.result.sbml_export",
+        "model_source": "sbml"
+      },
+      "label": "Step 2: basico"
+    }
+  ]
+}

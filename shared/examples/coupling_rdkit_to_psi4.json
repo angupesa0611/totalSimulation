@@ -1,0 +1,30 @@
+{
+  "coupling": "rdkit_to_psi4",
+  "label": "RDKit conformer \u2192 Psi4 quantum chemistry",
+  "from": "rdkit",
+  "to": "psi4",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "psi4",
+      "params": {
+        "geometry": "H 0 0 0\nH 0 0 0.74",
+        "basis": "sto-3g",
+        "method": "hf",
+        "charge": 0,
+        "multiplicity": 1
+      },
+      "param_map": {
+        "geometry": "$prev.result.atom_coords_xyz"
+      },
+      "label": "Step 2: psi4"
+    }
+  ]
+}

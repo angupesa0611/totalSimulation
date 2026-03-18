@@ -93,14 +93,16 @@ def run_qmmm(self, params: dict, project: str = "_default",
             # Define QM region (atom indices)
             qm_atoms = list(qm_region)
 
-            # PySCF QM theory
+            # PySCF QM theory (charge/mult set on fragment, not theory)
             qm_theory = ash.PySCFTheory(
                 basis=qm_basis,
                 functional=qm_method if qm_method in ('b3lyp', 'pbe', 'pbe0') else None,
                 scf_type='rhf' if qm_method == 'hf' else 'rks',
-                charge=charge,
-                mult=spin + 1,
             )
+
+            # Set charge and multiplicity on the fragment
+            fragment.charge = charge
+            fragment.mult = spin + 1
 
             # OpenMM MM theory (CPU-only)
             self.update_state(state="PROGRESS", meta={
@@ -110,7 +112,7 @@ def run_qmmm(self, params: dict, project: str = "_default",
 
             mm_theory = ash.OpenMMTheory(
                 pdbfile=pdb_path,
-                forcefield_file=f"{forcefield.lower()}14.xml" if 'amber' in forcefield.lower() else None,
+                xmlfiles=["amber14-all.xml"] if 'amber' in forcefield.lower() else None,
                 platform='CPU',
             )
 
@@ -121,6 +123,7 @@ def run_qmmm(self, params: dict, project: str = "_default",
                 fragment=fragment,
                 qmatoms=qm_atoms,
                 embedding="Elstat",
+                unusualboundary=True,
             )
 
             self.update_state(state="PROGRESS", meta={
@@ -176,8 +179,8 @@ def run_qmmm(self, params: dict, project: str = "_default",
             if not frames:
                 frames = [fragment.coords.tolist()]
 
-        except ImportError:
-            # ASH not available — run simplified QM/MM without ASH
+        except (ImportError, SystemExit, Exception):
+            # ASH not available or failed — run simplified QM/MM without ASH
             self.update_state(state="PROGRESS", meta={
                 "progress": 0.2,
                 "message": "ASH not available, running simplified QM/MM"

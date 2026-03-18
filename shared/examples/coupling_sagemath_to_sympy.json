@@ -1,0 +1,40 @@
+{
+  "coupling": "sagemath_to_sympy",
+  "label": "SageMath \u2192 SymPy expression",
+  "from": "sagemath",
+  "to": "sympy",
+  "steps": [
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Step 1: sagemath"
+    },
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "param_map": {
+        "expression": "$prev.result.result"
+      },
+      "label": "Step 2: sympy"
+    }
+  ]
+}

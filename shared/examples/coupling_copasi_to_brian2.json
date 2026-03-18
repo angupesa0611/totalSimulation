@@ -1,0 +1,87 @@
+{
+  "coupling": "copasi_to_brian2",
+  "label": "BasiCO concentrations \u2192 Brian2 input current",
+  "from": "basico",
+  "to": "brian2",
+  "steps": [
+    {
+      "tool": "basico",
+      "params": {
+        "simulation_type": "ode_timecourse",
+        "model_source": "reactions",
+        "reactions": [
+          {
+            "name": "binding",
+            "scheme": "S + E -> ES"
+          },
+          {
+            "name": "unbinding",
+            "scheme": "ES -> S + E"
+          },
+          {
+            "name": "catalysis",
+            "scheme": "ES -> P + E"
+          }
+        ],
+        "species": [
+          {
+            "name": "S",
+            "initial_concentration": 10.0
+          },
+          {
+            "name": "E",
+            "initial_concentration": 1.0
+          },
+          {
+            "name": "ES",
+            "initial_concentration": 0.0
+          },
+          {
+            "name": "P",
+            "initial_concentration": 0.0
+          }
+        ],
+        "parameters": [
+          {
+            "name": "(binding).k1",
+            "value": 0.1
+          },
+          {
+            "name": "(unbinding).k1",
+            "value": 0.01
+          },
+          {
+            "name": "(catalysis).k1",
+            "value": 0.05
+          }
+        ],
+        "duration": 200.0,
+        "n_steps": 200,
+        "method": "deterministic"
+      },
+      "label": "Step 1: basico"
+    },
+    {
+      "tool": "brian2",
+      "params": {
+        "simulation_type": "lif",
+        "n_neurons": 100,
+        "duration_ms": 500.0,
+        "dt_ms": 0.1,
+        "lif": {
+          "tau_m": 10.0,
+          "v_rest": -65.0,
+          "v_threshold": -50.0,
+          "v_reset": -65.0,
+          "tau_refrac": 2.0,
+          "input_rate_hz": 15.0,
+          "weight": 1.5
+        }
+      },
+      "param_map": {
+        "input_current_timeseries": "$prev.result"
+      },
+      "label": "Step 2: brian2"
+    }
+  ]
+}

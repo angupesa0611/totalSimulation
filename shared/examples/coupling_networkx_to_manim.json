@@ -1,0 +1,99 @@
+{
+  "coupling": "networkx_to_manim",
+  "label": "NetworkX graph \u2192 animated graph vis",
+  "from": "networkx",
+  "to": "manim",
+  "steps": [
+    {
+      "tool": "networkx",
+      "params": {
+        "simulation_type": "community_detection",
+        "nodes": "karate_club",
+        "algorithm": "louvain"
+      },
+      "label": "Step 1: networkx"
+    },
+    {
+      "tool": "manim",
+      "params": {
+        "simulation_type": "bloch_sphere",
+        "quality": "low_quality",
+        "format": "mp4",
+        "trajectory_x": [
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0
+        ],
+        "trajectory_y": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "trajectory_z": [
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0
+        ]
+      },
+      "param_map": {
+        "nodes": "$prev.result.nodes",
+        "edges": "$prev.result.edges"
+      },
+      "label": "Step 2: manim"
+    }
+  ]
+}

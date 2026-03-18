@@ -1,0 +1,49 @@
+{
+  "coupling": "sagemath_to_qiskit",
+  "label": "Coding theory \u2192 stabilizer codes for QEC",
+  "from": "sagemath",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Step 1: sagemath"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "code_data": "$prev.result.result"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}

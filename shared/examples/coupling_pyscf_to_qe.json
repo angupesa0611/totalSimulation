@@ -1,0 +1,73 @@
+{
+  "coupling": "pyscf_to_qe",
+  "label": "Molecular \u2194 periodic DFT bridge",
+  "from": "pyscf",
+  "to": "qe",
+  "steps": [
+    {
+      "tool": "pyscf",
+      "params": {
+        "atom_coords": "H 0 0 0; H 0 0 0.74",
+        "basis": "sto-3g",
+        "method": "hf",
+        "charge": 0,
+        "spin": 0
+      },
+      "label": "Step 1: pyscf"
+    },
+    {
+      "tool": "qe",
+      "params": {
+        "simulation_type": "scf",
+        "structure": {
+          "cell": [
+            [
+              0,
+              2.715,
+              2.715
+            ],
+            [
+              2.715,
+              0,
+              2.715
+            ],
+            [
+              2.715,
+              2.715,
+              0
+            ]
+          ],
+          "positions": [
+            {
+              "symbol": "Si",
+              "coords": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "symbol": "Si",
+              "coords": [
+                0.25,
+                0.25,
+                0.25
+              ]
+            }
+          ],
+          "is_fractional": true
+        },
+        "ecutwfc": 30,
+        "k_points": [
+          4,
+          4,
+          4
+        ]
+      },
+      "param_map": {
+        "molecular_data": "$prev.result"
+      },
+      "label": "Step 2: qe"
+    }
+  ]
+}

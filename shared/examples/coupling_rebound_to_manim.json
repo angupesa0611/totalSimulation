@@ -1,0 +1,129 @@
+{
+  "coupling": "rebound_to_manim",
+  "label": "REBOUND trajectories \u2192 animated orbital vis",
+  "from": "rebound",
+  "to": "manim",
+  "steps": [
+    {
+      "tool": "rebound",
+      "params": {
+        "particles": [
+          {
+            "name": "Sun",
+            "m": 1.0
+          },
+          {
+            "name": "Mercury",
+            "m": 1.66e-07,
+            "a": 0.387,
+            "e": 0.2056
+          },
+          {
+            "name": "Venus",
+            "m": 2.45e-06,
+            "a": 0.723,
+            "e": 0.0068
+          },
+          {
+            "name": "Earth",
+            "m": 3e-06,
+            "a": 1.0,
+            "e": 0.0167
+          },
+          {
+            "name": "Mars",
+            "m": 3.23e-07,
+            "a": 1.524,
+            "e": 0.0934
+          }
+        ],
+        "integrator": "whfast",
+        "tmax": 62.83185307,
+        "n_outputs": 500,
+        "dt": 0.01
+      },
+      "label": "Step 1: rebound"
+    },
+    {
+      "tool": "manim",
+      "params": {
+        "simulation_type": "bloch_sphere",
+        "quality": "low_quality",
+        "format": "mp4",
+        "trajectory_x": [
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0
+        ],
+        "trajectory_y": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "trajectory_z": [
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0
+        ]
+      },
+      "param_map": {
+        "trajectories": "$prev.result.trajectories"
+      },
+      "label": "Step 2: manim"
+    }
+  ]
+}

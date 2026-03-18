@@ -1,0 +1,29 @@
+{
+  "coupling": "openbabel_to_rdkit",
+  "label": "Open Babel \u2192 RDKit descriptors",
+  "from": "openbabel",
+  "to": "rdkit",
+  "steps": [
+    {
+      "tool": "openbabel",
+      "params": {
+        "simulation_type": "convert",
+        "source_format": "smi",
+        "source_data": "CC(=O)Oc1ccccc1C(=O)O",
+        "target_format": "sdf"
+      },
+      "label": "Step 1: openbabel"
+    },
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "param_map": {
+        "smiles": "$prev.result.output_data"
+      },
+      "label": "Step 2: rdkit"
+    }
+  ]
+}

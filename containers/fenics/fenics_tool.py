@@ -231,7 +231,7 @@ def _solve_heat(mesh, params, conductivity, source_value, degree, bc_specs, task
 
     task.update_state(state="PROGRESS", meta={"progress": 0.4, "message": "Solving linear system"})
 
-    problem = LinearProblem(a, L, bcs=bcs)
+    problem = LinearProblem(a, L, bcs=bcs, petsc_options={"ksp_type": "preonly", "pc_type": "lu"}, petsc_options_prefix="sim_")
     uh = problem.solve()
 
     task.update_state(state="PROGRESS", meta={"progress": 0.6, "message": "Extracting solution"})
@@ -286,7 +286,7 @@ def _solve_elasticity(mesh, params, E, nu, degree, bc_specs, task):
 
     task.update_state(state="PROGRESS", meta={"progress": 0.4, "message": "Solving elasticity"})
 
-    problem = LinearProblem(a, L, bcs=[bc])
+    problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"}, petsc_options_prefix="sim_")
     uh = problem.solve()
 
     task.update_state(state="PROGRESS", meta={"progress": 0.6, "message": "Computing displacement field"})
@@ -363,7 +363,7 @@ def _solve_stokes(mesh, params, degree, bc_specs, task):
 
     task.update_state(state="PROGRESS", meta={"progress": 0.4, "message": "Solving Stokes"})
 
-    problem = LinearProblem(a, L, bcs=[bc])
+    problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"}, petsc_options_prefix="sim_")
     uh = problem.solve()
 
     task.update_state(state="PROGRESS", meta={"progress": 0.6, "message": "Extracting velocity field"})

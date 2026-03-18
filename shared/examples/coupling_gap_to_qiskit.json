@@ -1,0 +1,46 @@
+{
+  "coupling": "gap_to_qiskit",
+  "label": "GAP stabilizers \u2192 Qiskit syndrome circuits",
+  "from": "gap",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "gap",
+      "params": {
+        "simulation_type": "group_properties",
+        "group_type": "symmetric",
+        "n": 5,
+        "compute": "conjugacy_classes"
+      },
+      "label": "Step 1: gap"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "gates": "$prev.result.gates"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}

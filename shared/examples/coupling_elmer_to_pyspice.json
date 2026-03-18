@@ -1,0 +1,79 @@
+{
+  "coupling": "elmer_to_pyspice",
+  "label": "Elmer EM/thermal \u2192 PySpice circuit params",
+  "from": "elmer",
+  "to": "pyspice",
+  "steps": [
+    {
+      "tool": "elmer",
+      "params": {
+        "problem_type": "structural",
+        "length_x": 1.0,
+        "length_y": 0.1,
+        "mesh_divisions_x": 20,
+        "mesh_divisions_y": 10,
+        "material": {
+          "youngs_modulus": 200000000000.0,
+          "poisson_ratio": 0.3,
+          "density": 7800
+        },
+        "loads": [
+          {
+            "type": "gravity"
+          }
+        ]
+      },
+      "label": "Step 1: elmer"
+    },
+    {
+      "tool": "pyspice",
+      "params": {
+        "simulation_type": "transient_analysis",
+        "components": [
+          {
+            "type": "V",
+            "name": "V1",
+            "nodes": [
+              1,
+              0
+            ],
+            "value": 5
+          },
+          {
+            "type": "R",
+            "name": "R1",
+            "nodes": [
+              1,
+              2
+            ],
+            "value": 100
+          },
+          {
+            "type": "L",
+            "name": "L1",
+            "nodes": [
+              2,
+              3
+            ],
+            "value": 0.01
+          },
+          {
+            "type": "C",
+            "name": "C1",
+            "nodes": [
+              3,
+              0
+            ],
+            "value": 1e-06
+          }
+        ],
+        "step_time": 1e-06,
+        "end_time": 0.005
+      },
+      "param_map": {
+        "field_data": "$prev.result.field_data"
+      },
+      "label": "Step 2: pyspice"
+    }
+  ]
+}

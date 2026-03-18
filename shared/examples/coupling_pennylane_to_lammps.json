@@ -1,0 +1,52 @@
+{
+  "coupling": "pennylane_to_lammps",
+  "label": "Quantum neural network potentials for MD",
+  "from": "pennylane",
+  "to": "lammps",
+  "steps": [
+    {
+      "tool": "pennylane",
+      "params": {
+        "simulation_type": "vqe",
+        "hamiltonian": [
+          {
+            "coeff": -0.5,
+            "pauli_string": "II"
+          },
+          {
+            "coeff": 0.5,
+            "pauli_string": "ZZ"
+          },
+          {
+            "coeff": 0.25,
+            "pauli_string": "XX"
+          }
+        ],
+        "n_qubits": 2,
+        "ansatz": "basic",
+        "optimizer": "gradient_descent",
+        "max_iterations": 50,
+        "step_size": 0.4
+      },
+      "label": "Step 1: pennylane"
+    },
+    {
+      "tool": "lammps",
+      "params": {
+        "simulation_type": "lj_fluid",
+        "lj_fluid": {
+          "n_atoms": 500,
+          "temperature": 1.0,
+          "density": 0.8,
+          "timestep": 0.005,
+          "n_steps": 10000,
+          "dump_interval": 100
+        }
+      },
+      "param_map": {
+        "potential_data": "$prev.result"
+      },
+      "label": "Step 2: lammps"
+    }
+  ]
+}

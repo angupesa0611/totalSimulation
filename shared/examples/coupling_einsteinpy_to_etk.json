@@ -1,0 +1,43 @@
+{
+  "coupling": "einsteinpy_to_etk",
+  "label": "EinsteinPy metric \u2192 ETK initial data",
+  "from": "einsteinpy",
+  "to": "einstein_toolkit",
+  "steps": [
+    {
+      "tool": "einsteinpy",
+      "params": {
+        "simulation_type": "schwarzschild_geodesic",
+        "M": 0.5,
+        "initial_position": [
+          10.0,
+          1.5708,
+          0.0
+        ],
+        "initial_velocity": [
+          0.0,
+          0.0,
+          0.01
+        ],
+        "max_time": 2000.0,
+        "n_steps": 500
+      },
+      "label": "Step 1: einsteinpy"
+    },
+    {
+      "tool": "einstein_toolkit",
+      "params": {
+        "simulation_type": "bbh_inspiral",
+        "mass_ratio": 1.0,
+        "initial_separation": 10.0,
+        "resolution": "low",
+        "evolution_time": 50.0,
+        "extraction_radius": 50.0
+      },
+      "param_map": {
+        "metric_data": "$prev.result"
+      },
+      "label": "Step 2: einstein_toolkit"
+    }
+  ]
+}

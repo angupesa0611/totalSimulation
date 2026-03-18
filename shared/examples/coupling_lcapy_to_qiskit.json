@@ -1,0 +1,46 @@
+{
+  "coupling": "lcapy_to_qiskit",
+  "label": "Symbolic circuit \u2192 transmon Hamiltonians",
+  "from": "lcapy",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "lcapy",
+      "params": {
+        "simulation_type": "transfer_function",
+        "netlist": "V1 1 0; R1 1 2 1000; C1 2 0 1e-6",
+        "input_node": "1",
+        "output_node": "2"
+      },
+      "label": "Step 1: lcapy"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "circuit_params": "$prev.result"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}

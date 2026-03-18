@@ -1,0 +1,47 @@
+{
+  "coupling": "sympy_to_einsteinpy",
+  "label": "Metric tensor \u2192 EinsteinPy geodesics",
+  "from": "sympy",
+  "to": "einsteinpy",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "einsteinpy",
+      "params": {
+        "simulation_type": "schwarzschild_geodesic",
+        "M": 0.5,
+        "initial_position": [
+          10.0,
+          1.5708,
+          0.0
+        ],
+        "initial_velocity": [
+          0.0,
+          0.0,
+          0.01
+        ],
+        "max_time": 2000.0,
+        "n_steps": 500
+      },
+      "param_map": {
+        "metric_expr": "$prev.result.expression"
+      },
+      "label": "Step 2: einsteinpy"
+    }
+  ]
+}

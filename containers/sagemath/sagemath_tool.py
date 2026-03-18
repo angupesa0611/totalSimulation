@@ -51,7 +51,6 @@ def run_sagemath(self, params, project="_default", label=None):
         else:
             raise ValueError(f"Unknown simulation_type: {sim_type}")
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

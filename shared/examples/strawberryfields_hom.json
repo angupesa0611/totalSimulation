@@ -1,0 +1,12 @@
+{
+  "tool": "strawberryfields",
+  "label": "Hong-Ou-Mandel Effect",
+  "params": {
+    "simulation_type": "hong_ou_mandel",
+    "hong_ou_mandel": {
+      "cutoff_dim": 10,
+      "n_shots": 1000,
+      "beam_splitter_angle": 0.7854
+    }
+  }
+}

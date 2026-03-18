@@ -1,0 +1,35 @@
+{
+  "coupling": "rdkit_to_sympy",
+  "label": "QSAR symbolic analysis of descriptors",
+  "from": "rdkit",
+  "to": "sympy",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "param_map": {
+        "expression": "$prev.result.descriptors"
+      },
+      "label": "Step 2: sympy"
+    }
+  ]
+}

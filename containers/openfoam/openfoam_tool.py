@@ -124,6 +124,11 @@ solvers
         tolerance       1e-06;
         relTol          0.05;
     }
+    pFinal
+    {
+        $p;
+        relTol          0;
+    }
     U
     {
         solver          smoothSolver;
@@ -195,9 +200,9 @@ boundary
 );
 """)
 
-    # constant/transportProperties
-    _write_foam_dict(os.path.join(case_dir, "constant", "transportProperties"),
-                     "dictionary", "transportProperties", f"""
+    # constant/physicalProperties (OpenFOAM 11+ naming)
+    _write_foam_dict(os.path.join(case_dir, "constant", "physicalProperties"),
+                     "dictionary", "physicalProperties", f"""
 nu              [0 2 -1 0 0 0 0] {nu};
 """)
 
@@ -291,6 +296,7 @@ snGradSchemes { default corrected; }
 solvers
 {
     p { solver PCG; preconditioner DIC; tolerance 1e-06; relTol 0.05; }
+    pFinal { $p; relTol 0; }
     U { solver smoothSolver; smoother symGaussSeidel; tolerance 1e-05; relTol 0; }
 }
 PISO { nCorrectors 2; nNonOrthogonalCorrectors 0; pRefCell 0; pRefValue 0; }
@@ -323,8 +329,8 @@ boundary
 );
 """)
 
-    _write_foam_dict(os.path.join(case_dir, "constant", "transportProperties"),
-                     "dictionary", "transportProperties", f"nu [0 2 -1 0 0 0 0] {nu};\n")
+    _write_foam_dict(os.path.join(case_dir, "constant", "physicalProperties"),
+                     "dictionary", "physicalProperties", f"nu [0 2 -1 0 0 0 0] {nu};\n")
 
     _write_foam_dict(os.path.join(case_dir, "0", "U"),
                      "volVectorField", "U", f"""
@@ -545,7 +551,6 @@ def run_openfoam(self, params, project="_default", label=None):
             }
 
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

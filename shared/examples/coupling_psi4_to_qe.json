@@ -1,0 +1,74 @@
+{
+  "coupling": "psi4_to_qe",
+  "label": "Molecular \u2194 periodic DFT via Psi4",
+  "from": "psi4",
+  "to": "qe",
+  "steps": [
+    {
+      "tool": "psi4",
+      "params": {
+        "geometry": "O  0.000000  0.000000  0.117489\nH -0.756950  0.000000 -0.469957\nH  0.756950  0.000000 -0.469957\n--\nO  3.000000  0.000000  0.117489\nH  2.243050  0.000000 -0.469957\nH  3.756950  0.000000 -0.469957",
+        "method": "sapt0",
+        "basis": "jun-cc-pvdz",
+        "charge": 0,
+        "multiplicity": 1,
+        "memory": "2 GB"
+      },
+      "label": "Step 1: psi4"
+    },
+    {
+      "tool": "qe",
+      "params": {
+        "simulation_type": "scf",
+        "structure": {
+          "cell": [
+            [
+              0,
+              2.715,
+              2.715
+            ],
+            [
+              2.715,
+              0,
+              2.715
+            ],
+            [
+              2.715,
+              2.715,
+              0
+            ]
+          ],
+          "positions": [
+            {
+              "symbol": "Si",
+              "coords": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "symbol": "Si",
+              "coords": [
+                0.25,
+                0.25,
+                0.25
+              ]
+            }
+          ],
+          "is_fractional": true
+        },
+        "ecutwfc": 30,
+        "k_points": [
+          4,
+          4,
+          4
+        ]
+      },
+      "param_map": {
+        "molecular_data": "$prev.result"
+      },
+      "label": "Step 2: qe"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "pipeline": "materials_discovery",
+  "label": "Materials Discovery",
+  "description": "DFT \u2192 large-scale MD \u2192 continuum simulation",
+  "steps": [
+    {
+      "tool": "qe",
+      "params": {
+        "simulation_type": "scf",
+        "structure": {
+          "cell": [
+            [
+              0,
+              2.715,
+              2.715
+            ],
+            [
+              2.715,
+              0,
+              2.715
+            ],
+            [
+              2.715,
+              2.715,
+              0
+            ]
+          ],
+          "positions": [
+            {
+              "symbol": "Si",
+              "coords": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "symbol": "Si",
+              "coords": [
+                0.25,
+                0.25,
+                0.25
+              ]
+            }
+          ],
+          "is_fractional": true
+        },
+        "ecutwfc": 30,
+        "k_points": [
+          4,
+          4,
+          4
+        ]
+      },
+      "label": "DFT calculation"
+    },
+    {
+      "tool": "lammps",
+      "params": {
+        "simulation_type": "lj_fluid",
+        "lj_fluid": {
+          "n_atoms": 500,
+          "temperature": 1.0,
+          "density": 0.8,
+          "timestep": 0.005,
+          "n_steps": 10000,
+          "dump_interval": 100
+        }
+      },
+      "label": "MD simulation"
+    },
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {
+          "conductivity": 1.0
+        },
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {
+            "type": "dirichlet",
+            "boundary": "left",
+            "value": 100
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "right",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "top",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "bottom",
+            "value": 0
+          }
+        ]
+      },
+      "label": "Continuum simulation"
+    }
+  ]
+}

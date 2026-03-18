@@ -1,0 +1,38 @@
+{
+  "coupling": "slim_to_msprime",
+  "label": "SLiM forward \u2192 msprime recapitation",
+  "from": "slim",
+  "to": "msprime",
+  "steps": [
+    {
+      "tool": "slim",
+      "params": {
+        "simulation_type": "neutral_evolution",
+        "population_size": 500,
+        "n_generations": 1000,
+        "mutation_rate": 1e-07,
+        "recombination_rate": 1e-08,
+        "sequence_length": 100000,
+        "n_samples": 50
+      },
+      "label": "Step 1: slim"
+    },
+    {
+      "tool": "msprime",
+      "params": {
+        "simulation_type": "coalescent",
+        "n_samples": 50,
+        "sequence_length": 100000,
+        "recombination_rate": 1e-08,
+        "mutation_rate": 1e-08,
+        "population_size": 10000,
+        "random_seed": 42,
+        "n_windows": 20
+      },
+      "param_map": {
+        "source_job_id": "$prev.job_id"
+      },
+      "label": "Step 2: msprime"
+    }
+  ]
+}

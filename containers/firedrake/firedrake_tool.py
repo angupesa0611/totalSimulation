@@ -95,7 +95,6 @@ def run_firedrake(self, params, project="_default", label=None):
             result = _solve_advection_diffusion(mesh, params, degree, self)
 
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     solve_time = time.time() - start_time
@@ -104,10 +103,10 @@ def run_firedrake(self, params, project="_default", label=None):
     result["problem_type"] = problem_type
     result["solve_time"] = solve_time
     result["mesh_info"] = {
-        "n_cells": mesh.num_cells(),
-        "n_vertices": mesh.num_vertices(),
+        "n_cells": int(mesh.num_cells()),
+        "n_vertices": int(mesh.num_vertices()),
         "domain": [lx, ly],
-        "resolution": [nx, ny],
+        "resolution": [int(nx), int(ny)],
     }
 
     self.update_state(state="PROGRESS", meta={"progress": 0.95, "message": "Saving results"})
@@ -171,7 +170,7 @@ def _solve_poisson(mesh, params, degree, bc_specs, source_value, task):
     task.update_state(state="PROGRESS", meta={"progress": 0.6, "message": "Extracting solution"})
 
     field_result = _extract_field_2d(mesh, uh, lx, ly)
-    field_result["n_dofs"] = V.dof_count
+    field_result["n_dofs"] = int(V.dof_count)
 
     return field_result
 
@@ -203,7 +202,7 @@ def _solve_stokes(mesh, params, degree, task):
     lx = params.get("length_x", 1.0)
     ly = params.get("length_y", 1.0)
     field_result = _extract_field_2d(mesh, uh, lx, ly)
-    field_result["n_dofs"] = V.dof_count
+    field_result["n_dofs"] = int(V.dof_count)
 
     return field_result
 
@@ -249,7 +248,7 @@ def _solve_elasticity(mesh, params, degree, material, task):
     lx = params.get("length_x", 1.0)
     ly = params.get("length_y", 1.0)
     field_result = _extract_field_2d(mesh, uh, lx, ly)
-    field_result["n_dofs"] = V.dof_count
+    field_result["n_dofs"] = int(V.dof_count)
 
     return field_result
 
@@ -285,6 +284,6 @@ def _solve_advection_diffusion(mesh, params, degree, task):
     lx = params.get("length_x", 1.0)
     ly = params.get("length_y", 1.0)
     field_result = _extract_field_2d(mesh, uh, lx, ly)
-    field_result["n_dofs"] = V.dof_count
+    field_result["n_dofs"] = int(V.dof_count)
 
     return field_result

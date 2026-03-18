@@ -1,0 +1,40 @@
+{
+  "coupling": "gmsh_to_lammps",
+  "label": "FEM mesh for hybrid continuum-atomistic",
+  "from": "gmsh",
+  "to": "lammps",
+  "steps": [
+    {
+      "tool": "gmsh",
+      "params": {
+        "simulation_type": "box_mesh",
+        "lx": 1.0,
+        "ly": 0.5,
+        "lz": 0.2,
+        "mesh_size": 0.05,
+        "dimension": 3,
+        "element_order": 1,
+        "output_format": "msh"
+      },
+      "label": "Step 1: gmsh"
+    },
+    {
+      "tool": "lammps",
+      "params": {
+        "simulation_type": "lj_fluid",
+        "lj_fluid": {
+          "n_atoms": 500,
+          "temperature": 1.0,
+          "density": 0.8,
+          "timestep": 0.005,
+          "n_steps": 10000,
+          "dump_interval": 100
+        }
+      },
+      "param_map": {
+        "mesh_data": "$prev.result.mesh_file_path"
+      },
+      "label": "Step 2: lammps"
+    }
+  ]
+}

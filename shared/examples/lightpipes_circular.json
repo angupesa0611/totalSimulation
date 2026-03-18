@@ -1,0 +1,14 @@
+{
+  "tool": "lightpipes",
+  "label": "Airy Disk — Circular Aperture",
+  "params": {
+    "simulation_type": "circular_aperture",
+    "circular_aperture": {
+      "wavelength": 632.8e-9,
+      "grid_size": 10e-3,
+      "grid_points": 512,
+      "aperture_radius": 0.5e-3,
+      "propagation_distance": 2.0
+    }
+  }
+}

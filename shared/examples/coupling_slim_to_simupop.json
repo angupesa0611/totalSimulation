@@ -1,0 +1,35 @@
+{
+  "coupling": "slim_to_simupop",
+  "label": "SLiM population \u2192 simuPOP model",
+  "from": "slim",
+  "to": "simupop",
+  "steps": [
+    {
+      "tool": "slim",
+      "params": {
+        "simulation_type": "neutral_evolution",
+        "population_size": 500,
+        "n_generations": 1000,
+        "mutation_rate": 1e-07,
+        "recombination_rate": 1e-08,
+        "sequence_length": 100000,
+        "n_samples": 50
+      },
+      "label": "Step 1: slim"
+    },
+    {
+      "tool": "simupop",
+      "params": {
+        "simulation_type": "random_mating",
+        "population_size": 1000,
+        "n_generations": 200,
+        "n_loci": 1,
+        "initial_freq": 0.5
+      },
+      "param_map": {
+        "population_size": "$prev.result.population_size"
+      },
+      "label": "Step 2: simupop"
+    }
+  ]
+}

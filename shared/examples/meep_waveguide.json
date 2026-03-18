@@ -1,0 +1,17 @@
+{
+  "tool": "meep",
+  "label": "Waveguide 90° Bend",
+  "params": {
+    "simulation_type": "waveguide_bend",
+    "waveguide_bend": {
+      "resolution": 30,
+      "sx": 16.0,
+      "sy": 16.0,
+      "waveguide_width": 1.0,
+      "wavelength": 1.55,
+      "n_core": 3.4,
+      "pml_thickness": 1.0,
+      "run_time": 200
+    }
+  }
+}

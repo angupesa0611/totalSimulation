@@ -1,0 +1,30 @@
+{
+  "coupling": "rdkit_to_openbabel",
+  "label": "RDKit \u2192 Open Babel format conversion",
+  "from": "rdkit",
+  "to": "openbabel",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "openbabel",
+      "params": {
+        "simulation_type": "convert",
+        "source_format": "smi",
+        "source_data": "CC(=O)Oc1ccccc1C(=O)O",
+        "target_format": "sdf"
+      },
+      "param_map": {
+        "source_data": "$prev.result.smiles",
+        "source_format": "smi"
+      },
+      "label": "Step 2: openbabel"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "tool": "lightpipes",
+  "label": "Gaussian Beam Lens Focus",
+  "params": {
+    "simulation_type": "lens_focus",
+    "lens_focus": {
+      "wavelength": 532e-9,
+      "grid_size": 10e-3,
+      "grid_points": 512,
+      "focal_length": 0.5,
+      "beam_radius": 2e-3
+    }
+  }
+}

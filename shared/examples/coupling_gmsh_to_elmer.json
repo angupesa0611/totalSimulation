@@ -1,0 +1,46 @@
+{
+  "coupling": "gmsh_to_elmer",
+  "label": "Gmsh mesh \u2192 Elmer FEM",
+  "from": "gmsh",
+  "to": "elmer",
+  "steps": [
+    {
+      "tool": "gmsh",
+      "params": {
+        "simulation_type": "box_mesh",
+        "lx": 1.0,
+        "ly": 0.5,
+        "lz": 0.2,
+        "mesh_size": 0.05,
+        "dimension": 3,
+        "element_order": 1,
+        "output_format": "msh"
+      },
+      "label": "Step 1: gmsh"
+    },
+    {
+      "tool": "elmer",
+      "params": {
+        "problem_type": "structural",
+        "length_x": 1.0,
+        "length_y": 0.1,
+        "mesh_divisions_x": 20,
+        "mesh_divisions_y": 10,
+        "material": {
+          "youngs_modulus": 200000000000.0,
+          "poisson_ratio": 0.3,
+          "density": 7800
+        },
+        "loads": [
+          {
+            "type": "gravity"
+          }
+        ]
+      },
+      "param_map": {
+        "mesh_file": "$prev.result.mesh_file_path"
+      },
+      "label": "Step 2: elmer"
+    }
+  ]
+}

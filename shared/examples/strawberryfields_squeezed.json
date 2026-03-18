@@ -1,0 +1,13 @@
+{
+  "tool": "strawberryfields",
+  "label": "Squeezed Vacuum State",
+  "params": {
+    "simulation_type": "squeezed_state",
+    "squeezed_state": {
+      "squeezing_param": 0.7,
+      "phase": 0.0,
+      "cutoff_dim": 20,
+      "n_shots": 1000
+    }
+  }
+}

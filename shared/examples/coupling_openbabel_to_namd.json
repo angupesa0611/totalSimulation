@@ -1,0 +1,33 @@
+{
+  "coupling": "openbabel_to_namd",
+  "label": "Open Babel PDB \u2192 NAMD MD",
+  "from": "openbabel",
+  "to": "namd",
+  "steps": [
+    {
+      "tool": "openbabel",
+      "params": {
+        "simulation_type": "convert",
+        "source_format": "smi",
+        "source_data": "CC(=O)Oc1ccccc1C(=O)O",
+        "target_format": "sdf"
+      },
+      "label": "Step 1: openbabel"
+    },
+    {
+      "tool": "namd",
+      "params": {
+        "pdb_content": "REMARK Minimal alanine test\nATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N\nATOM      2  CA  ALA A   1       1.458   0.000   0.000  1.00  0.00           C\nATOM      3  C   ALA A   1       2.009   1.420   0.000  1.00  0.00           C\nATOM      4  O   ALA A   1       1.246   2.390   0.000  1.00  0.00           O\nEND",
+        "psf_content": "PSF\n\n       1 !NTITLE\n REMARKS minimal psf for testing\n\n       4 !NATOM\n       1 PROT 1    ALA  N    NH1   -0.470000       14.0070           0\n       2 PROT 1    ALA  CA   CT1    0.070000       12.0110           0\n       3 PROT 1    ALA  C    C      0.510000       12.0110           0\n       4 PROT 1    ALA  O    O     -0.510000       15.9990           0\n\n       3 !NBOND: bonds\n       1       2       2       3       3       4\n\n       0 !NTHETA: angles\n\n       0 !NPHI: dihedrals\n\n       0 !NIMPHI: impropers\n\n       0 !NDON: donors\n\n       0 !NACC: acceptors\n\n       0 !NNB: nonbonded exclusions\n       0       0       0       0\n",
+        "namd_conf": "# NAMD Configuration\nstructure input.psf\ncoordinates input.pdb\nparaTypeCharmm on\nparameters par_minimal.prm\ntemperature 300\noutputName output\nnumsteps 100\ntimestep 1.0\nDCDfreq 10\noutputEnergies 10\nexclude scaled1-4\n1-4scaling 1.0\nswitching on\nswitchDist 10\ncutoff 12\npairlistdist 14\ncellBasisVector1 30.0 0.0 0.0\ncellBasisVector2 0.0 30.0 0.0\ncellBasisVector3 0.0 0.0 30.0\ncellOrigin 1.0 1.0 0.0\n",
+        "parameter_files": {
+          "par_minimal.prm": "* Minimal CHARMM parameters for alanine backbone\n*\n\nATOMS\nMASS  1  NH1   14.0070\nMASS  2  CT1   12.0110\nMASS  3  C     12.0110\nMASS  4  O     15.9990\n\nBONDS\nNH1  CT1   320.0   1.458\nCT1  C     250.0   1.522\nC    O     620.0   1.230\n\nANGLES\nNH1  CT1  C     50.0  109.5\nCT1  C    O     80.0  120.0\n\nDIHEDRALS\n\nIMPROPER\n\nNONBONDED nbxmod 5 atom cdiel shift vatom vdistance vswitch -\ncutnb 14.0 ctofnb 12.0 ctonnb 10.0 eps 1.0 e14fac 1.0 wmin 1.5\n\nNH1    0.0  -0.2000  1.8500\nCT1    0.0  -0.0200  2.2750  0.0  -0.0100  1.9000\nC      0.0  -0.1100  2.0000\nO      0.0  -0.1200  1.7000  0.0  -0.1200  1.4000\n\nEND\n"
+        }
+      },
+      "param_map": {
+        "pdb_content": "$prev.result.output_pdb"
+      },
+      "label": "Step 2: namd"
+    }
+  ]
+}

@@ -89,7 +89,6 @@ def run_gap(self, params, project="_default", label=None):
         else:
             raise ValueError(f"Unknown simulation_type: {sim_type}")
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     result["tool"] = "gap"

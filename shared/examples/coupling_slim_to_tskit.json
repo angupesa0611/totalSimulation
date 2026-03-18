@@ -1,0 +1,33 @@
+{
+  "coupling": "slim_to_tskit",
+  "label": "SLiM tree sequence \u2192 tskit analysis",
+  "from": "slim",
+  "to": "tskit",
+  "steps": [
+    {
+      "tool": "slim",
+      "params": {
+        "simulation_type": "neutral_evolution",
+        "population_size": 500,
+        "n_generations": 1000,
+        "mutation_rate": 1e-07,
+        "recombination_rate": 1e-08,
+        "sequence_length": 100000,
+        "n_samples": 50
+      },
+      "label": "Step 1: slim"
+    },
+    {
+      "tool": "tskit",
+      "params": {
+        "simulation_type": "diversity",
+        "source_job_id": "",
+        "n_windows": 20
+      },
+      "param_map": {
+        "source_job_id": "$prev.job_id"
+      },
+      "label": "Step 2: tskit"
+    }
+  ]
+}

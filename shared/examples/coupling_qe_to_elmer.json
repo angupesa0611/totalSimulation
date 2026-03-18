@@ -1,0 +1,83 @@
+{
+  "coupling": "qe_to_elmer",
+  "label": "DFT material \u2192 Elmer FEM continuum",
+  "from": "qe",
+  "to": "elmer",
+  "steps": [
+    {
+      "tool": "qe",
+      "params": {
+        "simulation_type": "scf",
+        "structure": {
+          "cell": [
+            [
+              0,
+              2.715,
+              2.715
+            ],
+            [
+              2.715,
+              0,
+              2.715
+            ],
+            [
+              2.715,
+              2.715,
+              0
+            ]
+          ],
+          "positions": [
+            {
+              "symbol": "Si",
+              "coords": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "symbol": "Si",
+              "coords": [
+                0.25,
+                0.25,
+                0.25
+              ]
+            }
+          ],
+          "is_fractional": true
+        },
+        "ecutwfc": 30,
+        "k_points": [
+          4,
+          4,
+          4
+        ]
+      },
+      "label": "Step 1: qe"
+    },
+    {
+      "tool": "elmer",
+      "params": {
+        "problem_type": "structural",
+        "length_x": 1.0,
+        "length_y": 0.1,
+        "mesh_divisions_x": 20,
+        "mesh_divisions_y": 10,
+        "material": {
+          "youngs_modulus": 200000000000.0,
+          "poisson_ratio": 0.3,
+          "density": 7800
+        },
+        "loads": [
+          {
+            "type": "gravity"
+          }
+        ]
+      },
+      "param_map": {
+        "material_data": "$prev.result"
+      },
+      "label": "Step 2: elmer"
+    }
+  ]
+}

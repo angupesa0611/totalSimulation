@@ -1,0 +1,38 @@
+{
+  "coupling": "mdanalysis_to_openbabel",
+  "label": "MDAnalysis frame \u2192 Open Babel convert",
+  "from": "mdanalysis",
+  "to": "openbabel",
+  "steps": [
+    {
+      "tool": "mdanalysis",
+      "params": {
+        "analysis_type": "rmsd",
+        "source_job_id": "",
+        "trajectory_data": {
+          "n_atoms": 3,
+          "n_frames": 3,
+          "frames": [
+            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.5, 1.0, 0.0]],
+            [[0.1, 0.1, 0.0], [1.1, 0.1, 0.0], [1.6, 1.1, 0.0]],
+            [[0.2, 0.2, 0.1], [1.2, 0.2, 0.1], [1.7, 1.2, 0.1]]
+          ]
+        }
+      },
+      "label": "Step 1: mdanalysis"
+    },
+    {
+      "tool": "openbabel",
+      "params": {
+        "simulation_type": "convert",
+        "source_format": "smi",
+        "source_data": "CC(=O)Oc1ccccc1C(=O)O",
+        "target_format": "sdf"
+      },
+      "param_map": {
+        "source_data": "$prev.result.pdb_frame"
+      },
+      "label": "Step 2: openbabel"
+    }
+  ]
+}

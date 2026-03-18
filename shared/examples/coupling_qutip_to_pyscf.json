@@ -1,0 +1,34 @@
+{
+  "coupling": "qutip_to_pyscf",
+  "label": "QuTiP state \u2192 PySCF electronic structure",
+  "from": "qutip",
+  "to": "pyscf",
+  "steps": [
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "label": "Step 1: qutip"
+    },
+    {
+      "tool": "pyscf",
+      "params": {
+        "atom_coords": "H 0 0 0; H 0 0 0.74",
+        "basis": "sto-3g",
+        "method": "hf",
+        "charge": 0,
+        "spin": 0
+      },
+      "param_map": {},
+      "label": "Step 2: pyscf"
+    }
+  ]
+}

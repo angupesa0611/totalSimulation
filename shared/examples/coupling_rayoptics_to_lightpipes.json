@@ -1,0 +1,43 @@
+{
+  "coupling": "rayoptics_to_lightpipes",
+  "label": "Ray trace focus \u2192 wave propagation",
+  "from": "rayoptics",
+  "to": "lightpipes",
+  "steps": [
+    {
+      "tool": "rayoptics",
+      "params": {
+        "simulation_type": "singlet_lens",
+        "singlet_lens": {
+          "efl": 100.0,
+          "f_number": 5.0,
+          "wavelength": 587.56,
+          "n_rays": 21,
+          "r1": 90.0,
+          "r2": -90.0,
+          "thickness": 6.0,
+          "glass": "N-BK7"
+        }
+      },
+      "label": "Step 1: rayoptics"
+    },
+    {
+      "tool": "lightpipes",
+      "params": {
+        "simulation_type": "double_slit",
+        "double_slit": {
+          "wavelength": 5.32e-07,
+          "grid_size": 0.01,
+          "grid_points": 512,
+          "slit_width": 0.0001,
+          "slit_separation": 0.0002,
+          "propagation_distance": 1.0
+        }
+      },
+      "param_map": {
+        "lens_focus.focal_length": "$prev.result.efl"
+      },
+      "label": "Step 2: lightpipes"
+    }
+  ]
+}

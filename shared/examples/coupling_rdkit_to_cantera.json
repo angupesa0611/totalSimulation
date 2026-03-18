@@ -1,0 +1,32 @@
+{
+  "coupling": "rdkit_to_cantera",
+  "label": "RDKit molecular properties \u2192 Cantera thermo",
+  "from": "rdkit",
+  "to": "cantera",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "cantera",
+      "params": {
+        "simulation_type": "ignition_delay",
+        "mechanism": "gri30.yaml",
+        "temperature_K": 1200,
+        "pressure_atm": 1,
+        "composition": "H2:2,O2:1,N2:3.76",
+        "end_time_s": 0.001,
+        "n_points": 200
+      },
+      "param_map": {
+        "smiles": "$prev.result.smiles"
+      },
+      "label": "Step 2: cantera"
+    }
+  ]
+}

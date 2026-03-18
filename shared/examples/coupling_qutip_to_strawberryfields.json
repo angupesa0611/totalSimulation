@@ -1,0 +1,37 @@
+{
+  "coupling": "qutip_to_strawberryfields",
+  "label": "Quantum state \u2192 photonic circuit",
+  "from": "qutip",
+  "to": "strawberryfields",
+  "steps": [
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "label": "Step 1: qutip"
+    },
+    {
+      "tool": "strawberryfields",
+      "params": {
+        "simulation_type": "hong_ou_mandel",
+        "hong_ou_mandel": {
+          "cutoff_dim": 10,
+          "n_shots": 1000,
+          "beam_splitter_angle": 0.7854
+        }
+      },
+      "param_map": {
+        "state_data": "$prev.result"
+      },
+      "label": "Step 2: strawberryfields"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "tool": "lightpipes",
+  "label": "Mach-Zehnder Interferometer",
+  "params": {
+    "simulation_type": "interferometer",
+    "interferometer": {
+      "wavelength": 632.8e-9,
+      "grid_size": 10e-3,
+      "grid_points": 512,
+      "tilt_angle": 0.001
+    }
+  }
+}

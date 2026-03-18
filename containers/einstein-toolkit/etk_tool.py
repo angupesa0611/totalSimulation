@@ -96,7 +96,7 @@ ADMBase::shift_evolution_method = "Gamma-driver"
 WeylScal4::offset                = 1e-12
 Multipole::nradii                = 1
 Multipole::radius[0]             = {extraction_radius}
-Multipole::variables             = "WeylScal4::Psi4r{sw=-2 cmplx='WeylScal4::Psi4i' name='Psi4'}"
+Multipole::variables             = "WeylScal4::Psi4r{{sw=-2 cmplx='WeylScal4::Psi4i' name='Psi4'}}"
 Multipole::l_max                 = 4
 
 # I/O

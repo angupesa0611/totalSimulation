@@ -208,7 +208,7 @@ def _compute_stats(ts, params):
         if len(mutation_log) >= 100:
             break
         mutation_log.append({
-            "position": int(mut.position),
+            "position": int(ts.site(mut.site).position),
             "time": float(mut.time),
             "type": "neutral",
         })
@@ -274,11 +274,13 @@ def _run_neutral(params: dict) -> dict:
             "simulation_type": "neutral_evolution",
             "population_size": pop_size,
             "n_generations": n_gens,
+            "_trees_path": output_path,
         })
         return stats
-    finally:
+    except Exception:
         if os.path.exists(output_path):
             os.unlink(output_path)
+        raise
 
 
 def _run_selection(params: dict) -> dict:
@@ -310,11 +312,13 @@ def _run_selection(params: dict) -> dict:
             "population_size": pop_size,
             "n_generations": n_gens,
             "selection_coefficient": sel_coeff,
+            "_trees_path": output_path,
         })
         return stats
-    finally:
+    except Exception:
         if os.path.exists(output_path):
             os.unlink(output_path)
+        raise
 
 
 def _run_nucleotide(params: dict) -> dict:
@@ -343,11 +347,13 @@ def _run_nucleotide(params: dict) -> dict:
             "simulation_type": "nucleotide_evolution",
             "population_size": pop_size,
             "n_generations": n_gens,
+            "_trees_path": output_path,
         })
         return stats
-    finally:
+    except Exception:
         if os.path.exists(output_path):
             os.unlink(output_path)
+        raise
 
 
 def _run_spatial(params: dict) -> dict:
@@ -376,11 +382,13 @@ def _run_spatial(params: dict) -> dict:
             "simulation_type": "spatial",
             "population_size": pop_size,
             "n_generations": n_gens,
+            "_trees_path": output_path,
         })
         return stats
-    finally:
+    except Exception:
         if os.path.exists(output_path):
             os.unlink(output_path)
+        raise
 
 
 @app.task(name="tools.slim_tool.run_slim", bind=True, soft_time_limit=300)
@@ -405,6 +413,15 @@ def run_slim(self, params: dict, project: str = "_default",
     result = runners[sim_type](params)
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})
-    _save_result(self.request.id, "slim", result, project, label)
+
+    # Copy .trees file to result directory so downstream tools (tskit) can find it
+    trees_path = result.pop("_trees_path", None)
+    run_dir = _save_result(self.request.id, "slim", result, project, label)
+
+    if trees_path and os.path.exists(trees_path):
+        import shutil
+        dest = os.path.join(run_dir, "output.trees")
+        shutil.copy2(trees_path, dest)
+        os.unlink(trees_path)
 
     return result

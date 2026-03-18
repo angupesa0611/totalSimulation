@@ -1,0 +1,44 @@
+{
+  "coupling": "sagemath_to_einsteinpy",
+  "label": "Differential geometry \u2192 EinsteinPy spacetime",
+  "from": "sagemath",
+  "to": "einsteinpy",
+  "steps": [
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Step 1: sagemath"
+    },
+    {
+      "tool": "einsteinpy",
+      "params": {
+        "simulation_type": "schwarzschild_geodesic",
+        "M": 0.5,
+        "initial_position": [
+          10.0,
+          1.5708,
+          0.0
+        ],
+        "initial_velocity": [
+          0.0,
+          0.0,
+          0.01
+        ],
+        "max_time": 2000.0,
+        "n_steps": 500
+      },
+      "param_map": {
+        "metric_data": "$prev.result.result"
+      },
+      "label": "Step 2: einsteinpy"
+    }
+  ]
+}

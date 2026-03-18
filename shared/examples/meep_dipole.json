@@ -1,0 +1,14 @@
+{
+  "tool": "meep",
+  "label": "Point Dipole Radiation",
+  "params": {
+    "simulation_type": "dipole_radiation",
+    "dipole_radiation": {
+      "resolution": 30,
+      "wavelength": 1.0,
+      "sx": 16.0,
+      "sy": 16.0,
+      "run_time": 100
+    }
+  }
+}

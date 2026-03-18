@@ -1,0 +1,35 @@
+{
+  "coupling": "qutip_to_lcapy",
+  "label": "Circuit QED: LC \u2192 quantum Hamiltonian",
+  "from": "qutip",
+  "to": "lcapy",
+  "steps": [
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "label": "Step 1: qutip"
+    },
+    {
+      "tool": "lcapy",
+      "params": {
+        "simulation_type": "transfer_function",
+        "netlist": "V1 1 0; R1 1 2 1000; C1 2 0 1e-6",
+        "input_node": "1",
+        "output_node": "2"
+      },
+      "param_map": {
+        "circuit_params": "$prev.result"
+      },
+      "label": "Step 2: lcapy"
+    }
+  ]
+}

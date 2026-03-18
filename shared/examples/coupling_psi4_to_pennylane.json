@@ -1,0 +1,49 @@
+{
+  "coupling": "psi4_to_pennylane",
+  "label": "pennylane-psi4 plugin",
+  "from": "psi4",
+  "to": "pennylane",
+  "steps": [
+    {
+      "tool": "psi4",
+      "params": {
+        "geometry": "O  0.000000  0.000000  0.117489\nH -0.756950  0.000000 -0.469957\nH  0.756950  0.000000 -0.469957\n--\nO  3.000000  0.000000  0.117489\nH  2.243050  0.000000 -0.469957\nH  3.756950  0.000000 -0.469957",
+        "method": "sapt0",
+        "basis": "jun-cc-pvdz",
+        "charge": 0,
+        "multiplicity": 1,
+        "memory": "2 GB"
+      },
+      "label": "Step 1: psi4"
+    },
+    {
+      "tool": "pennylane",
+      "params": {
+        "simulation_type": "vqe",
+        "hamiltonian": [
+          {
+            "coeff": -0.5,
+            "pauli_string": "II"
+          },
+          {
+            "coeff": 0.5,
+            "pauli_string": "ZZ"
+          },
+          {
+            "coeff": 0.25,
+            "pauli_string": "XX"
+          }
+        ],
+        "n_qubits": 2,
+        "ansatz": "basic",
+        "optimizer": "gradient_descent",
+        "max_iterations": 50,
+        "step_size": 0.4
+      },
+      "param_map": {
+        "molecular_data": "$prev.result"
+      },
+      "label": "Step 2: pennylane"
+    }
+  ]
+}

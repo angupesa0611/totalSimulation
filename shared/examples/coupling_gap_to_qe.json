@@ -1,0 +1,72 @@
+{
+  "coupling": "gap_to_qe",
+  "label": "Crystallographic groups \u2192 Brillouin zone",
+  "from": "gap",
+  "to": "qe",
+  "steps": [
+    {
+      "tool": "gap",
+      "params": {
+        "simulation_type": "group_properties",
+        "group_type": "symmetric",
+        "n": 5,
+        "compute": "conjugacy_classes"
+      },
+      "label": "Step 1: gap"
+    },
+    {
+      "tool": "qe",
+      "params": {
+        "simulation_type": "scf",
+        "structure": {
+          "cell": [
+            [
+              0,
+              2.715,
+              2.715
+            ],
+            [
+              2.715,
+              0,
+              2.715
+            ],
+            [
+              2.715,
+              2.715,
+              0
+            ]
+          ],
+          "positions": [
+            {
+              "symbol": "Si",
+              "coords": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "symbol": "Si",
+              "coords": [
+                0.25,
+                0.25,
+                0.25
+              ]
+            }
+          ],
+          "is_fractional": true
+        },
+        "ecutwfc": 30,
+        "k_points": [
+          4,
+          4,
+          4
+        ]
+      },
+      "param_map": {
+        "space_group": "$prev.result"
+      },
+      "label": "Step 2: qe"
+    }
+  ]
+}

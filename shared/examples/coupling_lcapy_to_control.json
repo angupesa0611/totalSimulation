@@ -1,0 +1,40 @@
+{
+  "coupling": "lcapy_to_control",
+  "label": "Lcapy transfer function \u2192 Bode/Nyquist",
+  "from": "lcapy",
+  "to": "control",
+  "steps": [
+    {
+      "tool": "lcapy",
+      "params": {
+        "simulation_type": "transfer_function",
+        "netlist": "V1 1 0; R1 1 2 1000; C1 2 0 1e-6",
+        "input_node": "1",
+        "output_node": "2"
+      },
+      "label": "Step 1: lcapy"
+    },
+    {
+      "tool": "control",
+      "params": {
+        "simulation_type": "bode_plot",
+        "numerator": [
+          1
+        ],
+        "denominator": [
+          0.001,
+          1
+        ],
+        "omega_range": [
+          0.1,
+          100000
+        ]
+      },
+      "param_map": {
+        "numerator": "$prev.result.transfer_numerator",
+        "denominator": "$prev.result.transfer_denominator"
+      },
+      "label": "Step 2: control"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "tool": "simupop",
+  "label": "simuPOP Wright-Fisher Random Mating",
+  "params": {
+    "simulation_type": "random_mating",
+    "population_size": 1000,
+    "n_generations": 200,
+    "n_loci": 1,
+    "initial_freq": 0.5
+  }
+}

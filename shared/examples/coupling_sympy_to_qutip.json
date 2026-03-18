@@ -1,0 +1,41 @@
+{
+  "coupling": "sympy_to_qutip",
+  "label": "Symbolic Hamiltonian \u2192 QuTiP dynamics",
+  "from": "sympy",
+  "to": "qutip",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "param_map": {
+        "hamiltonian_expr": "$prev.result.expression"
+      },
+      "label": "Step 2: qutip"
+    }
+  ]
+}

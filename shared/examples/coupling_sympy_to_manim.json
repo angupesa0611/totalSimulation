@@ -1,0 +1,105 @@
+{
+  "coupling": "sympy_to_manim",
+  "label": "SymPy expression \u2192 Manim animation",
+  "from": "sympy",
+  "to": "manim",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "manim",
+      "params": {
+        "simulation_type": "bloch_sphere",
+        "quality": "low_quality",
+        "format": "mp4",
+        "trajectory_x": [
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0
+        ],
+        "trajectory_y": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "trajectory_z": [
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0
+        ]
+      },
+      "param_map": {
+        "expressions": "$prev.result.latex"
+      },
+      "label": "Step 2: manim"
+    }
+  ]
+}

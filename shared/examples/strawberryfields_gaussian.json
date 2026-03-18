@@ -1,0 +1,12 @@
+{
+  "tool": "strawberryfields",
+  "label": "Two-Mode Gaussian State",
+  "params": {
+    "simulation_type": "gaussian_state",
+    "gaussian_state": {
+      "n_modes": 2,
+      "squeezing_param": 0.5,
+      "displacement": 1.0
+    }
+  }
+}

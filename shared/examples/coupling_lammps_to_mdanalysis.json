@@ -1,0 +1,43 @@
+{
+  "coupling": "lammps_to_mdanalysis",
+  "label": "LAMMPS trajectory \u2192 MDAnalysis",
+  "from": "lammps",
+  "to": "mdanalysis",
+  "steps": [
+    {
+      "tool": "lammps",
+      "params": {
+        "simulation_type": "lj_fluid",
+        "lj_fluid": {
+          "n_atoms": 500,
+          "temperature": 1.0,
+          "density": 0.8,
+          "timestep": 0.005,
+          "n_steps": 10000,
+          "dump_interval": 100
+        }
+      },
+      "label": "Step 1: lammps"
+    },
+    {
+      "tool": "mdanalysis",
+      "params": {
+        "analysis_type": "rmsd",
+        "source_job_id": "",
+        "trajectory_data": {
+          "n_atoms": 3,
+          "n_frames": 3,
+          "frames": [
+            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.5, 1.0, 0.0]],
+            [[0.1, 0.1, 0.0], [1.1, 0.1, 0.0], [1.6, 1.1, 0.0]],
+            [[0.2, 0.2, 0.1], [1.2, 0.2, 0.1], [1.7, 1.2, 0.1]]
+          ]
+        }
+      },
+      "param_map": {
+        "source_job_id": "$prev.job_id"
+      },
+      "label": "Step 2: mdanalysis"
+    }
+  ]
+}

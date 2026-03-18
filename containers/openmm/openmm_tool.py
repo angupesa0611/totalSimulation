@@ -82,8 +82,18 @@ def run_openmm(self, params: dict, project: str = "_default",
 
     # Force field
     forcefield = app_mm.ForceField(*forcefield_files)
+
+    # Add missing hydrogens if needed
+    modeller = app_mm.Modeller(pdb.topology, pdb.positions)
+    try:
+        modeller.addHydrogens(forcefield)
+    except Exception:
+        pass  # PDB may already have all hydrogens
+    topology = modeller.topology
+    positions = modeller.positions
+
     system = forcefield.createSystem(
-        pdb.topology,
+        topology,
         nonbondedMethod=app_mm.NoCutoff,
         constraints=app_mm.HBonds,
     )
@@ -107,8 +117,15 @@ def run_openmm(self, params: dict, project: str = "_default",
         raise ValueError(f"Unknown integrator: {integrator_type}")
 
     platform = _get_platform()
-    simulation = app_mm.Simulation(pdb.topology, system, integrator, platform)
-    simulation.context.setPositions(pdb.positions)
+    try:
+        simulation = app_mm.Simulation(topology, system, integrator, platform)
+    except Exception:
+        # CUDA/OpenCL may fail at context creation; fall back to CPU
+        platform = openmm.Platform.getPlatformByName("CPU")
+        integrator = openmm.LangevinMiddleIntegrator(
+            temperature * unit.kelvin, friction / unit.picosecond, dt * unit.picoseconds)
+        simulation = app_mm.Simulation(topology, system, integrator, platform)
+    simulation.context.setPositions(positions)
 
     self.update_state(state="PROGRESS", meta={"progress": 0.1, "message": f"Using platform: {platform.getName()}"})
 

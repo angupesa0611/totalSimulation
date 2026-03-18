@@ -1,0 +1,98 @@
+{
+  "pipeline": "qmmm_enzyme",
+  "label": "QM/MM Enzyme Catalysis",
+  "description": "Drug binding: ligand identification \u2192 QM/MM active site \u2192 pathway kinetics",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Ligand preparation"
+    },
+    {
+      "tool": "qmmm",
+      "params": {
+        "pdb_content": "REMARK QM/MM test: alanine dipeptide with capping\nATOM      1 HH31 ACE A   1       2.000   1.000   0.000  1.00  0.00           H\nATOM      2 HH32 ACE A   1       2.360   0.060   0.000  1.00  0.00           H\nATOM      3 HH33 ACE A   1       2.360   1.470   0.890  1.00  0.00           H\nATOM      4  CH3 ACE A   1       2.440   1.760   0.000  1.00  0.00           C\nATOM      5  C   ACE A   1       3.940   1.760   0.000  1.00  0.00           C\nATOM      6  O   ACE A   1       4.520   0.680   0.000  1.00  0.00           O\nATOM      7  N   ALA A   2       4.530   2.940   0.000  1.00  0.00           N\nATOM      8  H   ALA A   2       3.940   3.770   0.000  1.00  0.00           H\nATOM      9  CA  ALA A   2       5.980   3.060   0.000  1.00  0.00           C\nATOM     10  HA  ALA A   2       6.370   2.050   0.000  1.00  0.00           H\nATOM     11  CB  ALA A   2       6.460   3.780   1.260  1.00  0.00           C\nATOM     12 HB1  ALA A   2       7.540   3.780   1.260  1.00  0.00           H\nATOM     13 HB2  ALA A   2       6.090   4.800   1.260  1.00  0.00           H\nATOM     14 HB3  ALA A   2       6.090   3.280   2.150  1.00  0.00           H\nATOM     15  C   ALA A   2       6.540   3.780  -1.220  1.00  0.00           C\nATOM     16  O   ALA A   2       5.860   4.530  -1.890  1.00  0.00           O\nATOM     17  N   NME A   3       7.790   3.490  -1.570  1.00  0.00           N\nATOM     18  H   NME A   3       8.300   2.880  -0.930  1.00  0.00           H\nATOM     19  CH3 NME A   3       8.440   3.960  -2.790  1.00  0.00           C\nATOM     20 HH31 NME A   3       7.710   4.050  -3.590  1.00  0.00           H\nATOM     21 HH32 NME A   3       9.200   3.230  -3.050  1.00  0.00           H\nATOM     22 HH33 NME A   3       8.920   4.920  -2.630  1.00  0.00           H\nTER\nEND\n",
+        "qm_region": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "qm_method": "hf",
+        "qm_basis": "sto-3g",
+        "forcefield": "AMBER",
+        "task_type": "optimization",
+        "steps": 30,
+        "charge": 0,
+        "spin": 0
+      },
+      "label": "QM/MM simulation"
+    },
+    {
+      "tool": "basico",
+      "params": {
+        "simulation_type": "ode_timecourse",
+        "model_source": "reactions",
+        "reactions": [
+          {
+            "name": "binding",
+            "scheme": "S + E -> ES"
+          },
+          {
+            "name": "unbinding",
+            "scheme": "ES -> S + E"
+          },
+          {
+            "name": "catalysis",
+            "scheme": "ES -> P + E"
+          }
+        ],
+        "species": [
+          {
+            "name": "S",
+            "initial_concentration": 10.0
+          },
+          {
+            "name": "E",
+            "initial_concentration": 1.0
+          },
+          {
+            "name": "ES",
+            "initial_concentration": 0.0
+          },
+          {
+            "name": "P",
+            "initial_concentration": 0.0
+          }
+        ],
+        "parameters": [
+          {
+            "name": "(binding).k1",
+            "value": 0.1
+          },
+          {
+            "name": "(unbinding).k1",
+            "value": 0.01
+          },
+          {
+            "name": "(catalysis).k1",
+            "value": 0.05
+          }
+        ],
+        "duration": 200.0,
+        "n_steps": 200,
+        "method": "deterministic"
+      },
+      "label": "Kinetic modeling"
+    }
+  ]
+}

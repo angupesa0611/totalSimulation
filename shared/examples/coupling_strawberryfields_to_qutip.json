@@ -1,0 +1,37 @@
+{
+  "coupling": "strawberryfields_to_qutip",
+  "label": "Photonic state \u2192 cavity QED",
+  "from": "strawberryfields",
+  "to": "qutip",
+  "steps": [
+    {
+      "tool": "strawberryfields",
+      "params": {
+        "simulation_type": "hong_ou_mandel",
+        "hong_ou_mandel": {
+          "cutoff_dim": 10,
+          "n_shots": 1000,
+          "beam_splitter_angle": 0.7854
+        }
+      },
+      "label": "Step 1: strawberryfields"
+    },
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "param_map": {
+        "initial_state_data": "$prev.result"
+      },
+      "label": "Step 2: qutip"
+    }
+  ]
+}

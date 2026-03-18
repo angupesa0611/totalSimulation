@@ -1,13 +1,12 @@
-FROM su2code/su2-build:latest
-
-USER root
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-pip python3-numpy \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN pip3 install --no-cache-dir --break-system-packages celery[redis]==5.4.0 redis==5.2.1
-
+FROM condaforge/miniforge3:latest
 WORKDIR /app
+
+# SU2 conda-forge only has py3.10 builds — pin Python first
+RUN conda install -y python=3.10 && conda clean -afy
+RUN conda install -y -c conda-forge su2 numpy && conda clean -afy
+
+RUN pip install --no-cache-dir celery[redis]==5.4.0 redis==5.2.1
+
 COPY . .
 
 CMD ["celery", "-A", "worker", "worker", "--queues=cfd-su2", "--concurrency=1", "--loglevel=info"]

@@ -1,0 +1,36 @@
+{
+  "coupling": "openbabel_to_lammps",
+  "label": "Open Babel \u2192 LAMMPS data",
+  "from": "openbabel",
+  "to": "lammps",
+  "steps": [
+    {
+      "tool": "openbabel",
+      "params": {
+        "simulation_type": "convert",
+        "source_format": "smi",
+        "source_data": "CC(=O)Oc1ccccc1C(=O)O",
+        "target_format": "sdf"
+      },
+      "label": "Step 1: openbabel"
+    },
+    {
+      "tool": "lammps",
+      "params": {
+        "simulation_type": "lj_fluid",
+        "lj_fluid": {
+          "n_atoms": 500,
+          "temperature": 1.0,
+          "density": 0.8,
+          "timestep": 0.005,
+          "n_steps": 10000,
+          "dump_interval": 100
+        }
+      },
+      "param_map": {
+        "molecule_data": "$prev.result.output_data"
+      },
+      "label": "Step 2: lammps"
+    }
+  ]
+}

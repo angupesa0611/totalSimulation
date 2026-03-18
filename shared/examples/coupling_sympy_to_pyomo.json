@@ -1,0 +1,61 @@
+{
+  "coupling": "sympy_to_pyomo",
+  "label": "Symbolic expressions \u2192 Pyomo optimization",
+  "from": "sympy",
+  "to": "pyomo",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "pyomo",
+      "params": {
+        "simulation_type": "linear_program",
+        "variables": [
+          {
+            "name": "x1",
+            "lower": 0,
+            "upper": 1,
+            "domain": "binary"
+          },
+          {
+            "name": "x2",
+            "lower": 0,
+            "upper": 1,
+            "domain": "binary"
+          }
+        ],
+        "objective": {
+          "expression": "10*x1 + 20*x2",
+          "sense": "maximize"
+        },
+        "constraints": [
+          {
+            "name": "weight",
+            "expression": "5*x1 + 8*x2 <= 12"
+          }
+        ],
+        "solver": "glpk"
+      },
+      "param_map": {
+        "objective": {
+          "expression": "$prev.result.expression"
+        }
+      },
+      "label": "Step 2: pyomo"
+    }
+  ]
+}

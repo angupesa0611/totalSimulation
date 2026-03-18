@@ -1,0 +1,43 @@
+{
+  "pipeline": "photonic_design",
+  "label": "Photonic Device Design",
+  "description": "End-to-end photonic design: ray optics \u2192 wave propagation \u2192 FDTD \u2192 publication plot",
+  "steps": [
+    {
+      "tool": "rayoptics",
+      "params": {
+        "simulation_type": "singlet_lens",
+        "singlet_lens": {
+          "efl": 100.0,
+          "f_number": 5.0
+        }
+      },
+      "label": "Lens layout"
+    },
+    {
+      "tool": "lightpipes",
+      "params": {
+        "simulation_type": "lens_focus",
+        "lens_focus": {
+          "focal_length": 0.1,
+          "beam_radius": 0.002
+        }
+      },
+      "label": "Wave propagation"
+    },
+    {
+      "tool": "meep",
+      "params": {
+        "simulation_type": "waveguide_bend"
+      },
+      "label": "FDTD verification"
+    },
+    {
+      "tool": "matplotlib",
+      "params": {
+        "plot_type": "heatmap"
+      },
+      "label": "Publication plot"
+    }
+  ]
+}

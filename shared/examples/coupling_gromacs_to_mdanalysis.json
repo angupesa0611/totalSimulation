@@ -1,0 +1,28 @@
+{
+  "coupling": "gromacs_to_mdanalysis",
+  "label": "Analyze GROMACS trajectory with MDAnalysis",
+  "from": "gromacs",
+  "to": "mdanalysis",
+  "steps": [
+    {
+      "tool": "gromacs",
+      "params": {
+        "gro_content": "Argon LJ fluid\n    8\n    1AR      AR    1   0.500   0.500   0.500\n    2AR      AR    2   1.000   0.500   0.500\n    3AR      AR    3   0.500   1.000   0.500\n    4AR      AR    4   1.000   1.000   0.500\n    5AR      AR    5   0.500   0.500   1.000\n    6AR      AR    6   1.000   0.500   1.000\n    7AR      AR    7   0.500   1.000   1.000\n    8AR      AR    8   1.000   1.000   1.000\n   2.00000   2.00000   2.00000",
+        "top_content": "; Argon LJ fluid topology\n[ defaults ]\n1 1 no 1.0 1.0\n\n[ atomtypes ]\nAR  18  39.948  0.0  A  0.3405  0.9960\n\n[ moleculetype ]\nArgon 1\n\n[ atoms ]\n1 AR 1 AR AR 1 0.0 39.948\n2 AR 1 AR AR 2 0.0 39.948\n3 AR 1 AR AR 3 0.0 39.948\n4 AR 1 AR AR 4 0.0 39.948\n5 AR 1 AR AR 5 0.0 39.948\n6 AR 1 AR AR 6 0.0 39.948\n7 AR 1 AR AR 7 0.0 39.948\n8 AR 1 AR AR 8 0.0 39.948\n\n[ system ]\nArgon LJ fluid\n\n[ molecules ]\nArgon 1",
+        "mdp_content": "; Argon LJ fluid MD\nintegrator = md\nnsteps = 50\ndt = 0.002\nnstxout = 10\nnstvout = 0\nnstfout = 0\nnstlog = 10\nnstenergy = 10\nnstxout-compressed = 10\ncompressed-x-grps = System\ncutoff-scheme = Verlet\nnstlist = 10\nrlist = 0.9\nrcoulomb = 0.9\nrvdw = 0.9\ncoulombtype = Cut-off\nvdwtype = Cut-off\npbc = xyz\ntcoupl = v-rescale\ntc-grps = System\ntau-t = 0.1\nref-t = 94.4\ngen-vel = yes\ngen-temp = 94.4\n"
+      },
+      "label": "Step 1: gromacs"
+    },
+    {
+      "tool": "mdanalysis",
+      "params": {
+        "analysis_type": "rmsd",
+        "source_job_id": ""
+      },
+      "param_map": {
+        "source_job_id": "$prev.job_id"
+      },
+      "label": "Step 2: mdanalysis"
+    }
+  ]
+}

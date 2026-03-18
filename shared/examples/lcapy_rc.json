@@ -3,7 +3,7 @@
   "label": "RC Low-Pass Filter",
   "params": {
     "simulation_type": "transfer_function",
-    "netlist": "V1 1 0; R1 1 2 1k; C1 2 0 1u",
+    "netlist": "V1 1 0; R1 1 2 1000; C1 2 0 1e-6",
     "input_node": "1",
     "output_node": "2"
   }

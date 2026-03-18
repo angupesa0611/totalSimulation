@@ -1,0 +1,32 @@
+{
+  "coupling": "openbabel_to_psi4",
+  "label": "Open Babel geometry \u2192 Psi4",
+  "from": "openbabel",
+  "to": "psi4",
+  "steps": [
+    {
+      "tool": "openbabel",
+      "params": {
+        "simulation_type": "convert",
+        "source_format": "smi",
+        "source_data": "CC(=O)Oc1ccccc1C(=O)O",
+        "target_format": "sdf"
+      },
+      "label": "Step 1: openbabel"
+    },
+    {
+      "tool": "psi4",
+      "params": {
+        "geometry": "H 0 0 0\nH 0 0 0.74",
+        "basis": "sto-3g",
+        "method": "hf",
+        "charge": 0,
+        "multiplicity": 1
+      },
+      "param_map": {
+        "geometry": "$prev.result.output_xyz"
+      },
+      "label": "Step 2: psi4"
+    }
+  ]
+}

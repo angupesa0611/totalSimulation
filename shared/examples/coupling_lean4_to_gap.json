@@ -1,0 +1,30 @@
+{
+  "coupling": "lean4_to_gap",
+  "label": "Verified computational algebra",
+  "from": "lean4",
+  "to": "gap",
+  "steps": [
+    {
+      "tool": "lean4",
+      "params": {
+        "simulation_type": "verify_statement",
+        "lean_code": "theorem add_comm (n m : Nat) : n + m = m + n := Nat.add_comm n m",
+        "timeout_s": 60
+      },
+      "label": "Step 1: lean4"
+    },
+    {
+      "tool": "gap",
+      "params": {
+        "simulation_type": "group_properties",
+        "group_type": "symmetric",
+        "n": 5,
+        "compute": "conjugacy_classes"
+      },
+      "param_map": {
+        "proof_data": "$prev.result"
+      },
+      "label": "Step 2: gap"
+    }
+  ]
+}

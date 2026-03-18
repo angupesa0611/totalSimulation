@@ -1,0 +1,38 @@
+{
+  "coupling": "qutip_to_sagemath",
+  "label": "Lie algebra \u2192 quantum operators",
+  "from": "qutip",
+  "to": "sagemath",
+  "steps": [
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "label": "Step 1: qutip"
+    },
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "param_map": {
+        "operator_data": "$prev.result"
+      },
+      "label": "Step 2: sagemath"
+    }
+  ]
+}

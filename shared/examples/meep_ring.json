@@ -1,0 +1,16 @@
+{
+  "tool": "meep",
+  "label": "Ring Resonator with Bus Waveguide",
+  "params": {
+    "simulation_type": "ring_resonator",
+    "ring_resonator": {
+      "resolution": 30,
+      "n_core": 3.4,
+      "ring_radius": 5.0,
+      "waveguide_width": 1.0,
+      "gap": 0.1,
+      "wavelength": 1.55,
+      "run_time": 400
+    }
+  }
+}

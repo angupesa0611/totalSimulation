@@ -1,0 +1,36 @@
+{
+  "coupling": "rdkit_to_mdanalysis",
+  "label": "RDKit conformer ensemble \u2192 MDAnalysis",
+  "from": "rdkit",
+  "to": "mdanalysis",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "mdanalysis",
+      "params": {
+        "analysis_type": "rmsd",
+        "source_job_id": "",
+        "trajectory_data": {
+          "n_atoms": 3,
+          "n_frames": 3,
+          "frames": [
+            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.5, 1.0, 0.0]],
+            [[0.1, 0.1, 0.0], [1.1, 0.1, 0.0], [1.6, 1.1, 0.0]],
+            [[0.2, 0.2, 0.1], [1.2, 0.2, 0.1], [1.7, 1.2, 0.1]]
+          ]
+        }
+      },
+      "param_map": {
+        "structure_data": "$prev.result"
+      },
+      "label": "Step 2: mdanalysis"
+    }
+  ]
+}

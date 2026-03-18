@@ -1,0 +1,44 @@
+{
+  "coupling": "rdkit_to_qiskit",
+  "label": "Molecular data \u2192 Qiskit Nature VQE",
+  "from": "rdkit",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "smiles": "$prev.result.smiles"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}

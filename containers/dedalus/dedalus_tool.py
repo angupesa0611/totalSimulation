@@ -55,7 +55,7 @@ def _run_rayleigh_benard(params):
     nx, nz = params.get("resolution", [128, 64])
     aspect = params.get("aspect_ratio", 2)
     end_time = params.get("end_time", 1.0)
-    dt = params.get("dt", 1e-3)
+    timestep = params.get("dt", 1e-3)
 
     Lx = aspect
     Lz = 1
@@ -76,19 +76,27 @@ def _run_rayleigh_benard(params):
     tau_u1 = dist.VectorField(coords, name='tau_u1', bases=xbasis)
     tau_u2 = dist.VectorField(coords, name='tau_u2', bases=xbasis)
 
-    # Substitutions
-    kappa = (Ra * Pr)**(-1/2)
-    nu_val = (Ra / Pr)**(-1/2)
+    # Substitutions — use Dedalus Fields for equation parameters
+    kappa_val = (Ra * Pr)**(-1/2)
+    nu_val_val = (Ra / Pr)**(-1/2)
+    kappa = dist.Field(name='kappa')
+    kappa['g'] = kappa_val
+    nu_visc = dist.Field(name='nu_visc')
+    nu_visc['g'] = nu_val_val
     x, z = dist.local_grids(xbasis, zbasis)
     ex, ez = coords.unit_vector_fields(dist)
     lift_basis = zbasis.derivative_basis(1)
     lift = lambda A: d3.Lift(A, lift_basis, -1)
 
+    # First-order reductions (proper tau formulation for Dedalus 3)
+    grad_b = d3.grad(b) + ez * lift(tau_b1)
+    grad_u = d3.grad(u) + ez * lift(tau_u1)
+
     # Problem
     problem = d3.IVP([p, b, u, tau_p, tau_b1, tau_b2, tau_u1, tau_u2], namespace=locals())
-    problem.add_equation("trace(grad(u)) + tau_p = 0")
-    problem.add_equation("dt(b) - kappa*div(grad(b)) + lift(tau_b1) + lift(tau_b2) = - u@grad(b)")
-    problem.add_equation("dt(u) - nu_val*div(grad(u)) + grad(p) - b*ez + lift(tau_u1) + lift(tau_u2) = - u@grad(u)")
+    problem.add_equation("trace(grad_u) + tau_p = 0")
+    problem.add_equation("dt(b) - kappa*div(grad_b) + lift(tau_b2) = - u@grad(b)")
+    problem.add_equation("dt(u) - nu_visc*div(grad_u) + grad(p) - b*ez + lift(tau_u2) = - u@grad(u)")
     problem.add_equation("b(z=0) = 1")
     problem.add_equation("b(z=Lz) = 0")
     problem.add_equation("u(z=0) = 0")
@@ -105,11 +113,11 @@ def _run_rayleigh_benard(params):
     snapshots = []
     energy_times = []
     energy_values = []
-    snapshot_interval = max(1, int(end_time / dt / 10))
+    snapshot_interval = max(1, int(end_time / timestep / 10))
     step = 0
 
     while solver.proceed:
-        solver.step(dt)
+        solver.step(timestep)
         step += 1
 
         # Track energy
@@ -179,15 +187,15 @@ def _run_diffusion_1d(params):
     elif init_cond == "step":
         u['g'] = np.where(x < domain_size / 2, 1.0, 0.0)
 
-    dt = params.get("dt", 0.001)
+    timestep = params.get("dt", 0.001)
     snapshots = []
     energy_times = []
     energy_values = []
     step = 0
-    snapshot_interval = max(1, int(end_time / dt / 10))
+    snapshot_interval = max(1, int(end_time / timestep / 10))
 
     while solver.proceed:
-        solver.step(dt)
+        solver.step(timestep)
         step += 1
 
         if step % 10 == 0:
@@ -242,15 +250,15 @@ def _run_wave_1d(params):
     u['g'] = np.exp(-((x - domain_size / 2)**2) / (0.05 * domain_size)**2)
     v['g'] = 0
 
-    dt = params.get("dt", 0.001)
+    timestep = params.get("dt", 0.001)
     snapshots = []
     energy_times = []
     energy_values = []
     step = 0
-    snapshot_interval = max(1, int(end_time / dt / 10))
+    snapshot_interval = max(1, int(end_time / timestep / 10))
 
     while solver.proceed:
-        solver.step(dt)
+        solver.step(timestep)
         step += 1
 
         if step % 10 == 0:
@@ -296,7 +304,6 @@ def run_dedalus(self, params, project="_default", label=None):
             raise ValueError(f"Unknown simulation_type: {sim_type}")
 
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

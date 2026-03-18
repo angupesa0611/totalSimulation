@@ -1,0 +1,47 @@
+{
+  "coupling": "gap_to_pennylane",
+  "label": "Equivariant quantum circuits via symmetry",
+  "from": "gap",
+  "to": "pennylane",
+  "steps": [
+    {
+      "tool": "gap",
+      "params": {
+        "simulation_type": "group_properties",
+        "group_type": "symmetric",
+        "n": 5,
+        "compute": "conjugacy_classes"
+      },
+      "label": "Step 1: gap"
+    },
+    {
+      "tool": "pennylane",
+      "params": {
+        "simulation_type": "vqe",
+        "hamiltonian": [
+          {
+            "coeff": -0.5,
+            "pauli_string": "II"
+          },
+          {
+            "coeff": 0.5,
+            "pauli_string": "ZZ"
+          },
+          {
+            "coeff": 0.25,
+            "pauli_string": "XX"
+          }
+        ],
+        "n_qubits": 2,
+        "ansatz": "basic",
+        "optimizer": "gradient_descent",
+        "max_iterations": 50,
+        "step_size": 0.4
+      },
+      "param_map": {
+        "group_data": "$prev.result"
+      },
+      "label": "Step 2: pennylane"
+    }
+  ]
+}

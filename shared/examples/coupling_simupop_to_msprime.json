@@ -1,0 +1,36 @@
+{
+  "coupling": "simupop_to_msprime",
+  "label": "simuPOP pop size \u2192 msprime demographic model",
+  "from": "simupop",
+  "to": "msprime",
+  "steps": [
+    {
+      "tool": "simupop",
+      "params": {
+        "simulation_type": "random_mating",
+        "population_size": 1000,
+        "n_generations": 200,
+        "n_loci": 1,
+        "initial_freq": 0.5
+      },
+      "label": "Step 1: simupop"
+    },
+    {
+      "tool": "msprime",
+      "params": {
+        "simulation_type": "coalescent",
+        "n_samples": 50,
+        "sequence_length": 100000,
+        "recombination_rate": 1e-08,
+        "mutation_rate": 1e-08,
+        "population_size": 10000,
+        "random_seed": 42,
+        "n_windows": 20
+      },
+      "param_map": {
+        "population_size": "$prev.result.population_size"
+      },
+      "label": "Step 2: msprime"
+    }
+  ]
+}

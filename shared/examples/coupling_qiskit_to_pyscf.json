@@ -1,0 +1,47 @@
+{
+  "coupling": "qiskit_to_pyscf",
+  "label": "Qiskit Nature \u2192 molecular VQE Hamiltonian",
+  "from": "qiskit",
+  "to": "pyscf",
+  "steps": [
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "label": "Step 1: qiskit"
+    },
+    {
+      "tool": "pyscf",
+      "params": {
+        "atom_coords": "H 0 0 0; H 0 0 0.74",
+        "basis": "sto-3g",
+        "method": "hf",
+        "charge": 0,
+        "spin": 0
+      },
+      "param_map": {
+        "atom_coords": "$prev.result.molecular_geometry"
+      },
+      "label": "Step 2: pyscf"
+    }
+  ]
+}

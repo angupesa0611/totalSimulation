@@ -1,0 +1,36 @@
+{
+  "coupling": "gmsh_to_su2",
+  "label": "Gmsh mesh \u2192 SU2 mesh",
+  "from": "gmsh",
+  "to": "su2",
+  "steps": [
+    {
+      "tool": "gmsh",
+      "params": {
+        "simulation_type": "box_mesh",
+        "lx": 1.0,
+        "ly": 0.5,
+        "lz": 0.2,
+        "mesh_size": 0.05,
+        "dimension": 3,
+        "element_order": 1,
+        "output_format": "msh"
+      },
+      "label": "Step 1: gmsh"
+    },
+    {
+      "tool": "su2",
+      "params": {
+        "simulation_type": "inviscid_airfoil",
+        "mach_number": 0.8,
+        "angle_of_attack": 1.25,
+        "mesh": "naca_0012",
+        "n_iterations": 250
+      },
+      "param_map": {
+        "mesh_file": "$prev.result.mesh_file_path"
+      },
+      "label": "Step 2: su2"
+    }
+  ]
+}

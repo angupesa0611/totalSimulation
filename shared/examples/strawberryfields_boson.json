@@ -1,0 +1,13 @@
+{
+  "tool": "strawberryfields",
+  "label": "3-Mode Boson Sampling",
+  "params": {
+    "simulation_type": "boson_sampling",
+    "boson_sampling": {
+      "n_modes": 3,
+      "n_photons": 2,
+      "n_shots": 100,
+      "cutoff_dim": 5
+    }
+  }
+}

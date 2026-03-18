@@ -1,0 +1,43 @@
+{
+  "coupling": "lightpipes_to_meep",
+  "label": "Wave optics \u2192 FDTD source",
+  "from": "lightpipes",
+  "to": "meep",
+  "steps": [
+    {
+      "tool": "lightpipes",
+      "params": {
+        "simulation_type": "double_slit",
+        "double_slit": {
+          "wavelength": 5.32e-07,
+          "grid_size": 0.01,
+          "grid_points": 512,
+          "slit_width": 0.0001,
+          "slit_separation": 0.0002,
+          "propagation_distance": 1.0
+        }
+      },
+      "label": "Step 1: lightpipes"
+    },
+    {
+      "tool": "meep",
+      "params": {
+        "simulation_type": "waveguide_bend",
+        "waveguide_bend": {
+          "resolution": 30,
+          "sx": 16.0,
+          "sy": 16.0,
+          "waveguide_width": 1.0,
+          "wavelength": 1.55,
+          "n_core": 3.4,
+          "pml_thickness": 1.0,
+          "run_time": 200
+        }
+      },
+      "param_map": {
+        "source_field": "$prev.result.intensity"
+      },
+      "label": "Step 2: meep"
+    }
+  ]
+}

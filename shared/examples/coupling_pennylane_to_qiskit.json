@@ -1,0 +1,62 @@
+{
+  "coupling": "pennylane_to_qiskit",
+  "label": "PennyLane \u2192 Qiskit backend execution",
+  "from": "pennylane",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "pennylane",
+      "params": {
+        "simulation_type": "vqe",
+        "hamiltonian": [
+          {
+            "coeff": -0.5,
+            "pauli_string": "II"
+          },
+          {
+            "coeff": 0.5,
+            "pauli_string": "ZZ"
+          },
+          {
+            "coeff": 0.25,
+            "pauli_string": "XX"
+          }
+        ],
+        "n_qubits": 2,
+        "ansatz": "basic",
+        "optimizer": "gradient_descent",
+        "max_iterations": 50,
+        "step_size": 0.4
+      },
+      "label": "Step 1: pennylane"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "gates": "$prev.result.gate_sequence"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}

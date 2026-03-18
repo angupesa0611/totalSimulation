@@ -1,0 +1,15 @@
+{
+  "tool": "lightpipes",
+  "label": "Young's Double Slit",
+  "params": {
+    "simulation_type": "double_slit",
+    "double_slit": {
+      "wavelength": 532e-9,
+      "grid_size": 10e-3,
+      "grid_points": 512,
+      "slit_width": 0.1e-3,
+      "slit_separation": 0.2e-3,
+      "propagation_distance": 1.0
+    }
+  }
+}

@@ -94,12 +94,15 @@ def run_namd(self, params: dict, project: str = "_default",
         )
 
         if result.returncode != 0:
-            # Try namd2
-            namd_cmd = "namd2"
-            result = subprocess.run(
-                [namd_cmd, "+p1", conf_path],
-                capture_output=True, text=True, cwd=tmpdir,
-            )
+            # Try namd2 as fallback
+            try:
+                namd_cmd = "namd2"
+                result = subprocess.run(
+                    [namd_cmd, "+p1", conf_path],
+                    capture_output=True, text=True, cwd=tmpdir,
+                )
+            except FileNotFoundError:
+                pass  # namd2 not available, report namd3 error below
             if result.returncode != 0:
                 raise RuntimeError(f"NAMD failed: {result.stderr}")
 

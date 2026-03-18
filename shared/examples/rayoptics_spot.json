@@ -1,0 +1,17 @@
+{
+  "tool": "rayoptics",
+  "label": "Spot Diagram — f/4 Singlet",
+  "params": {
+    "simulation_type": "spot_diagram",
+    "spot_diagram": {
+      "efl": 80.0,
+      "f_number": 4.0,
+      "n_rings": 8,
+      "n_arms": 8,
+      "r1": 72.0,
+      "r2": -72.0,
+      "thickness": 5.0,
+      "glass": "N-BK7"
+    }
+  }
+}

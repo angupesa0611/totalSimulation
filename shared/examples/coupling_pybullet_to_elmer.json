@@ -1,0 +1,78 @@
+{
+  "coupling": "pybullet_to_elmer",
+  "label": "PyBullet contact forces \u2192 Elmer FEM",
+  "from": "pybullet",
+  "to": "elmer",
+  "steps": [
+    {
+      "tool": "pybullet",
+      "params": {
+        "simulation_type": "collision",
+        "gravity": -9.81,
+        "timestep": 0.00417,
+        "duration": 3.0,
+        "restitution": 0.95,
+        "friction": 0.3,
+        "objects": [
+          {
+            "name": "sphere_left",
+            "shape": "sphere",
+            "mass": 1.0,
+            "position": [
+              -2,
+              0,
+              1
+            ],
+            "velocity": [
+              3,
+              0,
+              0
+            ],
+            "radius": 0.3
+          },
+          {
+            "name": "sphere_right",
+            "shape": "sphere",
+            "mass": 1.0,
+            "position": [
+              2,
+              0,
+              1
+            ],
+            "velocity": [
+              -3,
+              0,
+              0
+            ],
+            "radius": 0.3
+          }
+        ]
+      },
+      "label": "Step 1: pybullet"
+    },
+    {
+      "tool": "elmer",
+      "params": {
+        "problem_type": "structural",
+        "length_x": 1.0,
+        "length_y": 0.1,
+        "mesh_divisions_x": 20,
+        "mesh_divisions_y": 10,
+        "material": {
+          "youngs_modulus": 200000000000.0,
+          "poisson_ratio": 0.3,
+          "density": 7800
+        },
+        "loads": [
+          {
+            "type": "gravity"
+          }
+        ]
+      },
+      "param_map": {
+        "contact_forces": "$prev.result.collisions"
+      },
+      "label": "Step 2: elmer"
+    }
+  ]
+}

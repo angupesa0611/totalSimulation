@@ -1,0 +1,53 @@
+{
+  "pipeline": "multiscale_tissue",
+  "label": "Multiscale Tissue Modeling",
+  "description": "FEniCS tissue stress \u2192 COPASI biochemical response",
+  "steps": [
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {"conductivity": 1.0},
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {"type": "dirichlet", "boundary": "left", "value": 100},
+          {"type": "dirichlet", "boundary": "right", "value": 0},
+          {"type": "dirichlet", "boundary": "top", "value": 0},
+          {"type": "dirichlet", "boundary": "bottom", "value": 0}
+        ]
+      },
+      "label": "Tissue mechanics"
+    },
+    {
+      "tool": "basico",
+      "params": {
+        "simulation_type": "ode_timecourse",
+        "model_source": "reactions",
+        "reactions": [
+          {"name": "binding", "scheme": "S + E -> ES"},
+          {"name": "unbinding", "scheme": "ES -> S + E"},
+          {"name": "catalysis", "scheme": "ES -> P + E"}
+        ],
+        "species": [
+          {"name": "S", "initial_concentration": 10.0},
+          {"name": "E", "initial_concentration": 1.0},
+          {"name": "ES", "initial_concentration": 0.0},
+          {"name": "P", "initial_concentration": 0.0}
+        ],
+        "parameters": [
+          {"name": "(binding).k1", "value": 0.1},
+          {"name": "(unbinding).k1", "value": 0.01},
+          {"name": "(catalysis).k1", "value": 0.05}
+        ],
+        "duration": 200.0,
+        "n_steps": 200,
+        "method": "deterministic"
+      },
+      "label": "Biochemical response"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "coupling": "rdkit_to_lammps",
+  "label": "RDKit conformer \u2192 LAMMPS system",
+  "from": "rdkit",
+  "to": "lammps",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "lammps",
+      "params": {
+        "simulation_type": "lj_fluid",
+        "lj_fluid": {
+          "n_atoms": 500,
+          "temperature": 1.0,
+          "density": 0.8,
+          "timestep": 0.005,
+          "n_steps": 10000,
+          "dump_interval": 100
+        }
+      },
+      "param_map": {
+        "coordinates": "$prev.result.conformer_coordinates"
+      },
+      "label": "Step 2: lammps"
+    }
+  ]
+}

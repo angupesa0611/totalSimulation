@@ -1,0 +1,35 @@
+{
+  "coupling": "qutip_to_psi4",
+  "label": "QuTiP quantum state \u2192 Psi4 electronic structure",
+  "from": "qutip",
+  "to": "psi4",
+  "steps": [
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "label": "Step 1: qutip"
+    },
+    {
+      "tool": "psi4",
+      "params": {
+        "geometry": "O  0.000000  0.000000  0.117489\nH -0.756950  0.000000 -0.469957\nH  0.756950  0.000000 -0.469957\n--\nO  3.000000  0.000000  0.117489\nH  2.243050  0.000000 -0.469957\nH  3.756950  0.000000 -0.469957",
+        "method": "sapt0",
+        "basis": "jun-cc-pvdz",
+        "charge": 0,
+        "multiplicity": 1,
+        "memory": "2 GB"
+      },
+      "param_map": {},
+      "label": "Step 2: psi4"
+    }
+  ]
+}

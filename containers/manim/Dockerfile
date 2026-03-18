@@ -2,7 +2,7 @@ FROM manimcommunity/manim:latest
 
 USER root
 RUN pip install --no-cache-dir celery[redis]==5.4.0 redis==5.2.1
-USER manimuser
+RUN mkdir -p /data/results
 
 WORKDIR /app
 COPY . .

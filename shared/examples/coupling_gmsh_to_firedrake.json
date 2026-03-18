@@ -1,0 +1,44 @@
+{
+  "coupling": "gmsh_to_firedrake",
+  "label": "Gmsh mesh \u2192 Firedrake mesh",
+  "from": "gmsh",
+  "to": "firedrake",
+  "steps": [
+    {
+      "tool": "gmsh",
+      "params": {
+        "simulation_type": "box_mesh",
+        "lx": 1.0,
+        "ly": 0.5,
+        "lz": 0.2,
+        "mesh_size": 0.05,
+        "dimension": 3,
+        "element_order": 1,
+        "output_format": "msh"
+      },
+      "label": "Step 1: gmsh"
+    },
+    {
+      "tool": "firedrake",
+      "params": {
+        "problem_type": "poisson",
+        "mesh_resolution": 32,
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "degree": 1,
+        "source_term": 1.0,
+        "boundary_conditions": [
+          {
+            "type": "dirichlet",
+            "boundary": "all",
+            "value": 0.0
+          }
+        ]
+      },
+      "param_map": {
+        "mesh_file": "$prev.result.mesh_file_path"
+      },
+      "label": "Step 2: firedrake"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "coupling": "fenics_to_tellurium",
+  "label": "FEniCS continuum \u2192 Tellurium boundary conditions",
+  "from": "fenics",
+  "to": "tellurium",
+  "steps": [
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {
+          "conductivity": 1.0
+        },
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {
+            "type": "dirichlet",
+            "boundary": "left",
+            "value": 100
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "right",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "top",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "bottom",
+            "value": 0
+          }
+        ]
+      },
+      "label": "Step 1: fenics"
+    },
+    {
+      "tool": "tellurium",
+      "params": {
+        "simulation_type": "antimony_timecourse",
+        "antimony_model": "model pathway\n  S1 -> S2; k1*S1;\n  S2 -> S3; k2*S2;\n  S3 -> ; k3*S3;\n  S1 = 10; S2 = 0; S3 = 0;\n  k1 = 0.1; k2 = 0.05; k3 = 0.02;\nend",
+        "start_time": 0.0,
+        "end_time": 200.0,
+        "n_points": 200
+      },
+      "param_map": {
+        "boundary_data": "$prev.result.field_data"
+      },
+      "label": "Step 2: tellurium"
+    }
+  ]
+}

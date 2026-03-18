@@ -1,0 +1,94 @@
+{
+  "coupling": "pybullet_to_fenics",
+  "label": "PyBullet contact forces \u2192 FEniCS stress",
+  "from": "pybullet",
+  "to": "fenics",
+  "steps": [
+    {
+      "tool": "pybullet",
+      "params": {
+        "simulation_type": "collision",
+        "gravity": -9.81,
+        "timestep": 0.00417,
+        "duration": 3.0,
+        "restitution": 0.95,
+        "friction": 0.3,
+        "objects": [
+          {
+            "name": "sphere_left",
+            "shape": "sphere",
+            "mass": 1.0,
+            "position": [
+              -2,
+              0,
+              1
+            ],
+            "velocity": [
+              3,
+              0,
+              0
+            ],
+            "radius": 0.3
+          },
+          {
+            "name": "sphere_right",
+            "shape": "sphere",
+            "mass": 1.0,
+            "position": [
+              2,
+              0,
+              1
+            ],
+            "velocity": [
+              -3,
+              0,
+              0
+            ],
+            "radius": 0.3
+          }
+        ]
+      },
+      "label": "Step 1: pybullet"
+    },
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {
+          "conductivity": 1.0
+        },
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {
+            "type": "dirichlet",
+            "boundary": "left",
+            "value": 100
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "right",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "top",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "bottom",
+            "value": 0
+          }
+        ]
+      },
+      "param_map": {
+        "source_forces": "$prev.result.collisions"
+      },
+      "label": "Step 2: fenics"
+    }
+  ]
+}

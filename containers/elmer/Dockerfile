@@ -4,9 +4,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
-# Install ElmerFEM and Python
+# Install ElmerFEM via PPA and Python
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    elmerfem \
+    software-properties-common gpg gpg-agent \
+    && add-apt-repository -y ppa:elmer-csc-ubuntu/elmer-csc-ppa \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    elmerfem-csc \
     python3 \
     python3-pip \
     python3-numpy \

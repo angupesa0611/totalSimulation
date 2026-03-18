@@ -1,0 +1,34 @@
+{
+  "coupling": "sagemath_to_gap",
+  "label": "SageMath group \u2192 GAP group theory",
+  "from": "sagemath",
+  "to": "gap",
+  "steps": [
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Step 1: sagemath"
+    },
+    {
+      "tool": "gap",
+      "params": {
+        "simulation_type": "group_properties",
+        "group_type": "symmetric",
+        "n": 5,
+        "compute": "conjugacy_classes"
+      },
+      "param_map": {
+        "group_data": "$prev.result.result"
+      },
+      "label": "Step 2: gap"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "coupling": "sagemath_to_elmer",
+  "label": "Differential geometry \u2192 curved-space FEM",
+  "from": "sagemath",
+  "to": "elmer",
+  "steps": [
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Step 1: sagemath"
+    },
+    {
+      "tool": "elmer",
+      "params": {
+        "problem_type": "structural",
+        "length_x": 1.0,
+        "length_y": 0.1,
+        "mesh_divisions_x": 20,
+        "mesh_divisions_y": 10,
+        "material": {
+          "youngs_modulus": 200000000000.0,
+          "poisson_ratio": 0.3,
+          "density": 7800
+        },
+        "loads": [
+          {
+            "type": "gravity"
+          }
+        ]
+      },
+      "param_map": {
+        "geometry_data": "$prev.result.result"
+      },
+      "label": "Step 2: elmer"
+    }
+  ]
+}

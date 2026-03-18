@@ -1,0 +1,17 @@
+{
+  "tool": "meep",
+  "label": "2D Photonic Crystal — Rod Array",
+  "params": {
+    "simulation_type": "photonic_crystal",
+    "photonic_crystal": {
+      "resolution": 32,
+      "n_rod": 3.4,
+      "rod_radius": 0.2,
+      "lattice_constant": 1.0,
+      "nx": 7,
+      "ny": 7,
+      "wavelength": 1.55,
+      "run_time": 200
+    }
+  }
+}

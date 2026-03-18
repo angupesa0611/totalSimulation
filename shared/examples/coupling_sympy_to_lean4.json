@@ -1,0 +1,36 @@
+{
+  "coupling": "sympy_to_lean4",
+  "label": "SymPy \u2192 Lean 4 formal verification",
+  "from": "sympy",
+  "to": "lean4",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "lean4",
+      "params": {
+        "simulation_type": "verify_statement",
+        "lean_code": "theorem add_comm (n m : Nat) : n + m = m + n := Nat.add_comm n m",
+        "timeout_s": 60
+      },
+      "param_map": {
+        "statement": "$prev.result.expression"
+      },
+      "label": "Step 2: lean4"
+    }
+  ]
+}

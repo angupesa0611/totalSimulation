@@ -1,0 +1,35 @@
+{
+  "coupling": "qutip_to_gap",
+  "label": "Group theory \u2192 symmetry quantum states",
+  "from": "qutip",
+  "to": "gap",
+  "steps": [
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "label": "Step 1: qutip"
+    },
+    {
+      "tool": "gap",
+      "params": {
+        "simulation_type": "group_properties",
+        "group_type": "symmetric",
+        "n": 5,
+        "compute": "conjugacy_classes"
+      },
+      "param_map": {
+        "symmetry_data": "$prev.result"
+      },
+      "label": "Step 2: gap"
+    }
+  ]
+}

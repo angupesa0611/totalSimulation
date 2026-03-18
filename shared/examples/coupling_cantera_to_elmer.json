@@ -1,0 +1,45 @@
+{
+  "coupling": "cantera_to_elmer",
+  "label": "Cantera thermal \u2192 Elmer FEM",
+  "from": "cantera",
+  "to": "elmer",
+  "steps": [
+    {
+      "tool": "cantera",
+      "params": {
+        "simulation_type": "ignition_delay",
+        "mechanism": "gri30.yaml",
+        "temperature_K": 1200,
+        "pressure_atm": 1,
+        "composition": "H2:2,O2:1,N2:3.76",
+        "end_time_s": 0.001,
+        "n_points": 200
+      },
+      "label": "Step 1: cantera"
+    },
+    {
+      "tool": "elmer",
+      "params": {
+        "problem_type": "structural",
+        "length_x": 1.0,
+        "length_y": 0.1,
+        "mesh_divisions_x": 20,
+        "mesh_divisions_y": 10,
+        "material": {
+          "youngs_modulus": 200000000000.0,
+          "poisson_ratio": 0.3,
+          "density": 7800
+        },
+        "loads": [
+          {
+            "type": "gravity"
+          }
+        ]
+      },
+      "param_map": {
+        "temperature_profile": "$prev.result.temperature"
+      },
+      "label": "Step 2: elmer"
+    }
+  ]
+}

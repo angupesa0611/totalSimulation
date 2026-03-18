@@ -1,0 +1,36 @@
+{
+  "coupling": "lean4_to_sympy",
+  "label": "Verified symbolic computation",
+  "from": "lean4",
+  "to": "sympy",
+  "steps": [
+    {
+      "tool": "lean4",
+      "params": {
+        "simulation_type": "verify_statement",
+        "lean_code": "theorem add_comm (n m : Nat) : n + m = m + n := Nat.add_comm n m",
+        "timeout_s": 60
+      },
+      "label": "Step 1: lean4"
+    },
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "param_map": {
+        "expression": "$prev.result.proof_term"
+      },
+      "label": "Step 2: sympy"
+    }
+  ]
+}

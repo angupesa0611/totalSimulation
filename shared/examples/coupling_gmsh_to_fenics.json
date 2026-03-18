@@ -1,0 +1,62 @@
+{
+  "coupling": "gmsh_to_fenics",
+  "label": "Gmsh mesh \u2192 FEniCS mesh import",
+  "from": "gmsh",
+  "to": "fenics",
+  "steps": [
+    {
+      "tool": "gmsh",
+      "params": {
+        "simulation_type": "box_mesh",
+        "lx": 1.0,
+        "ly": 0.5,
+        "lz": 0.2,
+        "mesh_size": 0.05,
+        "dimension": 3,
+        "element_order": 1,
+        "output_format": "msh"
+      },
+      "label": "Step 1: gmsh"
+    },
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {
+          "conductivity": 1.0
+        },
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {
+            "type": "dirichlet",
+            "boundary": "left",
+            "value": 100
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "right",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "top",
+            "value": 0
+          },
+          {
+            "type": "dirichlet",
+            "boundary": "bottom",
+            "value": 0
+          }
+        ]
+      },
+      "param_map": {
+        "mesh_file": "$prev.result.mesh_file_path"
+      },
+      "label": "Step 2: fenics"
+    }
+  ]
+}

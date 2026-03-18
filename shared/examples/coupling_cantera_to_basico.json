@@ -1,0 +1,81 @@
+{
+  "coupling": "cantera_to_basico",
+  "label": "Cantera kinetics \u2192 BasiCO network",
+  "from": "cantera",
+  "to": "basico",
+  "steps": [
+    {
+      "tool": "cantera",
+      "params": {
+        "simulation_type": "ignition_delay",
+        "mechanism": "gri30.yaml",
+        "temperature_K": 1200,
+        "pressure_atm": 1,
+        "composition": "H2:2,O2:1,N2:3.76",
+        "end_time_s": 0.001,
+        "n_points": 200
+      },
+      "label": "Step 1: cantera"
+    },
+    {
+      "tool": "basico",
+      "params": {
+        "simulation_type": "ode_timecourse",
+        "model_source": "reactions",
+        "reactions": [
+          {
+            "name": "binding",
+            "scheme": "S + E -> ES"
+          },
+          {
+            "name": "unbinding",
+            "scheme": "ES -> S + E"
+          },
+          {
+            "name": "catalysis",
+            "scheme": "ES -> P + E"
+          }
+        ],
+        "species": [
+          {
+            "name": "S",
+            "initial_concentration": 10.0
+          },
+          {
+            "name": "E",
+            "initial_concentration": 1.0
+          },
+          {
+            "name": "ES",
+            "initial_concentration": 0.0
+          },
+          {
+            "name": "P",
+            "initial_concentration": 0.0
+          }
+        ],
+        "parameters": [
+          {
+            "name": "(binding).k1",
+            "value": 0.1
+          },
+          {
+            "name": "(unbinding).k1",
+            "value": 0.01
+          },
+          {
+            "name": "(catalysis).k1",
+            "value": 0.05
+          }
+        ],
+        "duration": 200.0,
+        "n_steps": 200,
+        "method": "deterministic"
+      },
+      "param_map": {
+        "species_concentrations": "$prev.result.species"
+      },
+      "label": "Step 2: basico"
+    }
+  ]
+}

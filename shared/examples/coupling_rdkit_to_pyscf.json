@@ -1,0 +1,30 @@
+{
+  "coupling": "rdkit_to_pyscf",
+  "label": "RDKit SMILES \u2192 PySCF electronic structure",
+  "from": "rdkit",
+  "to": "pyscf",
+  "steps": [
+    {
+      "tool": "rdkit",
+      "params": {
+        "simulation_type": "descriptors",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      "label": "Step 1: rdkit"
+    },
+    {
+      "tool": "pyscf",
+      "params": {
+        "atom_coords": "H 0 0 0; H 0 0 0.74",
+        "basis": "sto-3g",
+        "method": "hf",
+        "charge": 0,
+        "spin": 0
+      },
+      "param_map": {
+        "atom_coords": "$prev.result.atom_coords_pyscf"
+      },
+      "label": "Step 2: pyscf"
+    }
+  ]
+}

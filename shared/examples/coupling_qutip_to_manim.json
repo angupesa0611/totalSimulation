@@ -1,0 +1,103 @@
+{
+  "coupling": "qutip_to_manim",
+  "label": "QuTiP Bloch vector \u2192 Manim 3D Bloch sphere",
+  "from": "qutip",
+  "to": "manim",
+  "steps": [
+    {
+      "tool": "qutip",
+      "params": {
+        "system_type": "qubit_rabi",
+        "qubit_rabi": {
+          "omega": 1.0,
+          "delta": 0.0,
+          "psi0": "ground",
+          "tmax": 25.0,
+          "n_steps": 500
+        }
+      },
+      "label": "Step 1: qutip"
+    },
+    {
+      "tool": "manim",
+      "params": {
+        "simulation_type": "bloch_sphere",
+        "quality": "low_quality",
+        "format": "mp4",
+        "trajectory_x": [
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0
+        ],
+        "trajectory_y": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "trajectory_z": [
+          1.0,
+          0.951,
+          0.809,
+          0.588,
+          0.309,
+          0,
+          -0.309,
+          -0.588,
+          -0.809,
+          -0.951,
+          -1.0,
+          -0.951,
+          -0.809,
+          -0.588,
+          -0.309,
+          0,
+          0.309,
+          0.588,
+          0.809,
+          0.951,
+          1.0
+        ]
+      },
+      "param_map": {
+        "simulation_type": "bloch_sphere"
+      },
+      "label": "Step 2: manim"
+    }
+  ]
+}

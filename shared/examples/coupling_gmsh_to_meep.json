@@ -1,0 +1,42 @@
+{
+  "coupling": "gmsh_to_meep",
+  "label": "Gmsh mesh \u2192 FDTD domain",
+  "from": "gmsh",
+  "to": "meep",
+  "steps": [
+    {
+      "tool": "gmsh",
+      "params": {
+        "simulation_type": "box_mesh",
+        "lx": 1.0,
+        "ly": 0.5,
+        "lz": 0.2,
+        "mesh_size": 0.05,
+        "dimension": 3,
+        "element_order": 1,
+        "output_format": "msh"
+      },
+      "label": "Step 1: gmsh"
+    },
+    {
+      "tool": "meep",
+      "params": {
+        "simulation_type": "waveguide_bend",
+        "waveguide_bend": {
+          "resolution": 30,
+          "sx": 16.0,
+          "sy": 16.0,
+          "waveguide_width": 1.0,
+          "wavelength": 1.55,
+          "n_core": 3.4,
+          "pml_thickness": 1.0,
+          "run_time": 200
+        }
+      },
+      "param_map": {
+        "mesh_file": "$prev.result.mesh_file_path"
+      },
+      "label": "Step 2: meep"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "coupling": "sympy_to_qiskit",
+  "label": "Symbolic Hamiltonian \u2192 Qiskit circuit",
+  "from": "sympy",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "label": "Step 1: sympy"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "hamiltonian_expr": "$prev.result.expression"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "coupling": "lammps_to_elmer",
+  "label": "Atomic \u2192 continuum: elastic/thermal props",
+  "from": "lammps",
+  "to": "elmer",
+  "steps": [
+    {
+      "tool": "lammps",
+      "params": {
+        "simulation_type": "lj_fluid",
+        "lj_fluid": {
+          "n_atoms": 500,
+          "temperature": 1.0,
+          "density": 0.8,
+          "timestep": 0.005,
+          "n_steps": 10000,
+          "dump_interval": 100
+        }
+      },
+      "label": "Step 1: lammps"
+    },
+    {
+      "tool": "elmer",
+      "params": {
+        "problem_type": "structural",
+        "length_x": 1.0,
+        "length_y": 0.1,
+        "mesh_divisions_x": 20,
+        "mesh_divisions_y": 10,
+        "material": {
+          "youngs_modulus": 200000000000.0,
+          "poisson_ratio": 0.3,
+          "density": 7800
+        },
+        "loads": [
+          {
+            "type": "gravity"
+          }
+        ]
+      },
+      "param_map": {
+        "material_properties": "$prev.result"
+      },
+      "label": "Step 2: elmer"
+    }
+  ]
+}

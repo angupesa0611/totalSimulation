@@ -1,0 +1,41 @@
+{
+  "coupling": "gmsh_to_openfoam",
+  "label": "Gmsh mesh \u2192 OpenFOAM mesh",
+  "from": "gmsh",
+  "to": "openfoam",
+  "steps": [
+    {
+      "tool": "gmsh",
+      "params": {
+        "simulation_type": "box_mesh",
+        "lx": 1.0,
+        "ly": 0.5,
+        "lz": 0.2,
+        "mesh_size": 0.05,
+        "dimension": 3,
+        "element_order": 1,
+        "output_format": "msh"
+      },
+      "label": "Step 1: gmsh"
+    },
+    {
+      "tool": "openfoam",
+      "params": {
+        "simulation_type": "cavity",
+        "re": 100,
+        "n_cells": [
+          20,
+          20,
+          1
+        ],
+        "end_time": 0.5,
+        "write_interval": 0.1,
+        "solver": "icoFoam"
+      },
+      "param_map": {
+        "mesh_file": "$prev.result.mesh_file_path"
+      },
+      "label": "Step 2: openfoam"
+    }
+  ]
+}

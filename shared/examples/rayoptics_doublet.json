@@ -1,0 +1,19 @@
+{
+  "tool": "rayoptics",
+  "label": "Achromatic Doublet Lens",
+  "params": {
+    "simulation_type": "doublet",
+    "doublet": {
+      "efl": 200.0,
+      "f_number": 8.0,
+      "n_rays": 21,
+      "r1": 120.0,
+      "r2": -80.0,
+      "r3": -250.0,
+      "t1": 8.0,
+      "t2": 3.0,
+      "glass1": "N-BK7",
+      "glass2": "N-SF2"
+    }
+  }
+}

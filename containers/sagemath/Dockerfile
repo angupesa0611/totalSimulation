@@ -2,7 +2,6 @@ FROM sagemath/sagemath:latest
 
 USER root
 RUN sage -pip install celery[redis]==5.4.0 redis==5.2.1
-USER sage
 
 WORKDIR /app
 COPY . .

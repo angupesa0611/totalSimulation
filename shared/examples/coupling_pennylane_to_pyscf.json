@@ -1,0 +1,48 @@
+{
+  "coupling": "pennylane_to_pyscf",
+  "label": "PennyLane VQE \u2192 PySCF electronic structure",
+  "from": "pennylane",
+  "to": "pyscf",
+  "steps": [
+    {
+      "tool": "pennylane",
+      "params": {
+        "simulation_type": "vqe",
+        "hamiltonian": [
+          {
+            "coeff": -0.5,
+            "pauli_string": "II"
+          },
+          {
+            "coeff": 0.5,
+            "pauli_string": "ZZ"
+          },
+          {
+            "coeff": 0.25,
+            "pauli_string": "XX"
+          }
+        ],
+        "n_qubits": 2,
+        "ansatz": "basic",
+        "optimizer": "gradient_descent",
+        "max_iterations": 50,
+        "step_size": 0.4
+      },
+      "label": "Step 1: pennylane"
+    },
+    {
+      "tool": "pyscf",
+      "params": {
+        "atom_coords": "H 0 0 0; H 0 0 0.74",
+        "basis": "sto-3g",
+        "method": "hf",
+        "charge": 0,
+        "spin": 0
+      },
+      "param_map": {
+        "geometry": "$prev.result.molecular_geometry"
+      },
+      "label": "Step 2: pyscf"
+    }
+  ]
+}

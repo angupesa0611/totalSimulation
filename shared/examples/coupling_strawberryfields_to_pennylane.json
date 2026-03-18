@@ -1,0 +1,49 @@
+{
+  "coupling": "strawberryfields_to_pennylane",
+  "label": "Photonic circuit \u2192 hybrid QML",
+  "from": "strawberryfields",
+  "to": "pennylane",
+  "steps": [
+    {
+      "tool": "strawberryfields",
+      "params": {
+        "simulation_type": "hong_ou_mandel",
+        "hong_ou_mandel": {
+          "cutoff_dim": 10,
+          "n_shots": 1000,
+          "beam_splitter_angle": 0.7854
+        }
+      },
+      "label": "Step 1: strawberryfields"
+    },
+    {
+      "tool": "pennylane",
+      "params": {
+        "simulation_type": "vqe",
+        "hamiltonian": [
+          {
+            "coeff": -0.5,
+            "pauli_string": "II"
+          },
+          {
+            "coeff": 0.5,
+            "pauli_string": "ZZ"
+          },
+          {
+            "coeff": 0.25,
+            "pauli_string": "XX"
+          }
+        ],
+        "n_qubits": 2,
+        "ansatz": "basic",
+        "optimizer": "gradient_descent",
+        "max_iterations": 50,
+        "step_size": 0.4
+      },
+      "param_map": {
+        "circuit_data": "$prev.result"
+      },
+      "label": "Step 2: pennylane"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "coupling": "simupop_to_tskit",
+  "label": "Genotype matrix \u2192 tsinfer \u2192 tree sequence",
+  "from": "simupop",
+  "to": "tskit",
+  "steps": [
+    {
+      "tool": "simupop",
+      "params": {
+        "simulation_type": "random_mating",
+        "population_size": 1000,
+        "n_generations": 200,
+        "n_loci": 1,
+        "initial_freq": 0.5
+      },
+      "label": "Step 1: simupop"
+    },
+    {
+      "tool": "tskit",
+      "params": {
+        "simulation_type": "diversity",
+        "source_job_id": "",
+        "n_windows": 20
+      },
+      "param_map": {
+        "genotype_data": "$prev.result"
+      },
+      "label": "Step 2: tskit"
+    }
+  ]
+}

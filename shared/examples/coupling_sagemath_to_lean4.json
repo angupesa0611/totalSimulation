@@ -1,0 +1,33 @@
+{
+  "coupling": "sagemath_to_lean4",
+  "label": "SageMath \u2192 Lean 4 formal verification",
+  "from": "sagemath",
+  "to": "lean4",
+  "steps": [
+    {
+      "tool": "sagemath",
+      "params": {
+        "simulation_type": "polynomial_algebra",
+        "polynomials": [
+          "x^2 + y^2 - 1",
+          "x - y"
+        ],
+        "ring": "QQ",
+        "operation": "groebner"
+      },
+      "label": "Step 1: sagemath"
+    },
+    {
+      "tool": "lean4",
+      "params": {
+        "simulation_type": "verify_statement",
+        "lean_code": "theorem add_comm (n m : Nat) : n + m = m + n := Nat.add_comm n m",
+        "timeout_s": 60
+      },
+      "param_map": {
+        "statement": "$prev.result.result"
+      },
+      "label": "Step 2: lean4"
+    }
+  ]
+}

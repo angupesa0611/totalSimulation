@@ -1,0 +1,51 @@
+{
+  "pipeline": "classical_circuit",
+  "label": "Classical Circuit Design",
+  "description": "Symbolic analysis \u2192 numerical SPICE simulation \u2192 EM field verification",
+  "steps": [
+    {
+      "tool": "lcapy",
+      "params": {
+        "simulation_type": "transfer_function",
+        "netlist": "V1 1 0; R1 1 2 1000; C1 2 0 1e-6",
+        "input_node": "1",
+        "output_node": "2"
+      },
+      "label": "Symbolic circuit"
+    },
+    {
+      "tool": "pyspice",
+      "params": {
+        "simulation_type": "transient_analysis",
+        "components": [
+          {"type": "V", "name": "V1", "nodes": [1, 0], "value": 5},
+          {"type": "R", "name": "R1", "nodes": [1, 2], "value": 100},
+          {"type": "L", "name": "L1", "nodes": [2, 3], "value": 0.01},
+          {"type": "C", "name": "C1", "nodes": [3, 0], "value": 0.000001}
+        ],
+        "step_time": 0.000001,
+        "end_time": 0.005
+      },
+      "label": "SPICE simulation"
+    },
+    {
+      "tool": "fenics",
+      "params": {
+        "problem_type": "heat",
+        "length_x": 1.0,
+        "length_y": 1.0,
+        "mesh_resolution": 32,
+        "degree": 1,
+        "material": {"conductivity": 1.0},
+        "source_term": 0.0,
+        "boundary_conditions": [
+          {"type": "dirichlet", "boundary": "left", "value": 100},
+          {"type": "dirichlet", "boundary": "right", "value": 0},
+          {"type": "dirichlet", "boundary": "top", "value": 0},
+          {"type": "dirichlet", "boundary": "bottom", "value": 0}
+        ]
+      },
+      "label": "EM field verification"
+    }
+  ]
+}

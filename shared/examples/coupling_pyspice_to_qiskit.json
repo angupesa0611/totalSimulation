@@ -1,0 +1,83 @@
+{
+  "coupling": "pyspice_to_qiskit",
+  "label": "Classical + quantum circuit co-design",
+  "from": "pyspice",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "pyspice",
+      "params": {
+        "simulation_type": "transient_analysis",
+        "components": [
+          {
+            "type": "V",
+            "name": "V1",
+            "nodes": [
+              1,
+              0
+            ],
+            "value": 5
+          },
+          {
+            "type": "R",
+            "name": "R1",
+            "nodes": [
+              1,
+              2
+            ],
+            "value": 100
+          },
+          {
+            "type": "L",
+            "name": "L1",
+            "nodes": [
+              2,
+              3
+            ],
+            "value": 0.01
+          },
+          {
+            "type": "C",
+            "name": "C1",
+            "nodes": [
+              3,
+              0
+            ],
+            "value": 1e-06
+          }
+        ],
+        "step_time": 1e-06,
+        "end_time": 0.005
+      },
+      "label": "Step 1: pyspice"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "circuit_data": "$prev.result"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}

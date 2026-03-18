@@ -1,0 +1,37 @@
+{
+  "coupling": "lcapy_to_sympy",
+  "label": "Lcapy circuit expression \u2192 SymPy analysis",
+  "from": "lcapy",
+  "to": "sympy",
+  "steps": [
+    {
+      "tool": "lcapy",
+      "params": {
+        "simulation_type": "transfer_function",
+        "netlist": "V1 1 0; R1 1 2 1000; C1 2 0 1e-6",
+        "input_node": "1",
+        "output_node": "2"
+      },
+      "label": "Step 1: lcapy"
+    },
+    {
+      "tool": "sympy",
+      "params": {
+        "simulation_type": "symbolic_solve",
+        "equations": [
+          "x**2 - 5*x + 6"
+        ],
+        "solve_for": [
+          "x"
+        ],
+        "variables": [
+          "x"
+        ]
+      },
+      "param_map": {
+        "expression": "$prev.result.transfer_function_str"
+      },
+      "label": "Step 2: sympy"
+    }
+  ]
+}

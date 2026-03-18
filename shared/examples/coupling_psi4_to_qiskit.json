@@ -1,0 +1,48 @@
+{
+  "coupling": "psi4_to_qiskit",
+  "label": "Qiskit Nature Psi4 driver",
+  "from": "psi4",
+  "to": "qiskit",
+  "steps": [
+    {
+      "tool": "psi4",
+      "params": {
+        "geometry": "O  0.000000  0.000000  0.117489\nH -0.756950  0.000000 -0.469957\nH  0.756950  0.000000 -0.469957\n--\nO  3.000000  0.000000  0.117489\nH  2.243050  0.000000 -0.469957\nH  3.756950  0.000000 -0.469957",
+        "method": "sapt0",
+        "basis": "jun-cc-pvdz",
+        "charge": 0,
+        "multiplicity": 1,
+        "memory": "2 GB"
+      },
+      "label": "Step 1: psi4"
+    },
+    {
+      "tool": "qiskit",
+      "params": {
+        "simulation_type": "circuit_simulation",
+        "n_qubits": 2,
+        "gates": [
+          {
+            "name": "h",
+            "qubits": [
+              0
+            ]
+          },
+          {
+            "name": "cx",
+            "qubits": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_shots": 1024,
+        "backend": "qasm"
+      },
+      "param_map": {
+        "molecular_data": "$prev.result"
+      },
+      "label": "Step 2: qiskit"
+    }
+  ]
+}
