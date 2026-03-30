@@ -153,8 +153,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         auth_header = request.headers.get("authorization")
+        x_api_key = request.headers.get("x-api-key")
         try:
-            get_current_user(auth_header)
+            get_current_user(auth_header, x_api_key)
         except ValueError as e:
             return JSONResponse(
                 status_code=401,

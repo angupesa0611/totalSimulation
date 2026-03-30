@@ -178,9 +178,15 @@ async def submit_simulation(req: SimulationRequest) -> SimulationStatus:
 
     increment_simulation(req.tool)
 
-    # Ensure the worker container is running (no-op for embedded tools)
-    from docker_manager import docker_mgr
-    await docker_mgr.ensure_worker(req.tool)
+    # Ensure the worker container is running (no-op for embedded tools).
+    # If image doesn't exist yet, build it on-demand before starting.
+    from docker_manager import docker_mgr, WorkerContainerNotFound
+    try:
+        await docker_mgr.ensure_worker(req.tool)
+    except WorkerContainerNotFound:
+        logger.info("Worker image not found for %s — triggering on-demand build", req.tool)
+        await docker_mgr.build_worker(req.tool)
+        await docker_mgr.ensure_worker(req.tool)
 
     tool_meta = TOOL_REGISTRY[req.tool]
     task = celery_app.send_task(

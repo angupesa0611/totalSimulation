@@ -223,7 +223,6 @@ def run_tellurium(self, params: dict, project: str = "_default",
     try:
         result = tool.run(params)
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

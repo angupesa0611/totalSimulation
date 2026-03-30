@@ -288,16 +288,7 @@ def run_gmsh(self, params: dict, project: str = "_default",
         self.update_state(state="PROGRESS", meta={"progress": 0.1, "message": f"Generating {sim_type}"})
         result = tool.run(params)
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
-
-    # Export .msh file for FEniCS coupling
-    self.update_state(state="PROGRESS", meta={"progress": 0.8, "message": "Exporting mesh file"})
-    try:
-        mesh_path = tool._export_msh(None, self.request.id)
-        result["mesh_file_path"] = mesh_path
-    except Exception:
-        pass
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})
     save_result(self.request.id, "gmsh", result, project, label)

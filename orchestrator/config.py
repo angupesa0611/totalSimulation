@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     auth_enabled: bool = False
     jwt_secret: str = "dev-secret-change-in-production"
     access_token_expire_minutes: int = 1440
+    api_key: str = ""  # Static X-API-Key for programmatic access (empty = disabled)
 
 
 settings = Settings()

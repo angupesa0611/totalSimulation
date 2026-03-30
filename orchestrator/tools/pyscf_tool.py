@@ -144,7 +144,6 @@ def run_pyscf(self, params: dict, project: str = "_default",
         self.update_state(state="PROGRESS", meta={"progress": 0.1, "message": f"Running {params.get('method', 'hf').upper()} calculation"})
         result = tool.run(params)
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

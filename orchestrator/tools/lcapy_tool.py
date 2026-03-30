@@ -275,7 +275,7 @@ class LcapyTool(SimulationTool):
     def get_default_params(self) -> dict[str, Any]:
         return {
             "simulation_type": "transfer_function",
-            "netlist": "V1 1 0; R1 1 2 1k; C1 2 0 1u",
+            "netlist": "V1 1 0; R1 1 2 1000; C1 2 0 1e-6",
             "input_node": "1",
             "output_node": "2",
         }
@@ -293,7 +293,6 @@ def run_lcapy(self, params: dict, project: str = "_default",
         self.update_state(state="PROGRESS", meta={"progress": 0.1, "message": f"Running {sim_type}"})
         result = tool.run(params)
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

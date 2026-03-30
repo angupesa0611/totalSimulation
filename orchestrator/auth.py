@@ -93,14 +93,19 @@ def decode_token(token: str) -> str | None:
         return None
 
 
-def get_current_user(authorization: str | None) -> str:
-    """FastAPI dependency — extract user from Authorization header.
+def get_current_user(authorization: str | None, x_api_key: str | None = None) -> str:
+    """FastAPI dependency — extract user from Authorization header or X-API-Key.
 
+    Accepts either a JWT Bearer token or a static X-API-Key header.
     Returns 'anonymous' when auth is disabled.
-    Raises ValueError when auth is enabled and token is invalid.
+    Raises ValueError when auth is enabled and both credentials are invalid.
     """
     if not settings.auth_enabled:
         return "anonymous"
+
+    # X-API-Key takes priority (programmatic access)
+    if x_api_key and settings.api_key and x_api_key == settings.api_key:
+        return "api"
 
     if not authorization or not authorization.startswith("Bearer "):
         raise ValueError("Missing or invalid authorization header")

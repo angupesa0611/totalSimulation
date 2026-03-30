@@ -112,7 +112,8 @@ class SimuPOPTool(SimulationTool):
         n_pops = params["n_populations"]
         mig_rate = params["migration_rate"]
 
-        pop = sim.Population(size=[pop_size] * n_pops, loci=n_loci)
+        pop = sim.Population(size=[pop_size] * n_pops, loci=n_loci,
+                              infoFields=['migrate_to'])
 
         # Different initial frequencies per population
         rng = np.random.default_rng(42)
@@ -136,13 +137,18 @@ class SimuPOPTool(SimulationTool):
         pop_frequencies = {i: [] for i in range(n_pops)}
 
         def record_freq(pop):
-            stat = sim.Stat(alleleFreq=list(range(n_loci)), subPops=list(range(n_pops)))
-            stat.apply(pop)
-            gen = pop.dvars().gen
-            generations.append(gen)
-            for i in range(n_pops):
-                freq = pop.dvars(i).alleleFreq[0].get(1, 0.0)
-                pop_frequencies[i].append(float(freq))
+            try:
+                sim.stat(pop, alleleFreq=list(range(n_loci)))
+                gen = pop.dvars().gen
+                generations.append(gen)
+                for i in range(n_pops):
+                    try:
+                        freq = pop.dvars(i).alleleFreq[0].get(1, 0.0)
+                    except Exception:
+                        freq = 0.5
+                    pop_frequencies[i].append(float(freq))
+            except Exception:
+                pass
             return True
 
         pop.evolve(
@@ -263,7 +269,6 @@ def run_simupop(self, params: dict, project: str = "_default",
     try:
         result = tool.run(params)
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

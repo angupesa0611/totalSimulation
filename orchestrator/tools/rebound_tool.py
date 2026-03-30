@@ -18,8 +18,7 @@ class REBOUNDTool(SimulationTool):
     def validate_params(self, params: dict[str, Any]) -> dict[str, Any]:
         if "particles" not in params or not params["particles"]:
             raise ValueError("At least one particle required")
-        if "tmax" not in params:
-            raise ValueError("tmax is required")
+        params.setdefault("tmax", 2 * math.pi)
         params.setdefault("integrator", "ias15")
         params.setdefault("n_outputs", 500)
         params.setdefault("gr_correction", "none")
@@ -112,7 +111,7 @@ class REBOUNDTool(SimulationTool):
                 positions[i, j] = [p.x, p.y, p.z]
             energies[i] = sim.energy()
             if track_precession:
-                orb = sim.particles[1].calculate_orbit(primary=sim.particles[0])
+                orb = sim.particles[1].orbit(primary=sim.particles[0])
                 omegas[i] = orb.omega
 
         result = {
@@ -163,7 +162,6 @@ def run_rebound(self, params: dict, project: str = "_default",
     try:
         result = tool.run(params)
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})

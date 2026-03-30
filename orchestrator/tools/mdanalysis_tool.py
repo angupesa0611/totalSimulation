@@ -34,11 +34,18 @@ class MDAnalysisTool(SimulationTool):
         if "source_job_id" in params and params["source_job_id"]:
             project = params.get("project", "_default")
             source_data = get_result_data(params["source_job_id"], project)
-            if source_data is None:
-                raise ValueError(f"Source job {params['source_job_id']} not found")
-            frames = source_data.get("frames", [])
-            n_atoms = source_data.get("n_atoms", 0)
-            energies = source_data.get("energies", [])
+            if source_data is not None and source_data.get("frames"):
+                frames = source_data["frames"]
+                n_atoms = source_data.get("n_atoms", 0)
+                energies = source_data.get("energies", [])
+            elif "trajectory_data" in params:
+                # Source job has no frame data; fall through to inline trajectory
+                traj = params["trajectory_data"]
+                frames = traj.get("frames", [])
+                n_atoms = traj.get("n_atoms", len(frames[0]) if frames else 0)
+                energies = traj.get("energies", [])
+            else:
+                raise ValueError(f"Source job {params['source_job_id']} has no trajectory frames")
         elif "trajectory_data" in params:
             traj = params["trajectory_data"]
             frames = traj.get("frames", [])
@@ -239,7 +246,6 @@ def run_mdanalysis(self, params: dict, project: str = "_default",
         self.update_state(state="PROGRESS", meta={"progress": 0.2, "message": "Loading trajectory data"})
         result = tool.run(params)
     except Exception as e:
-        self.update_state(state="FAILURE", meta={"message": str(e)})
         raise
 
     self.update_state(state="PROGRESS", meta={"progress": 0.9, "message": "Saving results"})
