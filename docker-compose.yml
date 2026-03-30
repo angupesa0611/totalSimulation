@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: always
     environment:
       POSTGRES_DB: totalsimulation
       POSTGRES_USER: totalsim
@@ -8,7 +9,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U totalsim -d totalsimulation"]
       interval: 10s
@@ -21,10 +22,11 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: always
     ports:
       - "6380:6379"
     volumes:
-      - redis-data:/data
+      - ./data/redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -35,6 +37,7 @@ services:
     build:
       context: ./orchestrator
       dockerfile: Dockerfile
+    restart: always
     ports:
       - "8000:8000"
     env_file: .env
@@ -48,6 +51,15 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - default
+      - personal-net
 
   openmm-worker:
     build:
@@ -307,23 +319,24 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+    restart: always
     ports:
       - "3100:80"
     depends_on:
-      - orchestrator
+      orchestrator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - default
+      - personal-net
 
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    command: tunnel --config /etc/cloudflared/config.yml run
-    volumes:
-      - ./containers/cloudflared/config.yml:/etc/cloudflared/config.yml:ro
-      - ./containers/cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
-    depends_on:
-      - client
-    restart: unless-stopped
-    profiles:
-      - tunnel
-
-volumes:
-  postgres-data:
-  redis-data:
+networks:
+  default:
+    driver: bridge
+  personal-net:
+    external: true
